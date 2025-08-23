@@ -1,4 +1,4 @@
-##  Tecnologia sigerida
+##  Tecnologia sugerida
 - **Framework:** [React.js](https://react.dev/)  
 - **Motivos da escolha:**
   - Grande comunidade e suporte.
