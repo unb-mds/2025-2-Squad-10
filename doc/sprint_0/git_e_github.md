@@ -1,47 +1,106 @@
 # Git e GitHub
-Git é um sistema de controle de versão distribuído amplamente utilizado no desenvolvimento de software. Ele permite rastrear e gerenciar mudanças em projetos, armazenar o histórico de alterações, reverter para versões anteriores e facilitar a colaboração entre vários desenvolvedores.
 
-GitHub é uma plataforma de hospedagem de código-fonte que utiliza o Git como base. Ele funciona como um espaço na nuvem para armazenar repositórios, possibilitando acessar e compartilhar projetos de qualquer lugar. Além de hospedar código, o GitHub oferece recursos adicionais que potencializam o trabalho em equipe, como por exemplo:
+Git é um sistema de controle de versão distribuído amplamente utilizado no desenvolvimento de software. Ele permite rastrear e gerenciar mudanças em projetos, armazenar o histórico de alterações, facilitar o trabalho em equipe e garantir maior segurança ao código.
 
-*Pull requests - para revisão e integração de mudanças de forma organizada.
-*Issues - para rastreamento de tarefas, bugs e novas funcionalidades.
-*Gerenciamento de Branches - permitindo que times trabalhem em paralelo sem afetar o código principal.
+GitHub é uma plataforma de hospedagem de código-fonte que utiliza o Git como base. Funciona como um espaço na nuvem para armazenar repositórios, possibilitando acessar e compartilhar projetos facilmente. No GitHub, você pode usar diversos recursos que tornam o desenvolvimento colaborativo mais eficiente, como:
+
+* **Pull requests** – para revisão e integração de mudanças de forma organizada.
+* **Issues** – para rastreamento de tarefas, bugs e novas funcionalidades.
+* **Gerenciamento de branches** – permitindo que times trabalhem em paralelo sem afetar o código principal.
 
 ## 1. Como configurar o Git
 
 ### 1. Baixando o Git
 
-Para utilizarmos o Git, primeiro precisamos baixa-lo.
-* Caso esteja utilizando o windowns, será necessáro acessar o [site](https://git-scm.com/downloads/win) e seguir o instalador.
-* No linux você terá que abrir o terminal e digitar o comando `sudo apt install git` (Debian/Ubuntu) ou `sudo yum install git` (Fedora/CentOS).
+Para utilizar o Git, primeiro é preciso baixá-lo.
 
-Depois, basta confirmar a instalação usando o comando `git --version` no terminal.
+* **Windows**: acesse o [site oficial](https://git-scm.com/download/win) e siga o instalador.
+* **Linux**: abra o terminal e digite o comando:
+  ```bash
+  sudo apt install git       # Para Debian/Ubuntu
+  sudo yum install git       # Para Fedora/CentOS
+  ```
 
-### 2. Configurando o seu Git
-Após baixar o Git, será necessário configurar o seu nome e email (eles aparecerão nos commits). Para isso, digite no terminal os seguintes comandos:
-`$ git config –global user.name “Seu nome”` e `$ git config –global user.email “Seu email”` substituindo "Seu nome" e "Seu email" com o nome e email que irá utilizar.
+Após a instalação, confirme usando o comando:
 
-Com isso a sua conta deverá estar pronta para ser usada!
+```bash
+git --version
+```
+
+### 2. Configurando seu Git
+
+Depois de instalar, é necessário configurar seu nome e email (eles aparecerão nos commits). No terminal, digite:
+
+```bash
+git config --global user.name "Seu Nome"
+git config --global user.email "seu@email.com"
+```
+Substitua `"Seu Nome"` e `"seu@email.com"` pelas suas informações.
+
+Pronto! Seu Git está configurado.
 
 ## 2. Criando e clonando um repositório
 
 ### 1. Criando o repositório
-Para criar um arquivo é muito simples, basta entrar no terminal e inserir o comando `mkdir nome_do_projeto` para criar uma pasta onde ficará seu projeto. Após criar a pasta precisamos abri-la com o comando `cd nome_do_projeto` e por fim executar o comando `git init` para criar o repositório.
+
+Para iniciar um projeto, crie uma pasta para ele e inicialize um repositório Git:
+
+```bash
+mkdir nome_do_projeto
+cd nome_do_projeto
+git init
+```
 
 ### 2. Clonando um repositório
-Para clonar um repositório existente basta usar o comando `git clone https://github.com/usuario/repositorio.git` trocando "`https://github.com/usuario/repositorio.git`" pelo link do repositório desejado.
+
+Para clonar um repositório existente, use:
+
+```bash
+git clone https://github.com/usuario/repositorio.git
+```
+Troque `https://github.com/usuario/repositorio.git` pelo link do projeto desejado.
 
 ## 3. Trabalhando com arquivos
 
 ### 1. Preparando o arquivo
-Após passar um tempo trabalhando em um projéto, é comum querer salvar ele em um repositório. Para isso, primeiro precisamos preparar o nosso arquivo para isso. Podemos usar o comando `git add nome_arquivo` para escolher um arquivo especifico ou o comando `git add .` para adicionar todos os arquivos.
+
+Após trabalhar em um projeto, é comum querer salvar as alterações. Para isso, prepare o arquivo para ser salvo no repositório:
+
+```bash
+git add nome_do_arquivo
+```
+Se quiser adicionar todos os arquivos modificados, use:
+
+```bash
+git add .
+```
 
 ### 2. Fazendo o commit (salvando mudanças)
-Após preparar o arquivo utilizamos o comando `git commit -m "Mensagem explicando as mudanças"` para fazer o commit e salvar o arquivo.
 
-Lembre-se de sempre colocar uma mensagem explicando as alterações mais importantes para que seu projeto siga sempre organizado.
+Depois de adicionar os arquivos, faça o commit (salve as alterações):
 
-### 3. Extras:
-Você pode verificar o status do seu arquivo utilizando o comando `git status`.
+```bash
+git commit -m "Mensagem explicando as mudanças"
+```
+Dica: sempre coloque uma mensagem clara e objetiva que explique o que mudou no commit.
 
-Você tambem pode verificar o histórico de commits usando o comando `git log`. 
+### 3. Extras
+
+* Verifique o status dos arquivos:
+
+  ```bash
+  git status
+  ```
+
+* Veja o histórico de commits:
+
+  ```bash
+  git log
+  ```
+
+* Sincronize seu repositório local com o remoto:
+
+  ```bash
+  git pull
+  git push
+  ```
