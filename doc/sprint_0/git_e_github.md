@@ -104,3 +104,75 @@ Dica: sempre coloque uma mensagem clara e objetiva que explique o que mudou no c
   git pull
   git push
   ```
+
+  ## 4. Como criar/mudar uma Branch
+
+  Uma branch (ramo) no Git é, de forma simples, uma linha de desenvolvimento independente dentro do seu repositório. Usar Branches permite:
+  
+  * Desenvolver novas funcionalidades sem quebrar a versão estável do projeto.
+  * Facilita o trabalho em equipe: cada pessoa pode trabalhar em sua própria branch.
+  * Depois, quando a funcionalidade estiver pronta e testada, você pode mesclar (merge) a branch de volta à main.
+
+  ### Criando uma Brench
+
+  Para inicair uma Brench use o comando:
+
+  ```bash
+  git checkout -b minha-branch
+  ```
+
+  ou caso a brench já existir, use:
+
+  ```bash
+  git checkout nome-da-branch
+  ```
+  após terminar de fazer as alterações e estiver pronto, junta a `nome-da-branch` na `main`
+
+  ```bash
+  git checkout main
+  git merge feature-login
+  ```
+
+  ## 5. Descartando/desfazendo alterações na brench
+
+  ### 1. Descartar alterações não adicionadas ao staging (`git add`)
+
+  Se você modificou um arquivo mas não deu `git add`:
+
+  ```bash
+  git restore nome_arquivo
+  ```
+
+  para descartar todos os arquivos:
+
+  ```bash
+  git restore .
+  ```
+
+  ### 2. Tirar arquivos do staging (`git add` já feito)
+
+  Se você já usou `git add`, mas ainda não fez commit:
+
+  ```bash
+  git reset nome_arquivo
+  ```
+
+  ou para todo:
+
+  ```bash
+  git reset
+  ```
+
+  ### 3. Desfazer commits
+
+  Se voce já tiver feito o commit e quiser defazer mas mantendo os arquivos modificado:
+
+  ```bash
+  git reset --soft HEAD~1
+  ```
+
+  Removendo todas as alterações:
+
+  ```bash
+  git reset --hard HEAD~1
+  ```
