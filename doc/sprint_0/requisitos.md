@@ -72,3 +72,8 @@ A gestão de requisitos é fundamental para manter o controle e garantir que o p
 * **Ferramentas de Gestão:** Utilizar ferramentas como **Jira**, **Trello** ou **Azure DevOps** para organizar, rastrear e gerenciar os requisitos e as *issues* do projeto.
 
 ---
+
+## Links úteis:
+* https://softdesign.com.br/blog/requisitos-de-software-funcionais-e-nao-funcionais/#h-quem-define-os-requisitos-e-quando
+* https://dev.to/jeronimafloriano/o-que-sao-requisitos-de-software-e-porque-e-importante-entende-los-bjn
+* https://www.youtube.com/watch?v=VcOeM2AD8Yk
