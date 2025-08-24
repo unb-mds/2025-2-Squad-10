@@ -23,4 +23,6 @@ A equipe analisa regularmente o quadro para identificar problemas, otimizar proc
 | Tarefa 1 | Tarefa 2     | Tarefa 3  |
 | Tarefa 4 |              |           |
 
+Referencias:
+https://youtu.be/qJRbAXlhJ3c?si=NsnBcV3UBKEqj9eg
 
