@@ -41,3 +41,8 @@ Eles especificam as **funções, comportamentos e serviços** que o software pre
 ## ✅ Resumindo
 
 Os requisitos funcionais são a **base do software**, pois descrevem as funções **essenciais** que o sistema precisa oferecer para cumprir seu objetivo.
+
+## Fontes usadas 
+
+https://www.youtube.com/watch?v=vbl8W0eUUzs
+https://www.youtube.com/watch?v=l9rdjLqmIVc
