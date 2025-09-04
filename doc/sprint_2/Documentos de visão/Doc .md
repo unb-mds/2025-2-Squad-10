@@ -1,31 +1,3 @@
-Documento do Projeto — Estrutura Completa (formatado)
-
-Objetivo deste arquivo: Apresentar um modelo claro, organizado e visualmente agradável para documentar um projeto de software. Use como base — preencha títulos e exemplos com o conteúdo do seu projeto.
-
-Índice
-
-Introdução
-
-Descrição geral do sistema
-
-Requisitos do sistema
-
-Análise e design
-
-Implementação
-
-Testes
-
-Implantação
-
-Manual do usuário
-
-Conclusões e considerações finais
-
-Referências
-
-Glossário
-
 1. Introdução
 
 Objetivo: Apresentar o projeto de forma clara, objetiva e concisa.
