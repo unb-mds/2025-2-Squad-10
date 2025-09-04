@@ -1,122 +1,197 @@
+Documento do Projeto — Estrutura Completa (formatado)
+
+Objetivo deste arquivo: Apresentar um modelo claro, organizado e visualmente agradável para documentar um projeto de software. Use como base — preencha títulos e exemplos com o conteúdo do seu projeto.
+
+Índice
+
+Introdução
+
+Descrição geral do sistema
+
+Requisitos do sistema
+
+Análise e design
+
+Implementação
+
+Testes
+
+Implantação
+
+Manual do usuário
+
+Conclusões e considerações finais
+
+Referências
+
+Glossário
+
 1. Introdução
 
-Objetivo: apresentar o projeto de forma clara, objetiva e concisa.
+Objetivo: Apresentar o projeto de forma clara, objetiva e concisa.
 
 O que incluir
 
-Tema — frase curta que define o assunto do projeto.
+Tema: Uma frase curta que define o assunto do projeto.
+Ex.: “Sistema de gerenciamento de tarefas acadêmicas.”
 
-Objetivo do projeto — objetivos gerais e específicos (o que o sistema fará).
+Objetivo do projeto:
 
-Delimitação do problema — escopo: o que está dentro e fora do projeto.
+Geral: declaração sucinta do propósito.
 
-Justificativa — motivação acadêmica ou prática.
+Específicos: lista de metas mensuráveis (ex.: permitir cadastro de usuários; gerar relatórios semanais).
 
-Método de trabalho — processo de desenvolvimento escolhido (ex.: RUP, ágil), linguagem/modelagem.
+Delimitação do problema (escopo):
 
-Organização do documento — capítulos e anexos.
+Dentro do projeto: funcionalidades principais que serão entregues.
 
-Glossário — termos importantes (definições breves).
+Fora do projeto: explicitamente o que não será contemplado nesta fase.
+
+Justificativa: Motivação acadêmica ou prática (por que este projeto é relevante? impacto esperado?).
+
+Método de trabalho: Processo de desenvolvimento (ex.: Ágil - Scrum, RUP, Kanban), linguagens, framework(s), ferramentas de modelagem.
+
+Organização do documento: Breve descrição dos capítulos e anexos deste documento.
+
+Glossário: Indicação de onde estão os termos importantes (ver seção Glossário
+).
 
 2. Descrição geral do sistema
 
-Visão de alto nível: contexto, usuários e regras de negócio.
+Visão de alto nível: contexto, público-alvo e regras de negócio.
 
 Pontos essenciais
 
-Descrição do problema — quem é afetado, impacto e solução proposta.
+Descrição do problema: Quem é afetado? Qual o impacto atual? Qual solução proposta?
+Ex.: Estudantes perdem prazos; proposta: sistema com notificações e painel de prazos.
 
-Principais envolvidos
+Principais envolvidos:
 
-Usuários — tipos e características (ex.: administrador, cliente).
+Usuários: tipos e características (ex.: Administrador — gerencia usuários; Aluno — cria e acompanha tarefas).
 
-Desenvolvedores — papéis (PO, dev, testador).
+Desenvolvedores/Stakeholders: PO (Product Owner), Desenvolvedores, Testadores, Analistas.
 
-Regras de negócio — restrições, volumes, tolerância a falhas, SLAs.
+Regras de negócio:
+
+Restrições (ex.: somente docentes aprovados podem publicar provas).
+
+Volumes esperados (nº de usuários simultâneos).
+
+Tolerância a falhas, SLAs (ex.: disponibilidade 99,9%).
 
 3. Requisitos do sistema
 
-Requisitos são a base; separá-los claro ajuda implementação e testes.
+Requisitos são a base do projeto — escreva de forma clara para facilitar implementação e testes.
 
 3.1 Requisitos funcionais
 
-Liste as funções que o sistema deve executar.
+Liste as funções que o sistema deve executar. Recomenda-se padronizar cada item.
 
-Recomenda-se especificar cada caso de uso com:
+Template de requisito funcional (use uma tabela ou seção por requisito):
 
-Nome, breve descrição, atores envolvidos;
-
-Pré-condições, fluxo principal (sequência de eventos);
-
-Pós-condições, exceções/fluxos alternativos, observações.
+RF-001 — Nome do Caso de Uso
+- Descrição: Breve resumo do que faz.
+- Atores: [Ex.: Aluno, Administrador]
+- Pré-condições: [o que precisa existir]
+- Fluxo principal: 
+  1. Ação A
+  2. Ação B
+- Pós-condições: [estado do sistema após conclusão]
+- Exceções / Fluxos alternativos: [erros, caminhos secundários]
+- Observações: [regras especiais, restrições]
 
 3.2 Requisitos não-funcionais
 
-Segurança, desempenho, usabilidade, portabilidade, escalabilidade, disponibilidade, etc.
+Segurança: exemplo — autenticação via OAuth 2.0; criptografia de dados sensíveis.
 
-Para cada requisito N-F: métrica/valor (ex.: latência ≤ 200ms; disponibilidade 99,9%).
+Desempenho: latência máxima aceitável (ex.: resposta API ≤ 200 ms).
+
+Disponibilidade: ex.: 99,9% uptime.
+
+Escalabilidade: tipo de dimensionamento esperado.
+
+Usabilidade: métricas (ex.: tarefa X deve ser completada em ≤ 3 passos).
+
+Portabilidade: navegadores/plataformas suportadas.
+
+Para cada RNF, especifique métrica/valor (ex.: latência ≤ 200 ms; disponibilidade 99,9%).
 
 3.3 Protótipo / Interface
 
-Protótipo de telas com objetivo, navegação, regras de validação e restrições de campo.
+Protótipos de telas com objetivo de cada tela, navegação e regras de validação.
 
-Use prototipação iterativa com feedback do usuário.
+Formato sugerido: imagens ou links (Figma/Adobe XD) + descrição de cada componente.
+
+Regras de validação e restrições de campo (ex.: senha mínimo 8 caracteres; formatos de data).
 
 3.4 Métricas e cronograma
 
-Estimativas (pontos de função, pontos de caso de uso ou outra técnica).
+Estimativas: pontos de função / story points / horas por tarefa.
 
-Cronograma detalhado com tarefas, responsáveis, datas de início e fim (ex.: Microsoft Project).
+Cronograma: usar tabela ou diagrama (Gantt). Exemplo de tabela resumida:
 
+Tarefa	Responsável	Início	Fim	Esforço (dias)
+Levantamento de requisitos	PO/Analista	2025-09-01	2025-09-07	5
+Protótipos	UX	2025-09-08	2025-09-14	5
+Implementação Módulo A	Dev	2025-09-15	2025-09-30	12
 4. Análise e design
 
 Transformar requisitos em solução técnica documentada.
 
 4.1 Arquitetura do sistema
 
-Topologia (ex.: 3-tiers, microservices), componentes, hardware mínimo, configuração de rede.
+Topologia (ex.: 3-tiers, microservices).
+
+Componentes: front-end, API, banco de dados, mensageria.
+
+Hardware mínimo e configuração de rede (se aplicável).
 
 4.2 Modelo de domínio
 
-Diagrama conceitual / diagrama de classes inicial (entidades, atributos, relacionamentos).
+Diagrama conceitual / diagrama de classes inicial: entidades, atributos e relacionamentos.
 
 4.3 Diagramas de interação
 
-Seqüência: fluxo temporal entre objetos para validar comportamento.
+Diagrama de sequência: validação de comportamentos ao longo do tempo.
 
-Colaboração/Comunicação: alternativa para seqüência; foca nos links entre objetos.
+Diagrama de colaboração/comunicação: links entre objetos e mensagens.
 
 4.4 Diagrama de classes (final)
 
-Todas as classes com atributos e métodos; relações (associação, agregação, generalização).
+Todas as classes detalhadas com atributos e métodos. Relações: associação, agregação, herança etc.
 
 4.5 Diagrama de atividades
 
-Fluxos de trabalho, tomadas de decisão, concorrência (use quando necessário).
+Fluxos de trabalho, decisões, concorrência e sincronização (útil para processos complexos).
 
 4.6 Diagrama de estados
 
-Estados possíveis de objetos cuja vida muda (útil para entidades com ciclo de vida complexo).
+Para entidades com ciclos de vida complexos (ex.: pedido — criado → pago → enviado → entregue).
 
 4.7 Diagrama de componentes
 
-Organização física dos componentes de software e dependências.
+Organização física dos componentes de software e dependências entre eles.
 
 4.8 Modelo de dados
 
 Modelo lógico (ER) com normalização.
 
-Criação física: scripts SQL, índices, constraints.
+Criação física: scripts SQL, índices e constraints.
 
-Dicionário de dados: tabela, coluna, tipo, descrição, restrições, valores padrão.
+Dicionário de dados: tabela com nome, coluna, tipo, descrição, restrições e valores padrão.
 
+Exemplo de dicionário (resumo):
+
+Tabela	Coluna	Tipo	Descrição	Restrições
+usuario	id	UUID	Identificador do usuário	PK, not null
+usuario	email	varchar(255)	E-mail do usuário	unique, not null
 4.9 Ambiente de desenvolvimento
 
-Linguagens, frameworks, SGBD, IDEs, ferramentas CASE, versão mínima de dependências.
+Linguagens, frameworks, SGBD, IDEs, ferramentas CI/CD, versão mínima das dependências.
 
 4.10 Sistemas e componentes externos
 
-Integrações, APIs externas, bibliotecas terceiras.
+Integrações com APIs externas, serviços de pagamento, bibliotecas terceiras e contratos de API.
 
 5. Implementação
 
@@ -124,70 +199,114 @@ Boas práticas e mapeamento do design para código.
 
 Recomendações
 
-Cabeçalhos claros nas funções (descrição, autor, data).
+Cabeçalhos claros: em funções (descrição, autor, data).
 
-Comentários úteis, padronização de nomes, tratamento de erros.
+Nomes padronizados: convenção clara (camelCase / snake_case).
 
-Uso de padrões de projeto quando apropriado.
+Comentários úteis: explicar por que, não somente o que.
 
-Encapsular acesso a dados (stored procedures / repositórios).
+Tratamento de erros: centralizado e com logs.
 
-Revisões de código e integrações contínuas (CI).
+Padrões de projeto: usar quando apropriado (Factory, Repository, Adapter).
+
+Encapsulamento de dados: usar repositórios ou DAO.
+
+Revisões de código: PRs, code review checklist.
+
+Integração contínua: pipeline com lint, testes e builds.
 
 6. Testes
 
-Plano para validar que o produto atende requisitos.
+Plano para validar que o produto atende aos requisitos.
 
 6.1 Plano de testes (mínimo)
 
 Para cada teste inclua:
 
-Nº do teste;
+Nº do teste: TEST-001
 
-Descrição;
+Descrição: o que se testa
 
-Pré-condições;
+Pré-condições: ambiente, dados iniciais
 
-Passos;
+Passos: passos claros e reproduzíveis
 
-Resultado esperado;
+Resultado esperado: critérios objetivos
 
-Critério de aceitação.
+Critério de aceitação: aprovado/reprovado
 
 Tipos de teste
 
-Unitários, integração, sistema, usabilidade, performance (carga/stress/volume), segurança, instalação/implantação.
+Unitários
+
+Integração
+
+Sistema
+
+Usabilidade
+
+Performance (carga / stress / volume)
+
+Segurança
+
+Instalação / Implantação
 
 6.2 Execução do plano
 
-Registro dos resultados: nº do teste, resultado obtido, executor, ambiente, comentários e evidências (prints, logs).
+Registro dos resultados com: nº do teste, resultado obtido, executor, ambiente, comentários e evidências (prints, logs).
+
+Manter um repositório de evidências (ex.: pasta /evidences/tests/).
 
 7. Implantação
 
 Como levar o sistema para produção.
 
-Itens
+Itens essenciais
 
-Diagrama de implantação (hardware, servidores, containers).
+Diagrama de implantação: servidores, containers, balanceadores.
 
-Manual de instalação passo a passo (pré-requisitos, scripts, configuração).
+Manual de instalação passo a passo: pré-requisitos, scripts, configuração, variáveis de ambiente.
 
-Procedimentos de rollback e plano de rollback.
+Procedimentos de rollback: passos claros para reverter versão (script de rollback + checagens).
+
+Plano de contingência: como agir em caso de falhas críticas.
 
 8. Manual do usuário
 
 Guia prático para usuários finais com instruções passo a passo.
 
-Conteúdo sugerido
+Conteúdo sugerido:
 
-Introdução; telas principais; fluxos comuns; requisitos do sistema; resolução de problemas; contatos de suporte.
+Introdução ao sistema
+
+Requisitos do sistema (hardware / software)
+
+Tela principal e descrição das funcionalidades
+
+Fluxos comuns (ex.: cadastrar tarefa, gerar relatório)
+
+Resolução de problemas comuns (FAQ)
+
+Contatos de suporte / SLA de atendimento
+
+Use imagens/prints e pequenos vídeos quando for útil.
 
 9. Conclusões e considerações finais
 
-Resultado esperado do projeto, limitações, possíveis melhorias e trabalhos futuros.
+Resultado esperado do projeto.
 
-Avaliação do atendimento aos objetivos iniciais.
+Limitações identificadas.
 
-10 . referências
+Melhorias e trabalhos futuros sugeridos.
+
+Avaliação do atendimento aos objetivos iniciais (checklist de sucesso).
+
+10. Referências
+
+Drive com material de apoio:
+
 https://drive.google.com/drive/folders/1GMGh38wmcre1ksEaF_D3QHBz4T-eze9X
+
+Vídeo de referência:
+
 https://www.youtube.com/watch?v=l9rdjLqmIVc
