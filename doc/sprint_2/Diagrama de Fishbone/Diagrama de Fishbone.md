@@ -12,6 +12,7 @@
 8. Exemplo prático detalhado
 9. Boas práticas e dicas
 10. Checklist final
+11. Refêrencias 
 
 
 ---
@@ -109,3 +110,6 @@ Depois de mapear causas no fishbone, escolha as mais prováveis e aplique os **5
 * [ ] Priorização aplicada
 * [ ] Plano de ação com responsáveis e prazos
 
+## 11. Referências 
+  https://www.google.com/search?sa=X&sca_esv=ad3bfb9a4481301e&rlz=1C1VDKB_pt-PTBR1059BR1059
+  https://www.youtube.com/watch?v=jqIk-KkqGRw
