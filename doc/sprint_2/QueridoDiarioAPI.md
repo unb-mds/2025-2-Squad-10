@@ -71,7 +71,6 @@ Permite consultar os diários oficiais.
 Para testar e documentar a API do Querido Diário, podemos usar ferramentas como:
 
 * **Postman** → testar requisições e organizar coleções.
-* **Insomnia** → alternativa simples e leve para testes.
 * **Swagger (OpenAPI)** → a própria API já oferece documentação interativa.
 
 ---
