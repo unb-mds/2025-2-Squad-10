@@ -37,7 +37,7 @@ O investimento em saúde oncológica, para o nosso projeto, pode ser segmentado 
 
 ## Levantamento de Requisitos Não Funcionais (RNF)
 
-Os Requisitos Não Funcionais são essenciais para garantir que a aplicação seja confiável, eficiente e útil para os usuários. Para o projeto, os principais RNF estão focados na qualidade, desempenho e usabilidade. Dividindo os RFN em tópicos, teremos:
+Os Requisitos Não Funcionais são essenciais para garantir que a aplicação seja confiável, eficiente e útil para os usuários. Para o projeto, os principais RNF estão focados na qualidade, desempenho e usabilidade. Dividindo os RNF em tópicos, teremos:
 
 1. **Requisitos de Usabilidade**
 
