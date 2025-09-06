@@ -117,3 +117,75 @@ export default Relogio;
 
 
 ---
+
+## 5. Tipando Eventos
+const Formulario: React.FC = () => {
+const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+event.preventDefault();
+console.log("Form enviado!");
+};
+
+
+return (
+<form onSubmit={handleSubmit}>
+<button type="submit">Enviar</button>
+</form>
+);
+};
+```
+
+
+---
+
+
+## 6. Tipando Requisições (com Fetch ou Axios)
+
+
+```tsx
+import React, { useState, useEffect } from "react";
+
+
+interface Post {
+id: number;
+title: string;
+}
+
+
+const Posts: React.FC = () => {
+const [posts, setPosts] = useState<Post[]>([]);
+
+
+useEffect(() => {
+fetch("https://jsonplaceholder.typicode.com/posts")
+.then((res) => res.json())
+.then((data: Post[]) => setPosts(data));
+}, []);
+
+
+return (
+<ul>
+{posts.map((post) => (
+<li key={post.id}>{post.title}</li>
+))}
+</ul>
+);
+};
+
+
+export default Posts;
+```
+
+
+---
+
+
+## 7. Conclusão
+
+
+Usar **React + TypeScript** ajuda a:
+- Escrever componentes mais seguros.
+- Evitar erros de tipagem em props e estados.
+- Aumentar a produtividade com melhor suporte de editor.
+
+
+> Dica: sempre comece tipando props e estados, e vá expandindo para context, hooks personalizados e reducers conforme o projeto cresce.
