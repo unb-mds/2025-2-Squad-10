@@ -1,4 +1,4 @@
-# Guia Básico de TypeScript
+# Estudo de TypeScript
 
 
 O **TypeScript** é um superset do JavaScript que adiciona **tipagem estática** e recursos avançados para facilitar o desenvolvimento de aplicações mais seguras e organizadas.
