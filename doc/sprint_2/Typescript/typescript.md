@@ -92,3 +92,68 @@ nome: "Carlos"
 
 
 ---
+
+## 5. Classes 
+
+```ts 
+class Animal{
+    nome: string;
+
+    contructor(nome: string){
+        this.nome = nome;
+    }
+    fazersom(): void {
+        console.log("Som genérico...");
+    }
+}
+class cachorro extend Animal {
+    fazersom(): void{
+        console.log("Au Au");
+    }
+}
+let dog = new cachorro("Rex");
+dog.fazersom();
+```
+
+---
+
+## 6. Generics
+
+Generics permitem reutilizar código de foma tipada.
+
+``` ts 
+function identidade<T>(valor: T): T {
+    return valor;
+}
+
+let num = identidade<number>(10);
+let texto = identidade<string>("Olá");
+```
+
+---
+
+## 7. Tipos Avançados
+
+## Union Types
+```ts
+let id : number | string;
+id = 10;
+id = "abc123";
+```
+## Types Alias
+```ts
+interface Pessoa{
+    nome: string;
+}
+interface Funcionario{
+    salario: number;
+}
+
+let trabalhador: Pessoa & Funcionario = {
+    nome: "Ana",
+    salario: 10.000
+};
+```
+
+---
+
