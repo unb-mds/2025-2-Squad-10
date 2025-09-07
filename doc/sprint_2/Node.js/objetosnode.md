@@ -1,5 +1,5 @@
 # 📑 Resumo de Objetos do Node.js / JavaScript
-## 🔹 Manipulação de Objetos em Node.js
+## 🔹 Manipulação de Objetos
 - **`for...in`**
   Percorre todas as propriedades enumeráveis de um objeto (incluindo herdadas da cadeia de protótipos). <br>
   Útil para iterar chaves de um objeto.
