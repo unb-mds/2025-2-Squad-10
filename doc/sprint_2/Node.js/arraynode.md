@@ -2,7 +2,7 @@
 
 ## 🔹 Métodos de Arrays
 
-- **`.length`**  
+- **`.length`**
   Retorna o tamanho (quantidade de elementos) do array.
   
   ```js
