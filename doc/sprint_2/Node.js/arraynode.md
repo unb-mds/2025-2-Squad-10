@@ -134,6 +134,3 @@ Extrai valores de um array em variáveis separadas.
   ```js
   const numerosSet = new Set([1, 2, 2, 3]);
   console.log(numerosSet); // Set {1, 2, 3}
-
-const numerosSet = new Set([1, 2, 2, 3]);
-console.log(numerosSet); // Set {1, 2, 3}
