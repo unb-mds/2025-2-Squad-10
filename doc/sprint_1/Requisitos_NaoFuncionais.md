@@ -47,7 +47,7 @@ A interface do usuário deve ser intuitiva e de fácil navegação para qualquer
 * **Visualize os resultados de forma clara**, como em tabelas, gráficos ou mapas, facilitando a interpretação dos dados.
 * **Exporte os relatórios** e dados extraídos em formatos comuns, como CSV ou PDF.
 
-2. **Requisitos de usabilidade**
+2. **Requisitos de Desempenho**
 
 Devido ao grande volume de diários oficiais e à quantidade de informações a serem processadas, o desempenho do sistema é crítico para uma boa experiência do usuário. O sistema deve:
 
