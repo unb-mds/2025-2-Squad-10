@@ -47,7 +47,8 @@
 - **[Giovanni]:** [Criar ambiente]
 - **[Felype]:** [ Criar o projeto de baixa fidelidade]
 - **[João]:** [ Subi e definir  o material de requisitos no git hub ]
-- **[Luiz]:** [ Criar o projeto de baixa fidelidade] // [Organizar as pastas do git hub].
+- **[Luiz]:** [ Criar o projeto de baixa fidelidade] //[Organizar as pastas do git hub] //[Criar atas das outras sprints e reuniões].
+-
 - **[Todos]:**
 - [Aprender react.js]  
 - [ Aprender a utilizar o figma ]
