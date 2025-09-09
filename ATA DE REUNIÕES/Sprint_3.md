@@ -46,9 +46,10 @@
 - **[Artur]:** [Criar ambiente ]  
 - **[Giovanni]:** [Criar ambiente]
 - **[Felype]:** [ Criar o projeto de baixa fidelidade]
-  **[João]:** [ Subi e definir  o material de requisitos no git hub ]
-  **[Luiz]:** [ Criar o projeto de baixa fidelidade] // [Organizar as pastas do git hub].
-- **[Todos]:** [Aprender react.js]  
+- **[João]:** [ Subi e definir  o material de requisitos no git hub ]
+- **[Luiz]:** [ Criar o projeto de baixa fidelidade] // [Organizar as pastas do git hub].
+- **[Todos]:**
+- [Aprender react.js]  
 - [ Aprender a utilizar o figma ]
 - [Aprender javascript].
 
