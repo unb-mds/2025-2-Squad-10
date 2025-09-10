@@ -36,7 +36,7 @@ Como um usuário (pesquisador, cidadão):
 
 **História de Usuário 1.2: Extração e Classificação de Dados Financeiros**
 
-Como um analista
+Como um analista:
 
 * Eu quero que o sistema extraia e classifique automaticamente os valores monetários e o tipo de investimento, para que eu possa entender como os recursos estão sendo distribuídos sem análise manual.
 
@@ -49,3 +49,94 @@ Como um analista
 * A precisão na extração de valores deve ser alta.
 
 * Toda despesa identificada deve ser associada a uma categoria de investimento.
+
+**ÉPICO 2: Visualização e Geração de Relatórios**
+- Conjunto de funcionalidades para apresentar os dados de forma clara, compreensível e útil para o usuário final.
+
+**História de Usuário 2.1: Visualização de Dados em Painel**
+
+Como um usuário:
+
+* Eu quero visualizar os resultados da busca em um painel de controle (dashboard) com tabelas e gráficos, para que eu possa analisar e interpretar facilmente as informações coletadas.
+
+**RF05: Exibição em Painel (Dashboard):** O sistema deve exibir os resultados da busca em um painel de controle central.
+
+**RF06: Tabela Detalhada:** O painel deve conter uma tabela detalhada com informações de cada licitação/contrato, incluindo, no mínimo: município, valor, data e descrição.
+
+**RF07: Gráficos Interativos:** O sistema deve conter gráficos interativos que mostrem a distribuição dos investimentos (ex: total de gastos por município ou por categoria).
+
+**Critérios de Aceitação:**
+
+* O painel deve ser atualizado dinamicamente conforme os filtros aplicados.
+
+* Os gráficos devem ser de fácil interpretação.
+
+**História de Usuário 2.2: Exportação de Dados**
+
+Como um analista:
+
+Eu quero poder exportar os dados e os relatórios gerados, para que eu possa realizar análises mais aprofundadas em outras ferramentas ou compartilhar os resultados.
+
+**RF08: Exportação de Dados:** O sistema deve permitir a exportação dos dados da tabela e dos relatórios em formatos comuns, como CSV e PDF.
+
+**Critérios de Aceitação:**
+
+* A exportação deve refletir os filtros atualmente aplicados.
+
+* O arquivo gerado deve ser íntegro e legível.
+
+**3. Requisitos Não Funcionais (RNF)**
+- Os requisitos não funcionais definem as características de qualidade do sistema, garantindo uma boa experiência de uso.
+
+**RNF01: Usabilidade**
+
+* A interface do usuário deve ser intuitiva e de fácil navegação, mesmo para usuários sem conhecimento técnico.
+
+* A visualização dos resultados (tabelas, gráficos) deve ser clara e facilitar a interpretação.
+
+* O processo de busca e exportação deve ser simples e direto.
+
+**RNF02: Desempenho**
+
+* As buscas no sistema devem retornar resultados em um tempo aceitável (meta: inferior a 5 segundos).
+
+* O processamento e a exibição dos dados no painel devem ser eficientes, mesmo com múltiplos filtros aplicados.
+
+**RNF03: Confiabilidade**
+
+* A extração de dados de licitações e contratos deve ser precisa, evitando erros de leitura de valores e datas.
+
+* A integridade dos dados deve ser mantida, garantindo consistência com as fontes dos diários oficiais.
+
+**RNF04: Escalabilidade**
+
+* A arquitetura do sistema deve permitir a inclusão de novos diários oficiais sem a necessidade de grandes mudanças estruturais.
+
+* O sistema deve ser capaz de suportar um aumento no volume de buscas e de usuários simultâneos no futuro.
+
+**4. Escopo para o MVP (Produto Mínimo Viável)**
+- Com base na priorização, a primeira versão do produto focará nas funcionalidades essenciais para entregar valor e validar a solução.
+
+**Funcionalidades INCLUÍDAS no MVP:**
+
+* Busca por Palavras-Chave e Filtros (RF01, RF02).
+
+* Extração e Classificação de Dados (RF03, RF04).
+
+* Visualização em Tabela Detalhada (RF06).
+
+**Funcionalidades para Versões Futuras (PÓS-MVP):**
+
+* Dashboard com Gráficos Interativos (RF05, RF07).
+
+* Exportação de Dados em CSV e PDF (RF08).
+
+* Filtros avançados e novas categorias de análise.
+
+**5. Restrições e Premissas do Projeto**
+
+* **Padrões de Software Livre:** O projeto seguirá as melhores práticas e padrões de desenvolvimento de software livre, incluindo licenciamento e guias de contribuição.
+
+* **Fonte de Dados Primária:** A única fonte de dados para o sistema será a plataforma "Querido Diário".
+
+* **Guia para Protótipos:** Os protótipos de interface (baixa e alta fidelidade) devem priorizar a clareza e simplicidade, focando em uma jornada de usuário fluida desde a busca até a visualização dos resultados.
