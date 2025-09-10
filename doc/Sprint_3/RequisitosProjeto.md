@@ -4,15 +4,15 @@
 
 1. **Visão Geral do Projeto**
 
-- O projeto **Radar de Investimento de Saúde Oncológica** visa analisar e dar transparência aos investimentos públicos em saúde oncológica nos municípios brasileiros. A solução irá extrair, padronizar e organizar dados da plataforma **Querido Diário**, que agrega uma vasta quantidade de diários oficiais municipais em formatos não padronizados.
+* O projeto **Radar de Investimento de Saúde Oncológica** visa analisar e dar transparência aos investimentos públicos em saúde oncológica nos municípios brasileiros. A solução irá extrair, padronizar e organizar dados da plataforma **Querido Diário**, que agrega uma vasta quantidade de diários oficiais municipais em formatos não padronizados.
 
-- O problema central a ser resolvido é a dificuldade em rastrear e analisar os gastos com licitações e contratações ligadas à oncologia (medicamentos, equipamentos, serviços e obras), devido à heterogeneidade e falta de padronização das fontes de dados.
+* O problema central a ser resolvido é a dificuldade em rastrear e analisar os gastos com licitações e contratações ligadas à oncologia (medicamentos, equipamentos, serviços e obras), devido à heterogeneidade e falta de padronização das fontes de dados.
 
 2. **Requisitos Funcionais (RF)**
-- Os requisitos funcionais descrevem o que o sistema deve fazer. Eles estão organizados em Épicos e Histórias de Usuário para fornecer contexto, seguidos pelos requisitos formais detalhados.
+* Os requisitos funcionais descrevem o que o sistema deve fazer. Eles estão organizados em Épicos e Histórias de Usuário para fornecer contexto, seguidos pelos requisitos formais detalhados.
 
 **ÉPICO 1: Busca e Análise de Dados**
-- Conjunto de funcionalidades que permitem ao usuário encontrar, extrair e classificar as informações relevantes dentro do grande volume de dados dos diários oficiais.
+* Conjunto de funcionalidades que permitem ao usuário encontrar, extrair e classificar as informações relevantes dentro do grande volume de dados dos diários oficiais.
 
 **História de Usuário 1.1: Busca e Filtragem de Informações**
 
@@ -51,7 +51,7 @@ Como um analista:
 * Toda despesa identificada deve ser associada a uma categoria de investimento.
 
 **ÉPICO 2: Visualização e Geração de Relatórios**
-- Conjunto de funcionalidades para apresentar os dados de forma clara, compreensível e útil para o usuário final.
+* Conjunto de funcionalidades para apresentar os dados de forma clara, compreensível e útil para o usuário final.
 
 **História de Usuário 2.1: Visualização de Dados em Painel**
 
@@ -86,7 +86,7 @@ Eu quero poder exportar os dados e os relatórios gerados, para que eu possa rea
 * O arquivo gerado deve ser íntegro e legível.
 
 **3. Requisitos Não Funcionais (RNF)**
-- Os requisitos não funcionais definem as características de qualidade do sistema, garantindo uma boa experiência de uso.
+* Os requisitos não funcionais definem as características de qualidade do sistema, garantindo uma boa experiência de uso.
 
 **RNF01: Usabilidade**
 
