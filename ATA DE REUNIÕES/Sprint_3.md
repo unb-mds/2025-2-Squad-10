@@ -32,7 +32,6 @@
 - **Pauta 2:** [UTILIZAÇÃO DA API ]  
   - **Definição:** [Como utilizar a api em nosso projeto ]
  
-  - 
 - **Pauta 3:** [Todos aprederem a utilizar react.js ]  
   - **Definição:** [A importâcia que todos apredam a liguagem do front pela dificuldade para utilização ]  
 
@@ -44,11 +43,10 @@
 
 - **[Gabriel]:** [Procurar a listagem e filtragem do investimento em saúde oncológica no querido diário]  
 - **[Artur]:** [Criar ambiente ]  
-- **[Giovanni]:** [Criar ambiente]
+- **[Giovani]:** [Criar ambiente]
 - **[Felype]:** [ Criar o projeto de baixa fidelidade]
 - **[João]:** [ Subi e definir  o material de requisitos no git hub ]
 - **[Luiz]:** [ Criar o projeto de baixa fidelidade] //[Organizar as pastas do git hub] //[Criar atas das outras sprints e reuniões].
--
 - **[Todos]:**
 - [Aprender react.js]  
 - [ Aprender a utilizar o figma ]
