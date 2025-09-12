@@ -2,10 +2,10 @@
 
 ## O time fez
 - Definimos os requisitos funcionais e não funcionais do projeto.  
-- Criamos o ambiente de desenvolvimento.  
+-  Definomos como vamos criar o ambiente de desenvolvimento.  
 - Documentamos padrões e ferramentas que serão usadas (React, TypeScript, Node.js, Figma, etc.).  
 - Estudamos a API do **Querido Diário** e como aplicá-la ao projeto.  
-- Entregamos: documentação inicial, documentos de apoio e protótipo de baixa fidelidade.  
+- Entregamos: documentação inicial, documentos de apoio e conceito do protótipo de baixa fidelidade.  
 - Em andamento: integração com a API e padronização do front-end em React.js.  
 - Impedimentos/Riscos: curva de aprendizado em React.js/TypeScript pode impactar a velocidade de entrega.  
 
