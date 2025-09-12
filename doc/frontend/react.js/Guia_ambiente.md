@@ -79,3 +79,11 @@ Abra esse endereço no navegador para visualizar o projeto rodando.
     └─ vite.config.js    # Configuração do Vite
 
 ------------------------------------------------------------------------
+
+## Dicas úteis
+
+-   Extensão **ES7+ React/Redux snippets** no VS Code para criar
+    componentes rapidamente.
+-   Use **Prettier** para formatar automaticamente o código.
+
+------------------------------------------------------------------------
