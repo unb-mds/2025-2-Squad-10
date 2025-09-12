@@ -20,3 +20,34 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
     distribuição Linux.
 
 ------------------------------------------------------------------------
+
+## Criar o projeto com Vite
+
+1.  Abra o terminal na pasta onde deseja criar o projeto.
+
+2.  Execute:
+
+    ``` bash
+    npm create vite@latest nome-do-projeto
+    ```
+
+3.  Escolha:
+
+    -   **Framework**: `React`
+    -   **Variante**: `JavaScript` ou `TypeScript` (conforme sua
+        preferência).
+
+4.  Entre na pasta do projeto:
+
+    ``` bash
+    cd nome-do-projeto
+    ```
+
+5.  Instale as dependências:
+
+    ``` bash
+    npm install
+    ```
+
+------------------------------------------------------------------------
+
