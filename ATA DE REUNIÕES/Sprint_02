@@ -1,0 +1,37 @@
+# Report — Semana 01 (08/09/2025–14/09/2025)
+
+## O time fez
+- Definimos os requisitos funcionais e não funcionais do projeto.  
+- Criamos o ambiente de desenvolvimento.  
+- Documentamos padrões e ferramentas que serão usadas (React, TypeScript, Node.js, Figma, etc.).  
+- Estudamos a API do **Querido Diário** e como aplicá-la ao projeto.  
+- Entregamos: documentação inicial, documentos de apoio e protótipo de baixa fidelidade.  
+- Em andamento: integração com a API e padronização do front-end em React.js.  
+- Impedimentos/Riscos: curva de aprendizado em React.js/TypeScript pode impactar a velocidade de entrega.  
+
+## Evidências e links
+- Documento: Requisitos do Projeto — [Link no GitHub](https://github.com/unb-mds/2025-2-Squad-10)  
+- Documento de Visão — [Link](https://github.com/unb-mds/2025-2-Squad-10)  
+- Protótipo/Design: [Figma (baixa fidelidade)](https://www.figma.com)  
+- PRs: #01, #02 — [Repositório GitHub](https://github.com/unb-mds/2025-2-Squad-10)  
+- Prints/Imagens: [Pasta de evidências](https://github.com/unb-mds/2025-2-Squad-10/tree/main/doc)  
+
+## Contribuições por integrante
+- **Giovani de Oliveira** — Documentação sobre **React.js e TypeScript**.  
+- **Gabriel Alenxandroni** — Pesquisa e explicação sobre a **API do Querido Diário**.  
+- **João Pedro de Sousa Silva** — Documentação de **Requisitos Funcionais e Não Funcionais**.  
+- **Felype Gomes Ribeiro** — Documento de apoio sobre **Figma** e protótipo de baixa fidelidade.  
+- **Luiz Henrique Pallavicini** — Documento de **Visão**, **Diagrama** e explicação do **método Fishbone**.  
+- **Artur Fernandes Galdino** — Documento de estudo sobre **Node.js**.  
+
+## Próximos passos (prévia da próxima semana)
+- Avançar no aprendizado e implementação em **React.js**.  
+- Integrar a **API do Querido Diário** ao projeto.  
+- Refinar os protótipos no **Figma**.  
+- Consolidar e revisar a documentação inicial.  
+- Distribuir novas tarefas da sprint de forma equilibrada.  
+
+## Retrospectiva
+- ✅ Ponto positivo: o time conseguiu dividir bem as tarefas de documentação e cobrir diversas áreas essenciais (front-end, back-end, API e design).  
+- ⚠️ Ponto de atenção: ainda falta prática em React.js/TypeScript, risco de atraso no desenvolvimento prático.  
+- 📌 Melhorar: colaboração no código e começar a transformar a documentação em implementação real.  
