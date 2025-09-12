@@ -66,3 +66,16 @@ O terminal mostrará algo como:
 Abra esse endereço no navegador para visualizar o projeto rodando.
 
 ------------------------------------------------------------------------
+
+## Estrutura inicial do projeto com vite 
+
+    nome-do-projeto/
+    ├─ public/           # Arquivos públicos (favicon, logos)
+    ├─ src/              # Código-fonte React
+    │  ├─ App.jsx/tsx    # Componente principal
+    │  ├─ main.jsx/tsx   # Ponto de entrada da aplicação
+    │  └─ index.css      # Estilos globais
+    ├─ package.json      # Dependências e scripts
+    └─ vite.config.js    # Configuração do Vite
+
+------------------------------------------------------------------------
