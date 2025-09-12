@@ -51,3 +51,18 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
 
 ------------------------------------------------------------------------
 
+## Rodar o servidor de desenvolvimento
+
+Execute:
+
+``` bash
+npm run dev
+```
+
+O terminal mostrará algo como:
+
+    Local:   http://localhost:5173/
+
+Abra esse endereço no navegador para visualizar o projeto rodando.
+
+------------------------------------------------------------------------
