@@ -76,7 +76,7 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
 
 # Backend
 
-## 1. Criar diretório do backend
+## Criar diretório do backend
 
     ``` bash
     mkdir backend
@@ -84,14 +84,14 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
     ```
 -------------------------------------------------------------------------
 
-## 2. Inicializar projeto Node.js
+## Inicializar projeto Node.js
 
     ``` bash
     npm init -y
     ```
 --------------------------------------------------------------------------
 
-## 3. Instalar dependências
+## Instalar dependências
 
     ``` bash
     npm install express cors dotenv
@@ -100,7 +100,7 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
 --------------------------------------------------------------------------
 
 
-## 4. Criar a pasta src e subpastas
+## Criar a pasta src e subpastas
 
     ```bash
     mkdir src
@@ -111,7 +111,7 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
 
 -------------------------------------------------------------------------
 
-## 5. Criar arquivo principal (src/index.js)
+## Criar arquivo principal (src/index.js)
 
     ```bash
     touch src/index.js
@@ -119,7 +119,7 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
 
 -------------------------------------------------------------------------
 
-## 6. Conteúdo para o arquivo src/index.js
+## Conteúdo para o arquivo src/index.js
     ```bash
     const express = require('express');
     const cors = require('cors');
@@ -144,7 +144,7 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
     ```
     --------------------------------------------------------------
 
-## 7. Criar o arquivo de variáveis de ambiente
+## Criar o arquivo de variáveis de ambiente
 
     ```bash
     touch .env
@@ -152,7 +152,7 @@ Este guia explica como instalar o **Vite** e iniciar um novo projeto
 
 ----------------------------------------------------------------
 
-## 8. Conteúdo para o arquivo .env
+## Conteúdo para o arquivo .env
 
     ```bash
     PORT=5000
