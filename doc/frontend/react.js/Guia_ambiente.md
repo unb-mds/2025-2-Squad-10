@@ -184,7 +184,7 @@ npm run dev
 ```
 O terminal mostrará algo como:
 
-Local: http://localhost:5000/
+    Local: http://localhost:5000/
 
 Abra esse endereço no navegador para visualizar o projeto rodando.
 
