@@ -115,8 +115,27 @@ npm install -D nodemon
 ```
 --------------------------------------------------------------------------
 
-## 4. Criar arquivo principal (src/index.js)
 
+## 4. Criar a pasta src e subpastas
+
+```bash
+mkdir src
+mkdir src/controllers
+mkdir src/routes
+mkdir src/models
+```
+
+-------------------------------------------------------------------------
+
+## 5. Criar arquivo principal (src/index.js)
+
+```bash
+touch src/index.js
+```
+
+-------------------------------------------------------------------------
+
+## 6. Conteúdo para o arquivo src/index.js
 ```bash
 const express = require('express');
 const cors = require('cors');
@@ -139,3 +158,21 @@ app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
 ```
+--------------------------------------------------------------
+
+## 7. Criar o arquivo de variáveis de ambiente
+
+```bash
+touch .env
+```
+
+----------------------------------------------------------------
+
+## 8. Conteúdo para o arquivo .env
+
+```bash
+PORT=5000
+NODE_ENV=development
+```
+
+------------------------------------------------------------------
