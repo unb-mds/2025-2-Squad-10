@@ -98,10 +98,44 @@ Abra esse endereço no navegador para visualizar o projeto rodando.
 mkdir backend
 cd backend
 ```
+-------------------------------------------------------------------------
 
 ## 2. Inicializar projeto Node.js
 
 ``` bash
 npm init -y
 ```
+--------------------------------------------------------------------------
 
+## 3. Instalar dependências
+
+``` bash
+npm install express cors dotenv
+npm install -D nodemon
+```
+--------------------------------------------------------------------------
+
+## 4. Criar arquivo principal (src/index.js)
+
+```bash
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Rotas
+app.get('/api/health', (req, res) => {
+  res.json({ message: 'Backend está funcionando!' });
+});
+
+// Iniciar servidor
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
+});
+```
