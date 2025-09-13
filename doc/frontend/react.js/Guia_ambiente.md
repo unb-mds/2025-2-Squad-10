@@ -1,4 +1,6 @@
-# Guia: Instalando Vite e Criando um Projeto React
+# Frontend 
+
+## Instalando Vite e Criando um Projeto React
 
 Este guia explica como instalar o **Vite** e iniciar um novo projeto
 **React** passo a passo.
@@ -87,3 +89,19 @@ Abra esse endereço no navegador para visualizar o projeto rodando.
 -   Use **Prettier** para formatar automaticamente o código.
 
 ------------------------------------------------------------------------
+
+# Backend
+
+## 1. Criar diretório do backend
+
+``` bash
+mkdir backend
+cd backend
+```
+
+## 2. Inicializar projeto Node.js
+
+``` bash
+npm init -y
+```
+
