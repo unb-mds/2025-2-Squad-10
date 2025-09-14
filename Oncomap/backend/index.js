@@ -1,22 +1,20 @@
-import express from "express"; // se usar "type": "module" no package.json
-// ou const express = require("express"); se não usar ESM
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
 
-// Middleware para interpretar JSON
+// Middlewares
+app.use(cors());
 app.use(express.json());
 
-// Rota de teste
-app.get("/", (req, res) => {
-  res.send("Backend Node.js funcionando! 🚀");
+// Rotas
+app.get('/api/health', (req, res) => {
+res.json({ message: 'Backend está funcionando!' });
 });
 
+// Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
-
-import dotenv from "dotenv";
-dotenv.config();
-
-const PORT2 = process.env.PORT || 3000;
