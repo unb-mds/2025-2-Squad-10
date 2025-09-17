@@ -1,21 +1,26 @@
 # OncoMap – Transparência e Monitoramento de investimento em saude oncologica no Brasil
 
+![GitHub](https://img.shields.io/github/license/unb-mds/2025-2-OncoMap)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/unb-mds/2025-2-OncoMap)
+![GitHub contributors](https://img.shields.io/github/contributors/unb-mds/2025-2-OncoMap)
+
+
 a
 
 # 📝 Sumário
 - Descrição
-- [Sumario](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-sum%C3%A1rio)
+- [Sumario](#-sum%C3%A1rio)
 - Início
-  - [Tecnologias Utilizadas](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#%EF%B8%8F-tecnologias-utilizadas)
-  - [Guia de Configuração](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-guia-de-configura%C3%A7%C3%A3o)
-    - [Pré-Requisitos](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-pr%C3%A9-requisitos)
-    - [Instalação e Configuração](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-instala%C3%A7%C3%A3o-e-configura%C3%A7%C3%A3o)
-    - [Estrutura do Projeto](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-instala%C3%A7%C3%A3o-e-configura%C3%A7%C3%A3o)
-  - [Observações](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-observa%C3%A7%C3%B5es)
+  - [Tecnologias-Utilizadas](#%EF%B8%8F-tecnologias-utilizadas)
+  - [Guia-de-Configuração](#-guia-de-configuração)
+    - [Pré-Requisitos](#-pré-requisitos)
+    - [Instalação e Configuração](#-instalação-e-configuração)
+    - [Estrutura do Projeto](#-estrutura-do-projeto)
+  - [Observações](#-observações)
 - Extras
-  - [Equipe](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-equipe)
-  - [Story Map](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-equipe)
-  - [Prototipo](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#prototipo)
+  - [Equipe](#-equipe)
+  - [Story Map](#story-map)
+  - [Prototipo](#prototipo)
 
 ## ⚙️ Tecnologias Utilizadas
 
@@ -31,9 +36,9 @@ a
 
 ## 👥 Equipe
 
-| Nome | GitHub |
-|------|--------|
-| Felype Gomes Ribeiro Carrijo | [Flyxs](https://github.com/Flyxs) |
+| [![Felype Carrijo](https://avatars.githubusercontent.com/u/168106790?v=4)](https://github.com/Flyxs) | [![Giovani Coelho](https://avatars.githubusercontent.com/u/176083022?v=4)](https://github.com/Gotc2607) | [![Arthur Galdino](https://avatars.githubusercontent.com/u/187340217?v=4)](https://github.com/ArturFGaldino) | [![Luiz](https://avatars.githubusercontent.com/u/212640680?v=4)](https://github.com/Luizz97) | [![João Pedro](https://avatars.githubusercontent.com/u/178330046?v=4)](https://github.com/joaoPedro-201) | [![Gabriel Alexandroni](https://avatars.githubusercontent.com/u/170197026?v=4)](https://github.com/Alexandroni07) |
+|-------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|-------------------------------------------------------------|-------------------------------------------------------------|
+| Felype Carrijo | Giovani Coelho | Arthur Galdino | Luiz | João Pedro | Gabriel Alexandroni |
 
 ## Story Map
 
