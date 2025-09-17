@@ -4,18 +4,18 @@ a
 
 # 📝 Sumário
 - Descrição
-- [Sumario](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#-sum%C3%A1rio)
+- [Sumario](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-sum%C3%A1rio)
 - Início
-  - [Tecnologias Utilizadas](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#%EF%B8%8F-tecnologias-utilizadas)
-  - [Guia de Configuração](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#-guia-de-configura%C3%A7%C3%A3o)
-    - [Pré-Requisitos](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#-guia-de-configura%C3%A7%C3%A3o)
-    - [Instalação e Configuração](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#-instala%C3%A7%C3%A3o-e-configura%C3%A7%C3%A3o)
-    - [Estrutura do Projeto](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#-estrutura-do-projeto)
-  - [Observações](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#-estrutura-do-projeto)
+  - [Tecnologias Utilizadas](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#%EF%B8%8F-tecnologias-utilizadas)
+  - [Guia de Configuração](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-guia-de-configura%C3%A7%C3%A3o)
+    - [Pré-Requisitos](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-pr%C3%A9-requisitos)
+    - [Instalação e Configuração](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-instala%C3%A7%C3%A3o-e-configura%C3%A7%C3%A3o)
+    - [Estrutura do Projeto](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-instala%C3%A7%C3%A3o-e-configura%C3%A7%C3%A3o)
+  - [Observações](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-observa%C3%A7%C3%B5es)
 - Extras
-  - [Equipe](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#-estrutura-do-projeto)
-  - [Story Map](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#story-map)
-  - [Prototipo](https://github.com/unb-mds/2025-2-OncoMap/edit/main/README.md#story-map)
+  - [Equipe](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-equipe)
+  - [Story Map](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#-equipe)
+  - [Prototipo](https://github.com/unb-mds/2025-2-OncoMap?tab=readme-ov-file#prototipo)
 
 ## ⚙️ Tecnologias Utilizadas
 
