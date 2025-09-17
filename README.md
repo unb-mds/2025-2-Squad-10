@@ -37,4 +37,8 @@ a
 
 ## Story Map
 
+[Link do story map](https://www.figma.com/board/8Jsltq8BOL65CsMoRWFjik/Template-MDS--Copy-?node-id=0-1&p=f&t=qNEzS63nFVyC3kB9-0)
+
 ## Prototipo
+
+[link do prototipo](https://www.figma.com/design/XyUsffocEKRw7przVsbk0n/Pagina-do-projeto?node-id=0-1&p=f&t=NCglUxCaxCXUAbg9-0)
