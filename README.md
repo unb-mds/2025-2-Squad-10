@@ -1,4 +1,4 @@
-# OncoMap – Transparência e Monitoramento de investimento em saude oncologica no Brasil
+# OncoMap - Transparência nos investimentos em saúde oncológica
 
 ![GitHub](https://img.shields.io/github/license/unb-mds/2025-2-OncoMap)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/unb-mds/2025-2-OncoMap)
