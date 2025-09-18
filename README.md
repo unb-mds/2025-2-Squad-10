@@ -46,4 +46,6 @@ a
 
 ## Prototipo
 
-[link do prototipo](https://www.figma.com/design/XyUsffocEKRw7przVsbk0n/Pagina-do-projeto?node-id=0-1&p=f&t=NCglUxCaxCXUAbg9-0)
+[link do prototipo de alta fidelidade](https://www.figma.com/design/XyUsffocEKRw7przVsbk0n/Pagina-do-projeto?node-id=0-1&p=f&t=NCglUxCaxCXUAbg9-0)
+
+[link do prototipo de baixa fidelidade](https://www.figma.com/design/td5oKsmfHCtT9CSPFzKU13/baixa-fidelidada?node-id=0-1&t=gMAdAvQszOHO9gqo-1)
