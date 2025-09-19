@@ -37,3 +37,51 @@ No diretório raiz do projeto,  será necessario:
 ```
 
 ---
+
+## 3. Criando os Dockerfiles
+
+### Backend (Node.js)
+
+Arquivo: **backend/Dockerfile**
+
+```dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --production
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
+```
+
+### Frontend (React)
+
+Arquivo: **frontend/Dockerfile**
+
+```dockerfile
+FROM node:20-alpine as build
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+# Servindo os arquivos estáticos com nginx
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+> Ajustar os comandos `npm start` ou scripts conforme nosso projeto.
+
+---
