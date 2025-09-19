@@ -144,4 +144,4 @@ Eu quero poder exportar os dados e os relatórios gerados, para que eu possa rea
 **6. Artefatos Relacionados**
 
 * **User Story Map:** O planejamento visual dos requisitos e do escopo do MVP pode ser acessado no [board do Figma](https://www.figma.com/board/8Jsltq8BOL65CsMoRWFjik/Template-MDS--Copy-?node-id=0-1&p=f&t=Mh9B7fFd33lW6I0P-0).
-* **Controle da Tarefa:** A criação e o desenvolvimento do Story Map foram rastreados através da seguinte [issue no GitHub](). 
+* **Controle da Tarefa:** A criação e o desenvolvimento do Story Map foram rastreados através da seguinte [issue no GitHub](https://github.com/unb-mds/2025-2-OncoMap/issues/33). 
