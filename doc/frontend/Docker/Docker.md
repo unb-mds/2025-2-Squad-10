@@ -85,3 +85,31 @@ CMD ["nginx", "-g", "daemon off;"]
 > Ajustar os comandos `npm start` ou scripts conforme nosso projeto.
 
 ---
+
+## 4. Criando o docker-compose.yml
+
+Arquivo: **docker-compose.yml**
+
+```yaml
+version: "3.9"
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+```
+
+---
