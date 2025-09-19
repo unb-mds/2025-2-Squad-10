@@ -113,3 +113,45 @@ services:
 ```
 
 ---
+
+## 5. Variáveis de ambiente (.env)
+
+Crie um arquivo **.env** (não comite em repositórios públicos) para guardar variáveis sensíveis:
+
+```env
+NODE_ENV=production
+API_URL=http://localhost:5000
+```
+
+O docker-compose lê automaticamente esse arquivo se configurado com `env_file`.
+
+---
+
+## 6. Comandos principais
+
+**Construir e subir os containers**:
+```bash
+docker compose up --build
+```
+
+**Rodar em segundo plano (detached)**:
+```bash
+docker compose up -d
+```
+
+**Parar os containers**:
+```bash
+docker compose down
+```
+
+**Rebuild apenas de um serviço**:
+```bash
+docker compose build backend
+```
+
+**Acessar o terminal de um container**:
+```bash
+docker exec -it backend sh
+```
+
+---
