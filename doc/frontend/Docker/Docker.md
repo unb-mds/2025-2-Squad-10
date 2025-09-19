@@ -155,3 +155,21 @@ docker exec -it backend sh
 ```
 
 ---
+
+## 7. Limpeza de imagens/volumes
+
+Remover containers parados, imagens e volumes não utilizados:
+```bash
+docker system prune -af
+docker volume prune
+```
+
+---
+
+## Dicas finais
+
+- Adicione um `.dockerignore` em **backend/** e **frontend/** para evitar copiar arquivos desnecessários para a imagem.
+- Em ambiente de produção, configure variáveis de ambiente seguras e revise regras de rede.
+- Utilize volumes para persistir dados de bancos de dados (se houver).
+
+---
