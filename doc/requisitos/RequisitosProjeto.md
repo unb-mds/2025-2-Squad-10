@@ -140,3 +140,8 @@ Eu quero poder exportar os dados e os relatórios gerados, para que eu possa rea
 * **Fonte de Dados Primária:** A única fonte de dados para o sistema será a plataforma "Querido Diário".
 
 * **Guia para Protótipos:** Os protótipos de interface (baixa e alta fidelidade) devem priorizar a clareza e simplicidade, focando em uma jornada de usuário fluida desde a busca até a visualização dos resultados.
+
+**6. Artefatos Relacionados**
+
+* **User Story Map:** O planejamento visual dos requisitos e do escopo do MVP pode ser acessado no [board do Figma](https://www.figma.com/board/8Jsltq8BOL65CsMoRWFjik/Template-MDS--Copy-?node-id=0-1&p=f&t=Mh9B7fFd33lW6I0P-0).
+* **Controle da Tarefa:** A criação e o desenvolvimento do Story Map foram rastreados através da seguinte [issue no GitHub](). 
