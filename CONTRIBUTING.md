@@ -6,9 +6,8 @@ Este guia contém as diretrizes para garantir que o processo de contribuição s
 
 ## Código de Conduta
 
-Para garantir um ambiente aberto e acolhedor, adotamos um [Código de Conduta](LINK_PARA_SEU_CODE_OF_CONDUCT.md) que se aplica a todos os contribuidores. Por favor, leia-o antes de participar.
+Para garantir um ambiente aberto e acolhedor, adotamos um [Código de Conduta](https://github.com/unb-mds/2025-2-OncoMap/blob/main/software_livre/CODE_OF_CONDUCT.md) que se aplica a todos os contribuidores. Por favor, leia-o antes de participar.
 
-*(Nota: Se você ainda não tem um, pode criar um arquivo `CODE_OF_CONDUCT.md` usando um modelo como o [Contributor Covenant](https://www.contributor-covenant.org/pt-br/version/2/1/code_of_conduct/))*
 
 ## Como Começar
 
