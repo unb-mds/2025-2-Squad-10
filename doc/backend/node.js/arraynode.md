@@ -1,7 +1,7 @@
 # 📑 Resumo das ferramentas do Node.js / JavaScript
 
 ## 🔹 Métodos de Arrays
-teste
+
 - **`.length`**
   Retorna o tamanho (quantidade de elementos) do array.
   
