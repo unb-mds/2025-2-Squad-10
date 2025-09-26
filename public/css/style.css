@@ -20,7 +20,7 @@ html, body {
 
 main {
   flex: 1; /* ocupa todo o espaço disponível */
-  padding: 0 0;
+  padding-top: 61px;
 }
 
 header {
@@ -33,6 +33,12 @@ header {
 
   background: #18464A;  
   color: #F4F7F6;
+
+  position: fixed; /* A propriedade mágica para fixar o elemento */
+  top: 0;          /* Cola o header no topo da tela */
+  left: 0;         /* Cola o header na esquerda da tela */
+  width: 100%;     /* Faz o header ocupar toda a largura */
+  z-index: 1000;   /* Garante que o header fique na frente de outros conteúdos */
 }
 
 header .left {
@@ -278,7 +284,7 @@ footer h1 {
 }
 
 .sprint-content a {
-  color: #007bff;
+  color: #00E59B;
   text-decoration: none;
 }
 
@@ -353,7 +359,7 @@ footer h1 {
 
 /* Estilização dos subtítulos (###) dentro do conteúdo */
 .issue-page .issue-body h3 {
-  border-bottom: 2px solid #007bff; /* Azul combinando com a milestone */
+  border-bottom: 2px solid #00E59B; /* Azul combinando com a milestone */
   padding-bottom: 0.5rem;
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -361,7 +367,7 @@ footer h1 {
 
 /* Estilização de links */
 .issue-page .issue-body a {
-  color: #007bff;
+  color: #00E59B;
   text-decoration: none;
   font-weight: 600;
 }
@@ -373,4 +379,85 @@ footer h1 {
 /* Estilização de listas */
 .issue-page .issue-body ul {
   padding-left: 20px;
+}
+
+/* ========================================= */
+/* --- ESTILO PARA A PÁGINA LISTA DE ISSUES --- */
+/* ========================================= */
+
+.issue-list-page .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 1.5rem; /* Ajustei o tamanho da fonte */
+    background: #18464A;
+    color: #F4F7F6;
+    padding: 3rem 4rem;
+}
+
+.issue-list-page .section-title {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 5rem;
+    color: #272B34; /* Corrigi a cor que estava sem # */
+}
+
+/* O GRID! A mágica para criar as colunas responsivas */
+.issue-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Outra forma de escrever 1fr 1fr 1fr */
+    gap: 1.5rem; /* Espaçamento entre os cards */
+    padding: 1rem 5rem;
+    margin-bottom: 1rem;
+}
+
+/* O CARD - o estilo de cada item da lista */
+.issue-card {
+    display: flex; 
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #F4F7F6;
+    border: 1px solid #ddd; /* Borda um pouco mais suave */
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: #272B34;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Efeito ao passar o mouse por cima do card */
+.issue-card:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Sombra mais sutil */
+}
+
+/* Cabeçalho do card (Título e Data) */
+.issue-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.issue-card .card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #272B34;
+}
+
+.issue-card .card-header .card-date {
+    font-size: 0.9rem;
+    color: #555; /* Cor da data mais escura para melhor contraste */
+    white-space: nowrap; /* Impede que a data quebre a linha */
+    margin-left: 1rem;
+}
+
+/* Rodapé do card (Botão "Acessar") */
+.issue-card .card-footer {
+    margin-top: 1.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #00E59B; /* Cor de destaque AZUL para diferenciar */
+    color: #fff;
+    border-radius: 5px;
+    text-align: center;
+    align-self: flex-start;
 }

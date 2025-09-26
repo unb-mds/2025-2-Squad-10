@@ -1,6 +1,0 @@
----
-title: "Requisitos"
-draft: false
----
-
-
