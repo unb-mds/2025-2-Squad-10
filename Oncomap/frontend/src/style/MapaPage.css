@@ -1,15 +1,17 @@
+
 .mapa-page-container {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  flex-direction: column; /* Organiza os filhos (conteúdo e footer) em uma coluna */
+  min-height: 100vh;      /* Garante que a página ocupe NO MÍNIMO a altura total da tela */
   background-color: #f0f2f5;
-  overflow: hidden; /* Previne barras de rolagem durante a animação */
+  overflow: hidden;
 }
 
-/* Este é o novo container que segura o mapa e o painel */
+/* Este é o container que segura o mapa e o painel de informações */
 .content-wrapper {
-  flex-grow: 1;
   display: flex;
+  flex-grow: 1; /* <-- ESSA É A PROPRIEDADE MÁGICA! */
+  /* Ela faz esta div crescer e ocupar todo o espaço vazio, empurrando o footer para baixo */
   transition: all 0.8s ease-in-out;
 }
 
@@ -19,7 +21,7 @@
   justify-content: center;
   padding: 2rem;
   transition: flex 0.8s ease-in-out;
-  flex: 1 0 100%; /* Por padrão, ocupa 100% da largura */
+  flex: 1 0 100%;
 }
 
 .panel-area {
@@ -28,15 +30,15 @@
   justify-content: center;
   padding: 2rem;
   transition: flex 0.8s ease-in-out;
-  flex: 0 0 0%; /* Por padrão, ocupa 0% e está escondido */
+  flex: 0 0 0%;
   overflow: hidden;
 }
 
 /* --- ESTADO ATIVO: Quando uma região é selecionada --- */
 .content-wrapper.region-selected .map-area {
-  flex: 1 0 60%; /* Mapa encolhe para 60% da largura */
+  flex: 1 0 60%;
 }
 
 .content-wrapper.region-selected .panel-area {
-  flex: 1 0 40%; /* Painel cresce para ocupar 40% da largura */
+  flex: 1 0 40%;
 }
