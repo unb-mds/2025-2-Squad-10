@@ -1,0 +1,57 @@
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Faz a seção ocupar a tela inteira */
+  background-color: #1A3A3F; /* Mesma cor de fundo do header */
+  color: white;
+  text-align: center;
+  padding: 120px 5% 40px 5%; /* Padding superior para não ficar atrás do navbar */
+  box-sizing: border-box;
+}
+
+.hero-content {
+  max-width: 800px; /* Limita a largura do texto */
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-size: 4rem; /* Tamanho grande para o título */
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 1.5rem auto 2.5rem auto; /* Espaçamento vertical e centralização */
+  color: #E0E0E0;
+}
+
+.hero-start-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.hero-start-button:hover {
+  color: #00C896;
+}
+
+.hero-start-icon {
+  font-size: 1.8rem;
+  color: #00C896;
+}
