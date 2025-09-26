@@ -1,5 +1,5 @@
 // src/data/dadosRegioes.ts
-import { DadosRegiao } from '../components/MapaPage/TabelaInfo';
+import type { DadosRegiao } from '../components/MapaPage/TabelaInfo';
 
 // Um objeto que mapeia o nome da região para seus dados
 export const dadosDasRegioes: Record<string, DadosRegiao> = {
