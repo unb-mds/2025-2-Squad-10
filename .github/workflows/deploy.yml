@@ -1,31 +1,29 @@
-name: Build and Deploy Hugo Site
+# .github/workflows/deploy.yml
+
+name: Build and Deploy Hugo Site to GitHub Pages
 
 on:
   push:
     branches:
-      - gh-pages # Aciona o workflow nesta branch
+      - gh-pages # 1. O workflow continua a ser acionado por pushes nesta branch
 
 jobs:
-  build-and-commit:
-    # Condição para evitar o loop infinito: Não rode se a mensagem do commit contiver [skip ci]
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1. Faz o checkout do código da branch gh-pages
+      # 2. Faz o checkout do seu código-fonte da branch 'gh-pages'
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # Precisamos do token aqui para poder fazer o push no final
-          token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: true # Necessário se você usar temas como submódulos
 
-      # 2. Instala o Hugo
+      # 3. Instala a versão mais recente do Hugo
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: 'latest'
 
-      # 3. Instala o Python e dependências
+      # 4. Instala Python e as dependências para seus scripts
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -34,34 +32,25 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      # 4. Executa os seus scripts de busca de dados
+      # 5. Executa seus scripts para buscar dados
       - name: Fetch Data
         run: |
           python ./scripts/fetch_issues.py
           python ./scripts/fetch_milestones.py
           python ./scripts/fetch_atas.py
 
-      # 5. Constrói o site Hugo (gera a pasta /public)
+      # 6. Constrói o site Hugo. O resultado vai para a pasta 'public'
       - name: Build Hugo Site
         run: hugo --minify
 
-      # 6. Configura o Git e faz o commit do site construído
-      - name: Commit and Push Built Site
-        run: |
-          # Configura o nome e email do "utilizador" que fará o commit
-          git config --global user.name "GitHub Actions Bot"
-          git config --global user.email "actions@github.com"
-          
-          # Adiciona a pasta /public ao stage. O Git verá os ficheiros novos/modificados.
-          git add public
-          
-          # Verifica se há algo para submeter. Se não houver, não faz nada.
-          # Se houver, faz o commit com a mensagem [skip ci] para evitar o loop.
-          if ! git diff-index --quiet HEAD; then
-            git commit -m "Deploy website: $(date) [skip ci]"
-            
-            # Empurra o novo commit de volta para a branch gh-pages
-            git push origin gh-pages
-          else
-            echo "No changes to deploy."
-          fi
+      # 7. Publica o conteúdo da pasta 'public' para uma branch de deploy
+      # Esta é a etapa mais importante.
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # A branch para a qual o site construído será enviado.
+          # Pode ser qualquer nome, mas 'gh-pages-deploy' é claro.
+          publish_branch: gh-pages-deploy
+          # O diretório que contém o site construído.
+          publish_dir: ./public
