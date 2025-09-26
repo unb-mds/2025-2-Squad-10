@@ -127,14 +127,23 @@ A estrutura do repositório organiza o código-fonte, a documentação e os arte
 .
 └── 2025-2-OncoMap/
 ├── ATA DE REUNIÕES/     # Atas e registros das reuniões de Sprint
+
 ├── doc/                 # Documentação técnica (arquitetura, requisitos, etc.)
+
 ├── Oncomap/             # Diretório principal com o código-fonte da aplicação
+
 │   ├── backend/         # Código do servidor (API, banco de dados)
+
 │   └── frontend/        # Código da interface do usuário (React + TS)
+
 ├── CODE_OF_CONDUCT.md   # Código de conduta para contribuidores
+
 ├── CONTRIBUTING.md      # Guia de como contribuir com o projeto
+
 ├── LICENSE              # Licença do projeto
+
 ├── README.md            # Este arquivo
+
 └── SECURITY.md          # Política de segurança
 
 
