@@ -1,0 +1,91 @@
+/* Container principal que usa Flexbox para as duas colunas */
+.about-layout {
+  display: flex;
+  justify-content: space-between;
+  gap: 4rem; /* Espaço entre as colunas */
+  align-items: flex-start; /* Alinha as colunas pelo topo */
+  background-color: #fff;
+  color: #1A3A3F;
+  padding: 50px 50px 50px 50px;
+  border-radius: 10px;
+}
+
+/* Estilos para ambas as colunas */
+.how-it-works-column,
+.about-project-column {
+  flex: 1; /* Faz com que cada coluna ocupe metade do espaço */
+}
+
+/* Coluna da Esquerda: Como Funciona */
+.how-it-works-column h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.features-grid {
+  display: grid;
+  /* Cria uma grade de 2 colunas */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+  gap: 1rem;
+  border: 1px solid #1A3A3F;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.feature-item:hover {
+  transform: translateY(-8px); 
+  box-shadow: 0 12px 24px rgba(26, 58, 63, 0.8); 
+  background-color: #fafafa; 
+  cursor: pointer;
+}
+
+
+
+.feature-icon {
+  font-size: 2rem;
+  color: #1A3A3F;
+}
+
+.feature-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+}
+
+.feature-description {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+  margin: 0;
+}
+
+
+/* Coluna da Direita: Sobre o Projeto */
+.about-project-column h2 {
+  margin-bottom: 1.5rem;
+}
+
+.about-project-column p {
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  text-align: justify;
+}
+
+
+/* Para telas menores (tablets e celulares), as colunas ficarão uma sobre a outra */
+@media (max-width: 992px) {
+  .about-layout {
+    flex-direction: column; /* Empilha as colunas */
+    gap: 3rem;
+  }
+}
