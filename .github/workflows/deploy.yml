@@ -39,7 +39,7 @@ jobs:
         run: |
           python ./scripts/fetch_issues.py
           python ./scripts/fetch_milestones.py
-          bash ./scripts/copy_atas.sh
+          python ./scripts/fetch_atas.py
 
       # 5. Constrói o site Hugo (gera a pasta /public)
       - name: Build Hugo Site
