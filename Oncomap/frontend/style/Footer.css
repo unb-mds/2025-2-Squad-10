@@ -1,0 +1,54 @@
+.footer {
+  background-color: #0d4b55; /* Cor teal escuro do design */
+  color: #a2b1b3; /* Cor cinza claro para o texto */
+  padding: 40px 0;
+  font-size: 14px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  flex-wrap: wrap; /* Permite que as colunas quebrem em telas menores */
+}
+
+.footer-section {
+  width: 22%;
+  margin-bottom: 20px;
+}
+
+.footer-section h4 {
+  color: #ffffff;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+}
+
+.footer-section a, .footer-column p {
+  color: #a2b1b3;
+  text-decoration: none;
+}
+
+.footer-section a:hover {
+  color: #ffffff;
+}
+
+.footer-bottom {
+  border-top: 1px solid #2a5f68;
+  padding-top: 20px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 20px auto 0 auto;
+}
