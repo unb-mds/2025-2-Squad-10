@@ -1,0 +1,42 @@
+.mapa-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  overflow: hidden; /* Previne barras de rolagem durante a animação */
+}
+
+/* Este é o novo container que segura o mapa e o painel */
+.content-wrapper {
+  flex-grow: 1;
+  display: flex;
+  transition: all 0.8s ease-in-out;
+}
+
+.map-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  transition: flex 0.8s ease-in-out;
+  flex: 1 0 100%; /* Por padrão, ocupa 100% da largura */
+}
+
+.panel-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  transition: flex 0.8s ease-in-out;
+  flex: 0 0 0%; /* Por padrão, ocupa 0% e está escondido */
+  overflow: hidden;
+}
+
+/* --- ESTADO ATIVO: Quando uma região é selecionada --- */
+.content-wrapper.region-selected .map-area {
+  flex: 1 0 60%; /* Mapa encolhe para 60% da largura */
+}
+
+.content-wrapper.region-selected .panel-area {
+  flex: 1 0 40%; /* Painel cresce para ocupar 40% da largura */
+}
