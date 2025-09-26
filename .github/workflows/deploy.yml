@@ -1,21 +1,23 @@
-name: Deploy Hugo Site to GitHub Pages
+name: Build and Deploy Hugo Site
 
 on:
-  # Roda quando um push é feito para a branch `source`
   push:
     branches:
-      - source # <-- GATILHO CORRETO
+      - gh-pages # Aciona o workflow nesta branch
 
 jobs:
-  build-deploy:
+  build-and-commit:
+    # Condição para evitar o loop infinito: Não rode se a mensagem do commit contiver [skip ci]
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
     runs-on: ubuntu-latest
     steps:
-      # 1. Clona o seu repositório (o código-fonte da branch `source`)
+      # 1. Faz o checkout do código da branch gh-pages
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: true
-          fetch-depth: 0
+          # Precisamos do token aqui para poder fazer o push no final
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # 2. Instala o Hugo
       - name: Setup Hugo
@@ -32,24 +34,34 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      # 4. Executa seus scripts de busca de dados
-      - name: Fetch Issues and Milestones
+      # 4. Executa os seus scripts de busca de dados
+      - name: Fetch Data
         run: |
           python ./scripts/fetch_issues.py
           python ./scripts/fetch_milestones.py
-      
-      - name: Copy Atas
-        run: bash ./scripts/copy_atas.sh
+          bash ./scripts/copy_atas.sh
 
-      # 5. Constrói o site Hugo
+      # 5. Constrói o site Hugo (gera a pasta /public)
       - name: Build Hugo Site
         run: hugo --minify
 
-      # 6. Faz o deploy para a branch `gh-pages`
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          # O branch para onde o site será publicado
-          publish_branch: gh-pages # <-- DESTINO CORRETO
+      # 6. Configura o Git e faz o commit do site construído
+      - name: Commit and Push Built Site
+        run: |
+          # Configura o nome e email do "utilizador" que fará o commit
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          
+          # Adiciona a pasta /public ao stage. O Git verá os ficheiros novos/modificados.
+          git add public
+          
+          # Verifica se há algo para submeter. Se não houver, não faz nada.
+          # Se houver, faz o commit com a mensagem [skip ci] para evitar o loop.
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Deploy website: $(date) [skip ci]"
+            
+            # Empurra o novo commit de volta para a branch gh-pages
+            git push origin gh-pages
+          else
+            echo "No changes to deploy."
+          fi
