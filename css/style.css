@@ -31,7 +31,7 @@ header {
   align-items: center;
   padding: 0.5rem 1rem;
 
-  background-color: #18464A;  
+  background: #18464A;  
   color: #F4F7F6;
 }
 
@@ -149,6 +149,8 @@ footer h1 {
   transition: 0.3s;
 }
 
+/* Estilo visual para pagina geral das sprints */
+
 .sprint-page .page-header {
     text-align: center;
     margin-bottom: 3rem;
@@ -162,6 +164,7 @@ footer h1 {
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     padding-left: 5rem;
+    color: 272B34;
 }
 
 /* O GRID! A mágica para criar as colunas responsivas */
@@ -228,4 +231,146 @@ footer h1 {
     border-radius: 5px;
     text-align: center;
     align-self: flex-start; /* Faz o botão não esticar */
+}
+
+/* ================================================== */
+/* --- Estilos para a página de Sprint Individual --- */
+/* ================================================== */
+
+.container-sprint {
+  max-width: 800px;
+  margin: 2rem auto; /* Centraliza o container */
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px #272B34;
+}
+
+.sprint-header {
+  border-bottom: 2px solid #f0f0f0;
+  padding: 1.5rem;
+  text-align: center;
+  background: #F4F7F6;
+}
+
+.sprint-header h1 {
+  margin-bottom: 0.5rem;
+  color: #272B34;
+}
+
+.sprint-header p {
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+.sprint-content {
+  line-height: 1.7;
+  color: #272B34;
+}
+
+/* Melhora a formatação de títulos, links e listas vindos do Markdown */
+.sprint-content h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.sprint-content a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.sprint-content a:hover {
+  text-decoration: underline;
+}
+
+.sprint-content ul, .sprint-content ol {
+  padding-left: 20px;
+}
+
+/* ===================================== */
+/* --- Estilo para a Página de ISSUE --- */
+/* ===================================== */
+
+
+/* Container que centraliza o card da issue na tela */
+.issue-page {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+/* O card branco principal onde o conteúdo da issue fica */
+.issue-page .issue-card {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* O cabeçalho do card */
+.issue-page .issue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* O título da issue */
+.issue-page .issue-title {
+  margin: 0;
+  font-size: 2.2rem;
+  color: #212529;
+}
+
+/* A caixa de metadados (data e milestone) */
+.issue-page .issue-meta {
+  text-align: right;
+  color: #6c757d;
+  font-size: 0.9rem;
+  padding-top: 6px;
+  flex-shrink: 0; /* Impede que o texto quebre em telas menores */
+  margin-left: 1rem;
+}
+
+.issue-page .issue-meta .milestone {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: #007bff; /* Um azul para destacar */
+}
+
+/* O corpo principal da issue com o conteúdo do Markdown */
+.issue-page .issue-body {
+  padding: 2rem;
+  line-height: 1.8;
+  color: #343a40;
+}
+
+/* Estilização dos subtítulos (###) dentro do conteúdo */
+.issue-page .issue-body h3 {
+  border-bottom: 2px solid #007bff; /* Azul combinando com a milestone */
+  padding-bottom: 0.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Estilização de links */
+.issue-page .issue-body a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.issue-page .issue-body a:hover {
+  text-decoration: underline;
+}
+
+/* Estilização de listas */
+.issue-page .issue-body ul {
+  padding-left: 20px;
 }
