@@ -16,12 +16,11 @@
 }
 
 .map-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
   transition: flex 0.8s ease-in-out;
   flex: 1 0 100%;
+  position: relative;
+  width: 100%;      
+
 }
 
 .panel-area {
