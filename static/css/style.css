@@ -1,0 +1,148 @@
+* {
+  margin: 0;
+  padding: 0 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  font-family: Poppins;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+html, body {
+  height: 100%; /* garante que o body ocupa a tela toda */
+  margin: 0;
+}
+
+main {
+  flex: 1; /* ocupa todo o espaço disponível */
+}
+
+header {
+    align-self: top;
+
+  display: flex;
+  justify-content: space-between; /* extremos esquerda e direita */
+  align-items: center;
+  padding: 0.5rem 1rem;
+
+  background-color: #18464A;  
+  color: #F4F7F6;
+}
+
+header .left {
+  flex: 1; /* ocupa espaço à esquerda */
+  text-align: left;
+}
+
+header .center {
+  flex: 1; /* ocupa espaço no meio */
+  text-align: center;
+}
+
+header .right {
+  flex: 1; /* ocupa espaço à direita */
+  text-align: right;
+}
+
+header a {
+  color: #F4F7F6;
+  text-decoration: none;
+  margin: 0 0.5rem;
+}
+
+.hero {
+  background: #18464A;
+  color: #F4F7F6;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 1316px;    /* largura máxima apenas do texto */
+  margin: 0 auto;      /* centraliza horizontalmente */
+}
+
+.hero h1 {
+  font-size: 4.5rem;
+  margin: 1rem 0;
+}
+
+.hero h2 {
+  font-size: 2.3rem;
+  margin: 1rem 0;
+}
+
+.hero h3 {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.hero-button {
+  margin-top: 2rem;
+}
+
+.hero-button .btn {
+  background-color: #00E59B;
+  color: #F4F7F6;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 50px;
+  transition: 0.3s;
+}
+
+footer {
+    text-align: left;
+    align-self: bottom;;
+
+  color: #F4F7F6;
+  background: #18464A;
+  padding: 0 0px;
+}
+
+footer .content {
+    align-self: top;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 10rem;
+}
+
+footer .content .left,
+footer .content .center,
+footer .content .right {
+    flex: 1;
+    text-align: left;
+    align-items: center;
+    padding: 10px;
+    
+}
+
+footer .copyright {
+    align-self: bottom;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: #133538;
+  padding: 10px 1rem;
+}
+
+footer a {
+  color: #F4F7F6;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+footer a:hover {
+  color: #00bfff;
+}
+
+footer h1 {
+    margin: 1rem 0;
+}
