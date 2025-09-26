@@ -1,5 +1,5 @@
 # Documento de Requisitos de Software: Radar de Investimento de Saúde Oncológica
-## Versão: 1.0 (Escopo do MVP)
+## Versão: 0.1.0 (Escopo do MVP)
 ## Data: 09 de Setembro de 2025
 
 1. **Visão Geral do Projeto**
