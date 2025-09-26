@@ -1,5 +1,5 @@
 ---
-title: "Documentação de Issues"
+title: "Documentação da Issues"
 draft: false
 ---
 

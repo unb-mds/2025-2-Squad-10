@@ -1,0 +1,19 @@
+{{ define "main" }}
+<div class="issue-page">
+  <div class="issue-card">
+    
+    <header class="issue-header">
+      <h1 class="issue-title">{{ .Title }}</h1>
+      <div class="issue-meta">
+        <span>{{ .Date.Format "02/01/2006" }}</span>
+        <span class="milestone">Milestone: {{ .Params.milestone | default "Nenhum" }}</span>
+      </div>
+    </header>
+
+    <div class="issue-body">
+      {{ .Content }}
+    </div>
+
+  </div>
+</div>
+{{ end }}

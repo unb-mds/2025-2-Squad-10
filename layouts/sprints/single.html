@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div class="container-sprint">
+
+  <header class="sprint-header">
+    <h1>{{ .Title }}</h1>
+    <p>Data: <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "02/01/2006" }}</time></p>
+  </header>
+
+  <article class="sprint-content">
+    {{ .Content }}
+  </article>
+
+</div>
+{{ end }}
+

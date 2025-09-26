@@ -175,6 +175,8 @@
   </url><url>
     <loc>http://localhost:1313/2025-2-OncoMap/categories/</loc>
   </url><url>
+    <loc>http://localhost:1313/2025-2-OncoMap/requisitos/</loc>
+  </url><url>
     <loc>http://localhost:1313/2025-2-OncoMap/tags/</loc>
   </url>
 </urlset>

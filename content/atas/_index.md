@@ -3,4 +3,4 @@ title: "Atas de Reunião"
 draft: false
 ---
 
-Aqui ficam as atas do projeto.
+Aqui ficam os requisitos do projeto.
