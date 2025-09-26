@@ -1,0 +1,37 @@
+name: Deploy Hugo
+
+on:
+  push:
+    branches: [ git-pages ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Fetch Issues
+        run: python git-pages/scripts/fetch_issues.py
+
+      - name: Fetch Milestones
+        run: python git-pages/scripts/fetch_milestones.py
+
+      - name: Copy Atas
+        run: bash git-pages/scripts/copy_atas.sh
+
+      - name: Build Hugo Site
+        run: hugo --minify --source git-pages
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: git-pages/public
