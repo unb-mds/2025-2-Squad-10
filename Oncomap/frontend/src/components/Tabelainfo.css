@@ -1,0 +1,52 @@
+
+
+.info-container {
+  background-color: #008080; /* Cor principal (Teal) */
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 350px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.search-bar {
+  margin-bottom: 15px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; 
+}
+
+.titulo-estado {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+}
+
+.tabela-investimentos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.tabela-investimentos th,
+.tabela-investimentos td {
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.tabela-investimentos th {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: bold;
+}
+
+.tabela-investimentos .categoria-titulo {
+  font-weight: bold;
+  padding-top: 15px;
+  font-size: 1.1em;
+}
