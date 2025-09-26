@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import './Tabelainfo.css'; // Mantenha a importação do seu CSS
+import '../../style/Tabelainfo.css'; // Mantenha a importação do seu CSS
 
 // Tipos para os dados (vamos reutilizá-los)
 interface Investimento {

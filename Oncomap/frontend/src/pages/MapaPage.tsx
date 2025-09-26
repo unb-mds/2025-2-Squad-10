@@ -3,11 +3,13 @@ import MapaInterativo3D from "../components/MapaPage/mapa";
 import Footer from "../components/Geral/footer";
 import TabelaInfo from '../components/MapaPage/TabelaInfo'; // <-- Mude a importação
 import { dadosDasRegioes } from '../data/dados_regioes'; // <-- Importe os dados
-import './MapaPage.css';
+import '../style/MapaPage.css';
 
 const MapaPege = () => {
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
 
+    console.log("Região selecionada:", selectedRegion);
+    
     return(
         <div className="mapa-page-container">
             <div className={selectedRegion ? "content-wrapper region-selected" : "content-wrapper"}>
