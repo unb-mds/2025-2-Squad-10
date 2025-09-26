@@ -1,37 +1,59 @@
-name: Deploy Hugo
+name: Deploy Hugo Site to GitHub Pages
 
 on:
+  # Roda quando um push é feito para o branch `main`
   push:
-    branches: [ git-pages ]
+    branches:
+      - gh-pages # Mude para o nome do seu branch principal se for diferente
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      # 1. Clona o seu repositório (o código-fonte)
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true  # Baixa submódulos do tema, se houver
+          fetch-depth: 0    # Necessário para o Hugo obter datas de commits
 
+      # 2. Instala o Hugo
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          # extended: true # Descomente se seu tema precisar da versão SASS/SCSS
+
+      # 3. Instala o Python e dependências
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
-      - name: Install requests
+      - name: Install dependencies
         run: pip install requests
 
+      # 4. Executa seus scripts (com os caminhos corrigidos)
       - name: Fetch Issues
-        run: python git-pages/scripts/fetch_issues.py
+        run: python ./scripts/fetch_issues.py
 
       - name: Fetch Milestones
-        run: python git-pages/scripts/fetch_milestones.py
+        run: python ./scripts/fetch_milestones.py
+      
+      # Nota: Seu script copy_atas.sh não estava no seu workflow original, adicione se necessário.
+      # - name: Copy Atas
+      #   run: bash ./scripts/copy_atas.sh
 
-      - name: Copy Atas
-        run: bash git-pages/scripts/copy_atas.sh
-
+      # 5. Constrói o site Hugo (o --source não é necessário se hugo.toml está na raiz)
       - name: Build Hugo Site
-        run: hugo --minify --source git-pages
+        run: hugo --minify
 
+      # 6. Faz o deploy para o branch gh-pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v6
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: git-pages/public
+          # O diretório que contém o site final
+          publish_dir: ./public
+          # O branch para onde o site será publicado
+          publish_branch: gh-pages
