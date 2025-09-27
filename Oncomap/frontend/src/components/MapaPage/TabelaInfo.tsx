@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import '../../style/Tabelainfo.css'; // Mantenha a importação do seu CSS
+import '../../style/Tabelainfo.css'; 
 
-// Tipos para os dados (vamos reutilizá-los)
+
 interface Investimento {
   nome: string;
   valor: string;
@@ -14,13 +14,13 @@ export interface DadosRegiao {
   municipios: string[];
 }
 
-// Tipos para as props que o componente vai receber
+
 interface TabelaInfoProps {
   dadosDaRegiao: DadosRegiao;
   onClose: () => void;
 }
 
-// Estendendo a interface do jsPDF
+
 interface jsPDFWithAutoTable extends jsPDF {
   autoTable: (options: any) => jsPDF;
 }
@@ -28,7 +28,7 @@ interface jsPDFWithAutoTable extends jsPDF {
 const TabelaInfo = ({ dadosDaRegiao, onClose }: TabelaInfoProps) => {
   const [termoBusca, setTermoBusca] = useState<string>('');
 
-  // Agora usa os dados recebidos via props
+  
   const municipiosFiltrados = dadosDaRegiao.municipios.filter((municipio) =>
     municipio.toLowerCase().includes(termoBusca.toLowerCase())
   );
@@ -71,7 +71,7 @@ const TabelaInfo = ({ dadosDaRegiao, onClose }: TabelaInfoProps) => {
       <h2 className="titulo-estado">{dadosDaRegiao.regiao}</h2>
 
       <table className="tabela-investimentos">
-        {/* O conteúdo da tabela continua o mesmo, mas agora usará 'dadosDaRegiao' */}
+        
         <thead>
           <tr>
             <th>Total Investido</th>

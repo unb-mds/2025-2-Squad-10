@@ -1,8 +1,8 @@
-// src/geojson/regioes.ts
+
 
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 
-// (Importe seus arquivos .json de cada estado normalmente)
+
 import AC from './estados/macroregions-ac-12.json';
 import AM from './estados/macroregions-am-13.json';
 import MG from './estados/macroregions-mg-31.json';
@@ -32,23 +32,22 @@ import AP from './estados/macroregions-ap-16.json';
 import ES from './estados/macroregions-es-32.json';
 
 
-// --- DEFINIÇÃO DE TIPOS ---
 
-// Tipagem para as propriedades customizadas que esperamos em cada estado
+
+
 interface EstadoProperties {
   codarea: string;
-  regiao?: string; // A região será adicionada dinamicamente
+  regiao?: string; 
   centroide?: [number, number];
-  [key: string]: any; // Permite outras propriedades que possam existir
+  [key: string]: any; 
 }
 
-// Tipagem para uma Feature de um Estado
 type EstadoFeature = Feature<Geometry, EstadoProperties>;
 
-// Tipagem para uma FeatureCollection de Estados
+
 type EstadoFeatureCollection = FeatureCollection<Geometry, EstadoProperties>;
 
-// --- LÓGICA DE PROCESSAMENTO ---
+
 
 /**
  * Adiciona a chave da região dentro das "properties" de cada feature (estado).
@@ -69,7 +68,7 @@ const addRegionToFeatures = (
   }));
 };
 
-// Objeto final, tipado para garantir que a estrutura está correta
+
 export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
   norte: {
     type: 'FeatureCollection',

@@ -1,4 +1,3 @@
-// src/components/Sidebar.tsx
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import '../../style/Sidebar.css';
@@ -6,12 +5,12 @@ import '../../style/Sidebar.css';
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Função para fechar o menu
+  
   const closeSidebar = () => setIsOpen(false);
 
   return (
     <>
-      {/* A sobreposição que aparece quando o menu está aberto */}
+      
       <div
         className={isOpen ? 'sidebar-overlay open' : 'sidebar-overlay'}
         onClick={closeSidebar}
@@ -35,9 +34,9 @@ const Sidebar = () => {
         </nav>
       </aside>
 
-      {/* O botão agora é renderizado depois para facilitar o CSS `+` */}
+      
       <button className="sidebar-toggle" onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? '✕' : '☰'} {/* Muda o ícone quando está aberto */}
+        {isOpen ? '✕' : '☰'} 
       </button>
     </>
   );

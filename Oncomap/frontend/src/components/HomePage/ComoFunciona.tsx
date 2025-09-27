@@ -1,7 +1,7 @@
 import { FaMapMarkedAlt, FaSearch, FaFilePdf, FaChartLine } from 'react-icons/fa';
 import './HowItWorks.css';
 
-// Um pequeno componente para cada item da grade para manter o código limpo
+
 const FeatureItem = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
   <div className="feature-item">
     <div className="feature-icon">{icon}</div>
@@ -12,10 +12,8 @@ const FeatureItem = ({ icon, title, description }: { icon: React.ReactNode, titl
 
 const HowItWorks = () => {
   return (
-    // Usamos a tag <section> com o id para o link da navbar funcionar
     <section id="sobre" className="container">
       
-      {/* --- Parte "Como Funciona" --- */}
       <h2>Como Funciona</h2>
       <div className="features-grid">
         <FeatureItem 
@@ -40,7 +38,6 @@ const HowItWorks = () => {
         />
       </div>
 
-      {/* --- Parte "Sobre o Projeto" --- */}
       <div className="about-project-section">
         <h2>Sobre o Projeto</h2>
         <p>

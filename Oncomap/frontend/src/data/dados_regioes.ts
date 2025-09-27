@@ -1,7 +1,6 @@
-// src/data/dadosRegioes.ts
 import type { DadosRegiao } from '../components/MapaPage/TabelaInfo';
 
-// Um objeto que mapeia o nome da região para seus dados
+
 export const dadosDasRegioes: Record<string, DadosRegiao> = {
   norte: {
     regiao: 'Norte',
@@ -19,7 +18,7 @@ export const dadosDasRegioes: Record<string, DadosRegiao> = {
     ],
     municipios: ['Salvador', 'Recife', 'Fortaleza', 'São Luís', 'Maceió'],
   },
-  // Adicione aqui os dados para 'sul', 'sudeste' e 'centroOeste'
+  
   sul: { 
     regiao: 'Sul',
     investimentos: [

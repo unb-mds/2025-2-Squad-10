@@ -1,7 +1,7 @@
 import { FaMapMarkedAlt, FaSearch, FaChartLine, FaFilePdf } from 'react-icons/fa';
 import '../../style/SobreProjeto.css';
 
-// Componente interno para cada item do "Como Funciona"
+
 const FeatureItem = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
   <div className="feature-item">
     <div className="feature-icon">{icon}</div>

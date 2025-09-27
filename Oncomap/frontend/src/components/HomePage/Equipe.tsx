@@ -1,30 +1,30 @@
 import { FaGithub } from 'react-icons/fa';
 import '../../style/Equipe.css';
 
-// Dados da equipe em um array de objetos. Fácil de atualizar!
+
 const teamMembers = [
   { 
     name: 'Felype Carrijo', 
     role: 'Desenvolvedor', 
-    img: 'https://placehold.co/300x200/2a2a2a/FFF?text=FC', // Usando placeholder
+    img: 'https://placehold.co/300x200/2a2a2a/FFF?text=FC', 
     githubUrl: 'https://github.com' 
   },
   { 
     name: 'Artur Galdino', 
     role: 'Desenvolvedor', 
-    img: 'https://i.imgur.com/eBOUX2i.png', // Imagem do seu design anterior
+    img: 'https://i.imgur.com/eBOUX2i.png', 
     githubUrl: 'https://github.com' 
   },
   { 
     name: 'João Pedro', 
     role: 'Desenvolvedor', 
-    img: 'https://placehold.co/300x200/e0e0e0/000?text=JP', // Usando placeholder
+    img: 'https://placehold.co/300x200/e0e0e0/000?text=JP', 
     githubUrl: 'https://github.com' 
   },
   { 
     name: 'Gabriel Alexandroni', 
     role: 'Desenvolvedor', 
-    img: 'https://placehold.co/300x200/c5e8c7/000?text=GA', // Usando placeholder
+    img: 'https://placehold.co/300x200/c5e8c7/000?text=GA', 
     githubUrl: 'https://github.com' 
   },
   { 
@@ -41,7 +41,7 @@ const teamMembers = [
   },
 ];
 
-// Componente para um único card de membro da equipe
+
 const CardsEquipe = ({ name, role, img, githubUrl }: typeof teamMembers[0]) => (
   <div className="team-card">
     <div className="team-image-container">
