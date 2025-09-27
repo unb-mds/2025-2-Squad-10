@@ -1,0 +1,49 @@
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 40px;
+  text-align: center;
+}
+
+.feature-item {
+  padding: 20px;
+}
+
+.feature-icon {
+  font-size: 3rem; 
+  color: #0d4b55; 
+  margin-bottom: 1rem;
+}
+
+.feature-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.feature-description {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+
+.about-project-section {
+  margin-top: 80px; 
+  text-align: center;
+  max-width: 800px; 
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-project-section h2 {
+  margin-bottom: 20px;
+}
+
+.about-project-section p {
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  text-align: justify; 
+}

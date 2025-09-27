@@ -1,7 +1,7 @@
 
 
 .info-container {
-  background-color: #008080; /* Cor principal (Teal) */
+  background-color: #1A3A3F; 
   color: #ffffff;
   padding: 20px;
   border-radius: 8px;
@@ -49,4 +49,17 @@
   font-weight: bold;
   padding-top: 15px;
   font-size: 1.1em;
+}
+
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
 }
