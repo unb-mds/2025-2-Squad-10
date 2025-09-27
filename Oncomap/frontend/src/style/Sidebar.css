@@ -2,9 +2,9 @@
   position: fixed;
   top: 15px;
   left: 15px;
-  z-index: 1002; /* Fica acima da sidebar */
-  background: white;
-  color: #0d4b55;
+  z-index: 1002; 
+  background: #0d4b55;
+  color: white;
   border: none;
   font-size: 1.5rem;
   padding: 0.5rem 1rem;
@@ -28,15 +28,15 @@
   left: 0;
   height: 100%;
   width: 250px;
-  background-color: #242424;
-  transform: translateX(-100%); /* Escondido por padrão */
+  background-color: #0d4b55;
+  transform: translateX(-100%); 
   transition: transform 0.3s ease-in-out;
   z-index: 1000;
-  padding-top: 60px; /* Espaço para o botão não sobrepor o conteúdo */
+  padding-top: 60px; 
 }
 
 .sidebar.open {
-  transform: translateX(0); /* Visível quando a classe 'open' é aplicada */
+  transform: translateX(0); 
 }
 
 .sidebar.open + .sidebar-toggle{
@@ -59,10 +59,10 @@
 }
 
 .sidebar nav li a:hover {
-  background-color: #333;
+  background-color: #00a37a;
 }
 
-/* O NavLink adiciona a classe 'active' automaticamente */
+
 .sidebar nav li a.active {
   background-color: #646cff;
   font-weight: bold;
@@ -75,7 +75,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000; /* Fica atrás da sidebar, mas na frente do conteúdo */
+  z-index: 1000; 
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;

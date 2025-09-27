@@ -7,7 +7,6 @@ import StaticMap from 'react-map-gl';
 import type { StyleSpecification } from 'mapbox-gl';
 import { regioesGeoJson } from '../../data/regioes';
 
-// --- DEFINIÇÃO DE TIPOS ---
 interface EstadoProperties {
   codarea: string;
   regiao?: string;
@@ -16,7 +15,7 @@ interface EstadoProperties {
 }
 type EstadoFeature = Feature<Geometry, EstadoProperties>;
 
-// --- TOKEN E ESTILO DE MAPA ---
+
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
 
 const BLANK_MAP_STYLE: StyleSpecification = {
@@ -34,14 +33,13 @@ const BLANK_MAP_STYLE: StyleSpecification = {
   ],
 };
 
-// --- ESTADOS DE VISUALIZAÇÃO DA CÂMERA ---
 const INITIAL_VIEW_STATE: MapViewState = {
   longitude: -54,
   latitude: -15,
   zoom: 3.2,
   minZoom: 3.2,
   maxZoom: 10,
-  pitch: 30, // <-- Inclinação suave para o 3D
+  pitch: 30, 
   bearing: 0,
 };
 
@@ -49,47 +47,46 @@ const REGION_VIEW_STATES = {
   norte: { 
     longitude: -60,
     latitude: -5, 
-    zoom: 3.8,      // Zoom ajustado para enquadrar melhor
-    pitch: 0,       // Sem inclinação 3D
+    zoom: 3.8,      
+    pitch: 30,       
     bearing: 0 
   },
   nordeste: { 
     longitude: -42, 
     latitude: -8, 
-    zoom: 4.4,      // Zoom ajustado
-    pitch: 0,
+    zoom: 4.4,      
+    pitch: 30,
     bearing: 0 
   },
   centroOeste: { 
     longitude: -54, 
     latitude: -15, 
-    zoom: 4.4,      // Zoom ajustado
-    pitch: 0,
+    zoom: 4.4,      
+    pitch: 30,
     bearing: 0 
   },
   sudeste: { 
-    longitude: -45.5, // Centro ajustado
+    longitude: -45.5, 
     latitude: -20.5,
-    zoom: 5.0,      // Zoom ajustado
-    pitch: 0,
+    zoom: 4.4,      
+    pitch: 30,
     bearing: 0 
   },
   sul: { 
     longitude: -52, 
-    latitude: -28.5, // Centro ajustado
-    zoom: 5.1,      // Zoom ajustado
-    pitch: 0,
+    latitude: -28.5, 
+    zoom: 4.8,     
+    pitch: 30,
     bearing: 0 
   },
 };
 
-// --- PROPS DO COMPONENTE ---
 interface MapProps {
   selectedRegion: string | null;
   setSelectedRegion: (region: string | null) => void;
 }
 
-// --- COMPONENTE PRINCIPAL ---
+
 const MapaInterativo3D: React.FC<MapProps> = ({ selectedRegion, setSelectedRegion }) => {
   const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE);
   const [hoveredState, setHoveredState] = useState<EstadoFeature | null>(null);

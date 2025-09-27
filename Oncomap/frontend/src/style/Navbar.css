@@ -1,8 +1,8 @@
-/* Estilo para o cabeçalho fixo */
+
 .navbar-header {
-  background-color: #1A3A3F; /* Cor de fundo escura */
+  background-color: #1A3A3F; 
   padding: 0.1rem 4%;
-  position: absolute; /* Posição absoluta para ficar sobre a seção Hero */
+  position: absolute; 
   width: 100%;
   top: 0;
   left: 0;
@@ -29,13 +29,13 @@
 .navbar-nav ul {
   list-style: none;
   display: flex;
-  gap: 2.5rem; /* Espaçamento entre os links */
+  gap: 2.5rem; 
   margin: 0;
   padding: 0;
 }
 
 .navbar-nav a {
-  color: #E0E0E0; /* Branco um pouco mais suave */
+  color: #E0E0E0; 
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.2s ease-in-out;
@@ -46,7 +46,7 @@
 }
 
 .navbar-cta {
-  background-color: #00C896; /* Verde-água */
+  background-color: #00C896; 
   color: white;
   padding: 12px 28px;
   border-radius: 25px;
@@ -56,5 +56,7 @@
 }
 
 .navbar-cta:hover {
-  background-color: #00a37a;
+  background-color: #1A3A3F;
+  color: #00C896;
+  border: 1px solid #00C896;
 }

@@ -3,12 +3,8 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  
-  color: #213547;            /* Cor do texto principal (quase preto) */
-  background-color: #f8f9fa; /* Cor de fundo principal (branco levemente acinzentado) */
-  /* ------------------------------------ */
-
+  color: #213547;            
+  background-color: #f8f9fa; 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -20,7 +16,6 @@
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
 }
 
 

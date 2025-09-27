@@ -3,16 +3,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Faz a seção ocupar a tela inteira */
-  background-color: #1A3A3F; /* Mesma cor de fundo do header */
+  min-height: 100vh; 
+  background-color: #1A3A3F; 
   color: white;
   text-align: center;
-  padding: 120px 5% 40px 5%; /* Padding superior para não ficar atrás do navbar */
+  padding: 120px 5% 40px 5%; 
   box-sizing: border-box;
 }
 
 .hero-content {
-  max-width: 800px; /* Limita a largura do texto */
+  max-width: 800px; 
 }
 
 .hero-subtitle {
@@ -22,7 +22,7 @@
 }
 
 .hero-title {
-  font-size: 4rem; /* Tamanho grande para o título */
+  font-size: 4rem; 
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
@@ -31,7 +31,7 @@
 .hero-description {
   font-size: 1.1rem;
   max-width: 600px;
-  margin: 1.5rem auto 2.5rem auto; /* Espaçamento vertical e centralização */
+  margin: 1.5rem auto 2.5rem auto; 
   color: #E0E0E0;
 }
 

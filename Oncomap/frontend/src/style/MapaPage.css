@@ -1,21 +1,16 @@
 
 .mapa-page-container {
-  /* O container da página tem um fluxo normal, permitindo a rolagem */
   width: 100%;
   background-color: #f0f2f5;
 }
 
-/* O container que segura o mapa e o painel */
+
 .content-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  
-  /* --- ALTURA DEFINIDA PARA O BLOCO DO MAPA --- */
-  height: 90vh; /* Ocupa 90% da altura da tela. Você pode ajustar este valor. */
-  /* ------------------------------------------- */
-  
+  height: 90vh; 
   padding: 2rem;
   box-sizing: border-box;
   transition: all 0.8s ease-in-out;
@@ -35,16 +30,18 @@
 
 .panel-area {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   box-sizing: border-box;
   transition: flex 0.8s ease-in-out;
   flex: 0 0 0%;
   overflow: hidden;
   height: 100%;
+  overflow-y: auto; 
 }
 
-/* --- ESTADO ATIVO: Quando uma região é selecionada --- */
+
+
 .content-wrapper.region-selected .map-area {
   flex: 1 0 60%;
 }

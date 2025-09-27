@@ -1,7 +1,7 @@
 
 
 .info-container {
-  background-color: #008080; /* Cor principal (Teal) */
+  background-color: #1A3A3F; 
   color: #ffffff;
   padding: 20px;
   border-radius: 8px;
@@ -51,7 +51,7 @@
   font-size: 1.1em;
 }
 
-/* Adicione ao final de Tabelainfo.css */
+
 .close-button {
   position: absolute;
   top: 15px;
