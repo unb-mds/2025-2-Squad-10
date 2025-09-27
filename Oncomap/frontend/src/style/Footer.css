@@ -1,8 +1,11 @@
-.footer {
-  background-color: #0d4b55; /* Cor teal escuro do design */
-  color: #a2b1b3; /* Cor cinza claro para o texto */
-  padding: 40px 0;
+/* src/components/Geral/Footer.css (Versão Compacta) */
+
+.site-footer {
+  background-color: #1A3A3F;
+  color: #a2b1b3;
+  padding: 30px 0 20px 0; /* Padding vertical diminuído */
   font-size: 14px;
+  line-height: 1.6;
 }
 
 .footer-content {
@@ -14,41 +17,50 @@
   flex-wrap: wrap; /* Permite que as colunas quebrem em telas menores */
 }
 
-.footer-section {
+.footer-column {
   width: 22%;
+  min-width: 200px;
   margin-bottom: 20px;
 }
 
-.footer-section h4 {
+.footer-column h4 {
   color: #ffffff;
+  margin-top: 0;
   margin-bottom: 15px;
   font-size: 16px;
+  font-weight: 600;
 }
 
-.footer-section ul {
+.footer-column ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-.footer-section ul li {
-  margin-bottom: 10px;
+.footer-column ul li {
+  margin-bottom: 8px; /* Espaçamento entre links diminuído */
 }
 
-.footer-section a, .footer-column p {
+.footer-column a, .footer-column p {
   color: #a2b1b3;
   text-decoration: none;
+  margin: 0;
 }
 
-.footer-section a:hover {
+.footer-column a:hover {
   color: #ffffff;
 }
 
 .footer-bottom {
   border-top: 1px solid #2a5f68;
-  padding-top: 20px;
-  margin-top: 20px;
+  padding-top: 15px; /* Padding superior diminuído */
+  margin-top: 15px;  /* Margem superior diminuída */
   display: flex;
   justify-content: space-between;
   max-width: 1200px;
-  margin: 20px auto 0 auto;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 12px;
 }

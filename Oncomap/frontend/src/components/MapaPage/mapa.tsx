@@ -41,16 +41,46 @@ const INITIAL_VIEW_STATE: MapViewState = {
   zoom: 3.2,
   minZoom: 3.2,
   maxZoom: 10,
-  pitch: 45,
+  pitch: 30, // <-- Inclinação suave para o 3D
   bearing: 0,
 };
 
 const REGION_VIEW_STATES = {
-  norte: { longitude: -65, latitude: -5, zoom: 4.2, pitch: 45 },
-  nordeste: { longitude: -47, latitude: -8, zoom: 4.5, pitch: 45 },
-  centroOeste: { longitude: -59, latitude: -15, zoom: 4.5, pitch: 45 },
-  sudeste: { longitude: -50, latitude: -21, zoom: 4.9, pitch: 45 },
-  sul: { longitude: -57, latitude: -28, zoom: 4.9, pitch: 45 },
+  norte: { 
+    longitude: -60,
+    latitude: -5, 
+    zoom: 3.8,      // Zoom ajustado para enquadrar melhor
+    pitch: 0,       // Sem inclinação 3D
+    bearing: 0 
+  },
+  nordeste: { 
+    longitude: -42, 
+    latitude: -8, 
+    zoom: 4.4,      // Zoom ajustado
+    pitch: 0,
+    bearing: 0 
+  },
+  centroOeste: { 
+    longitude: -54, 
+    latitude: -15, 
+    zoom: 4.4,      // Zoom ajustado
+    pitch: 0,
+    bearing: 0 
+  },
+  sudeste: { 
+    longitude: -45.5, // Centro ajustado
+    latitude: -20.5,
+    zoom: 5.0,      // Zoom ajustado
+    pitch: 0,
+    bearing: 0 
+  },
+  sul: { 
+    longitude: -52, 
+    latitude: -28.5, // Centro ajustado
+    zoom: 5.1,      // Zoom ajustado
+    pitch: 0,
+    bearing: 0 
+  },
 };
 
 // --- PROPS DO COMPONENTE ---
@@ -108,7 +138,6 @@ const MapaInterativo3D: React.FC<MapProps> = ({ selectedRegion, setSelectedRegio
       },
       onHover: (info: PickingInfo<EstadoFeature>) => setHoveredState(info.object || null),
       onClick: (info: PickingInfo<EstadoFeature>) => {
-        // Só permite clicar para selecionar uma região se já não houver uma selecionada
         if (!selectedRegion) {
           const region = info.object?.properties.regiao;
           if (region) {
@@ -121,31 +150,18 @@ const MapaInterativo3D: React.FC<MapProps> = ({ selectedRegion, setSelectedRegio
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      
-      {/* ================================================================== */}
-      {/* --- BOTÃO DE VOLTAR ADICIONADO AQUI --- */}
-      {/* Ele só aparece se 'selectedRegion' tiver um valor */}
       {selectedRegion && (
         <button
-          // Ao clicar, chama a função para limpar a região selecionada
           onClick={() => setSelectedRegion(null)}
           style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            zIndex: 1, // Garante que fique na frente do mapa
-            padding: '10px 15px',
-            cursor: 'pointer',
-            borderRadius: '8px',
-            border: '1px solid #ccc',
-            backgroundColor: 'white',
-            fontWeight: 'bold',
+            position: 'absolute', top: '20px', left: '20px', zIndex: 1,
+            padding: '10px 15px', cursor: 'pointer', borderRadius: '8px',
+            border: '1px solid #ccc', backgroundColor: 'white', fontWeight: 'bold',
           }}
         >
           Ver Brasil
         </button>
       )}
-      {/* ================================================================== */}
 
       <DeckGL
         initialViewState={INITIAL_VIEW_STATE}
