@@ -66,6 +66,15 @@ header a {
   margin: 0 0.5rem;
 }
 
+header a:hover {
+  color: #00E59B;
+}
+
+header a:active {
+  color: #00E59B;
+  font-weight: bold;
+} 
+
 .page-header {
     text-align: center;
     margin-bottom: 3rem;
@@ -509,3 +518,8 @@ footer h1 {
     margin: 1rem;
     line-height: 1.6;
 } 
+
+/* =================== */
+/* --- Arquitetura --- */
+/* =================== */
+
