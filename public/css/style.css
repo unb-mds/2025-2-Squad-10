@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+a {
+  color: #00E59B;
+  text-decoration: none;
+}
 
 body {
   font-family: Poppins;
@@ -62,6 +66,15 @@ header a {
   margin: 0 0.5rem;
 }
 
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 1.5rem; /* Ajustei o tamanho da fonte */
+    background: #18464A;
+    color: #F4F7F6;
+    padding: 3rem 4rem;
+}
+
 
 footer {
     text-align: left;
@@ -106,7 +119,7 @@ footer a {
 }
 
 footer a:hover {
-  color: #00bfff;
+  color: #00E59B;
 }
 
 footer h1 {
@@ -156,15 +169,6 @@ footer h1 {
 }
 
 /* Estilo visual para pagina geral das sprints */
-
-.sprint-page .page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    font-size: 2rem;
-    background: #18464A;
-    color: #F4F7F6;
-    padding: 3rem 4rem;
-}
 
 .sprint-page .section-title {
     margin-bottom: 1.5rem;
@@ -283,10 +287,6 @@ footer h1 {
   padding-bottom: 0.5rem;
 }
 
-.sprint-content a {
-  color: #00E59B;
-  text-decoration: none;
-}
 
 .sprint-content a:hover {
   text-decoration: underline;
@@ -367,8 +367,6 @@ footer h1 {
 
 /* Estilização de links */
 .issue-page .issue-body a {
-  color: #00E59B;
-  text-decoration: none;
   font-weight: 600;
 }
 
@@ -384,15 +382,6 @@ footer h1 {
 /* ========================================= */
 /* --- ESTILO PARA A PÁGINA LISTA DE ISSUES --- */
 /* ========================================= */
-
-.issue-list-page .page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    font-size: 1.5rem; /* Ajustei o tamanho da fonte */
-    background: #18464A;
-    color: #F4F7F6;
-    padding: 3rem 4rem;
-}
 
 .issue-list-page .section-title {
     margin-bottom: 1.5rem;
@@ -461,3 +450,62 @@ footer h1 {
     text-align: center;
     align-self: flex-start;
 }
+
+/* ==================================================== */
+/* --- Estilo para a Página de Guia de Configuração --- */
+/* ==================================================== */
+
+.guia-configuracao {
+    margin: 0rem 20rem;
+    margin-bottom: 3rem;
+    text-decoration: none;
+}
+
+
+.guia-configuracao .requisitos {
+    margin-bottom: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.guia-configuracao .requisitos ul {
+    padding: 0rem 2rem;
+}
+
+.guia-configuracao .requisitos:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.guia-configuracao .instalacao_configuracao {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.guia-configuracao .instalacao_configuracao:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.guia-configuracao code {
+    background-color: #eeeeee;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+}
+
+.guia-configuracao pre {
+    background-color: #eeeeee;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.guia-configuracao li {
+    margin: 1rem;
+    line-height: 1.6;
+} 
