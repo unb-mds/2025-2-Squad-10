@@ -16,11 +16,14 @@
 
     <div class="center">
       <nav>
-        <a href="/">Início</a>
-        <a href="/sprints/">Sprints</a>
-        <a href="/issues/">Issues</a>
-        <a href="/requisitos/">Guia de Configuração</a>
-        <a href="/arquitetura/">Arquitetura</a>
+        {{ $currentPage := . }}
+        {{ range .Site.Menus.main }}
+          {{/* Verifica se o item do menu é a página atual ou um ancestral dela */}}
+          {{ $active := or ($currentPage.IsMenuCurrent "main" .) ($currentPage.HasMenuCurrent "main" .) }}
+          <a href="{{ .URL }}" class="{{ if $active }}active{{ end }}">
+            {{ .Name }}
+          </a>
+        {{ end }}
       </nav>
     </div>
 
