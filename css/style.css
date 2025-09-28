@@ -482,23 +482,13 @@ footer h1 {
     padding: 0rem 2rem;
 }
 
-.guia-configuracao .requisitos:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
 .guia-configuracao .instalacao_configuracao {
     padding: 1rem;
     border: 1px solid #ddd;
     border-radius: 8px;
 }
 
-.guia-configuracao .instalacao_configuracao:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.guia-configuracao code {
+code {
     background-color: #eeeeee;
     padding: 2px 6px;
     border-radius: 8px;
@@ -506,7 +496,7 @@ footer h1 {
     font-size: 0.95rem;
 }
 
-.guia-configuracao pre {
+pre {
     background-color: #eeeeee;
     padding: 1rem;
     border-radius: 8px;
@@ -514,7 +504,7 @@ footer h1 {
     margin: 1rem 0;
 }
 
-.guia-configuracao li {
+li {
     margin: 1rem;
     line-height: 1.6;
 } 
@@ -523,3 +513,25 @@ footer h1 {
 /* --- Arquitetura --- */
 /* =================== */
 
+.arquitetura {
+    margin: 0rem 10rem;
+    margin-bottom: 3rem;
+    text-decoration: none;
+}
+
+.arquitetura .visao-geral {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.arquitetura .fluxo-dados {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.arquitetura .diagrama-arquitetura {
+    margin: 1rem 0;
+}
