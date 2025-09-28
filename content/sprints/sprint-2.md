@@ -8,9 +8,9 @@ draft: false
 
 
 ## Issues
-- [#12](/issues/issue-12/) Estudo de Node.js
-- [#11](/issues/issue-11/) API's e Uso geral
-- [#10](/issues/issue-10/) Requisitos Não Funcionais
-- [#9](/issues/issue-9/) Requisitos Funcionais
-- [#8](/issues/issue-8/) Estudo de React para o projeto
-- [#7](/issues/issue-7/) Banco de dados
+- [12 - Estudo de Node.js](/issues/issue-12/)
+- [11 - API's e Uso geral](/issues/issue-11/)
+- [10 - Requisitos Não Funcionais](/issues/issue-10/)
+- [9 - Requisitos Funcionais](/issues/issue-9/)
+- [8 - Estudo de React para o projeto](/issues/issue-8/)
+- [7 - Banco de dados](/issues/issue-7/)

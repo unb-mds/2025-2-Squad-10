@@ -33,6 +33,6 @@ for m in milestones:
         f.write(f"## Descrição\n{desc}\n\n")
         f.write("## Issues\n")
         for issue in issues:
-            f.write(f"- [#{issue['number']}](/issues/issue-{issue['number']}/) {issue['title']}\n")
+            f.write(f"- [{issue['number']} - {issue['title']}](/issues/issue-{issue['number']}/)\n")
 
 print(f"{len(milestones)} sprints salvas em {OUTPUT_DIR}")

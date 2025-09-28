@@ -8,13 +8,13 @@ draft: false
 
 
 ## Issues
-- [#22](/issues/issue-22/) Node.js (Objetos)
-- [#21](/issues/issue-21/) Node.js (array)
-- [#20](/issues/issue-20/) Levantamento Requisitos funcionais
-- [#19](/issues/issue-19/) API Querido Diario
-- [#18](/issues/issue-18/) Estudo de React mais Typescript
-- [#17](/issues/issue-17/) Estudo de Typescript
-- [#16](/issues/issue-16/) Figma
-- [#15](/issues/issue-15/) Documento de visao
-- [#14](/issues/issue-14/) Template do diagrama de Fishbone
-- [#13](/issues/issue-13/) Diagrama de Fishbone
+- [22 - Node.js (Objetos)](/issues/issue-22/)
+- [21 - Node.js (array)](/issues/issue-21/)
+- [20 - Levantamento Requisitos funcionais](/issues/issue-20/)
+- [19 - API Querido Diario](/issues/issue-19/)
+- [18 - Estudo de React mais Typescript](/issues/issue-18/)
+- [17 - Estudo de Typescript](/issues/issue-17/)
+- [16 - Figma](/issues/issue-16/)
+- [15 - Documento de visao](/issues/issue-15/)
+- [14 - Template do diagrama de Fishbone](/issues/issue-14/)
+- [13 - Diagrama de Fishbone](/issues/issue-13/)
