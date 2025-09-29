@@ -1,0 +1,52 @@
+
+.mapa-page-container {
+  width: 100%;
+  background-color: #f0f2f5;
+}
+
+
+.content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 90vh; 
+  padding: 2rem;
+  box-sizing: border-box;
+  transition: all 0.8s ease-in-out;
+}
+
+.map-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  background-color: white;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+  border-radius: 15px;
+  transition: flex 0.8s ease-in-out;
+  flex: 1 0 100%;
+}
+
+.panel-area {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: flex 0.8s ease-in-out;
+  flex: 0 0 0%;
+  overflow: hidden;
+  height: 100%;
+  overflow-y: auto; 
+}
+
+
+
+.content-wrapper.region-selected .map-area {
+  flex: 1 0 60%;
+}
+
+.content-wrapper.region-selected .panel-area {
+  flex: 1 0 40%;
+  padding-left: 2rem;
+}
