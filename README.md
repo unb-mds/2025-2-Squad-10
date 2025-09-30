@@ -143,7 +143,7 @@ A estrutura do repositório organiza o código-fonte, a documentação e os arte
 ## 👥 Equipe
 | [![Felype Carrijo](https://avatars.githubusercontent.com/u/168106790?v=4)](https://github.com/Flyxs) | [![Giovani Coelho](https://avatars.githubusercontent.com/u/176083022?v=4)](https://github.com/Gotc2607) | [![Artur Galdino](https://avatars.githubusercontent.com/u/187340217?v=4)](https://github.com/ArturFGaldino) | [![Luiz](https://avatars.githubusercontent.com/u/212640680?v=4)](https://github.com/Luizz97) | [![João Pedro](https://avatars.githubusercontent.com/u/178330046?v=4)](https://github.com/joaoPedro-201) | [![Gabriel Alexandroni](https://avatars.githubusercontent.com/u/170197026?v=4)](https://github.com/Alexandroni07) |
 |:-------------------------------------------------------------:|:-----------------------------------------------------------:|:-----------------------------------------------------------:|:-----------------------------------------------------------:|:-------------------------------------------------------------:|:-------------------------------------------------------------:|
-| [Felype Carrijo](https://github.com/Flyxs) | [Giovani Coelho](https://github.com/Gotc2607) | [Arthur Galdino](https://github.com/ArturFGaldino) | [Luiz](https://github.com/Luizz97) | [João Pedro](https://github.com/joaoPedro-201) | [Gabriel Alexandroni](https://github.com/Alexandroni07) |
+| [Felype Carrijo](https://github.com/Flyxs) | [Giovani Coelho](https://github.com/Gotc2607) | [Artur Galdino](https://github.com/ArturFGaldino) | [Luiz](https://github.com/Luizz97) | [João Pedro](https://github.com/joaoPedro-201) | [Gabriel Alexandroni](https://github.com/Alexandroni07) |
 
 ---
 
