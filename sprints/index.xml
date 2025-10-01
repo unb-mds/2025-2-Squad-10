@@ -1,4 +1,15 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Sprints on OncoMap</title><link>https://unb-mds.github.io/2025-2-OncoMap/sprints/</link><description>Recent content in Sprints on OncoMap</description><generator>Hugo</generator><language>pt-br</language><lastBuildDate>Wed, 24 Sep 2025 07:00:00 +0000</lastBuildDate><atom:link href="https://unb-mds.github.io/2025-2-OncoMap/sprints/index.xml" rel="self" type="application/rss+xml"/><item><title>Sprint_04</title><link>https://unb-mds.github.io/2025-2-OncoMap/sprints/sprint-5/</link><pubDate>Wed, 24 Sep 2025 07:00:00 +0000</pubDate><guid>https://unb-mds.github.io/2025-2-OncoMap/sprints/sprint-5/</guid><description>&lt;h2 id="descrição"&gt;Descrição&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Sprints on OncoMap</title><link>https://unb-mds.github.io/2025-2-OncoMap/sprints/</link><description>Recent content in Sprints on OncoMap</description><generator>Hugo</generator><language>pt-br</language><lastBuildDate>Mon, 29 Sep 2025 07:00:00 +0000</lastBuildDate><atom:link href="https://unb-mds.github.io/2025-2-OncoMap/sprints/index.xml" rel="self" type="application/rss+xml"/><item><title>Sprint 5</title><link>https://unb-mds.github.io/2025-2-OncoMap/sprints/sprint-6/</link><pubDate>Mon, 29 Sep 2025 07:00:00 +0000</pubDate><guid>https://unb-mds.github.io/2025-2-OncoMap/sprints/sprint-6/</guid><description>&lt;h2 id="descrição"&gt;Descrição&lt;/h2&gt;
+&lt;h2 id="issues"&gt;Issues&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-46/"&gt;46 - Início do codigo do projeto&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-45/"&gt;45 - docs: Revisão completa e atualização do README.md&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-44/"&gt;44 - Template de Pull request&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-42/"&gt;42 - Página inicial do projeto&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-41/"&gt;41 - GitHub Pages&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-40/"&gt;40 - Alimentação de DataBase e criação de endpoints&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-39/"&gt;39 - Criando Template da pull request&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-38/"&gt;38 - Software livre&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Sprint 4</title><link>https://unb-mds.github.io/2025-2-OncoMap/sprints/sprint-5/</link><pubDate>Wed, 24 Sep 2025 07:00:00 +0000</pubDate><guid>https://unb-mds.github.io/2025-2-OncoMap/sprints/sprint-5/</guid><description>&lt;h2 id="descrição"&gt;Descrição&lt;/h2&gt;
 &lt;h2 id="issues"&gt;Issues&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-37/"&gt;37 - DataBase Local e testes no Postman sobre API&lt;/a&gt;&lt;/li&gt;
@@ -15,7 +26,7 @@
 &lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-29/"&gt;29 - Organização das atas de reunião&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-28/"&gt;28 - Projeto de baixa fidelidade&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-27/"&gt;27 - Criação do ambiente para o frontend e backend&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-26/"&gt;26 - Organização das pastas do repositorio no girhub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-26/"&gt;26 - Organização das pastas do repositorio no github&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-25/"&gt;25 - Levantamento e Documentação dos Requisitos para a Release 1 (MVP)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-24/"&gt;24 - Node.js (Excessões)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://unb-mds.github.io/2025-2-OncoMap/issues/issue-23/"&gt;23 - Template ata de reunião&lt;/a&gt;&lt;/li&gt;
