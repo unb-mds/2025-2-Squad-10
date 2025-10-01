@@ -1,6 +1,6 @@
 ---
 title: "Criação do ambiente para o frontend e backend"
-date: 2025-09-26
+date: 2025-10-01
 milestone: "Sprint  3"
 type: "issue"
 draft: false

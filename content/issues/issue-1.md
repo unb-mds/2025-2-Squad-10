@@ -1,6 +1,6 @@
 ---
 title: "Git e GitHub"
-date: 2025-09-26
+date: 2025-10-01
 milestone: "Sprint 0"
 type: "issue"
 draft: false

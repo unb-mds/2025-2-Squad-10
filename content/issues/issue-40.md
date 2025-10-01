@@ -1,7 +1,7 @@
 ---
 title: "Alimentação de DataBase e criação de endpoints"
-date: 2025-09-26
-milestone: "Sprint_05"
+date: 2025-10-01
+milestone: "Sprint 5"
 type: "issue"
 draft: false
 ---
@@ -19,9 +19,9 @@ Desenvolvimento básico do backend / API e alimentação do DB.
 ---
 
 ### 📌 Critérios de Aceitação  
-- [ ] EndPoints básicos funcionais  
-- [ ] DB alimentado (ao menos alguns  
-- [ ] Fácil entendimento para o grupo  
+- [x] EndPoints básicos funcionais  
+- [x] DB alimentado (ao menos alguns  
+- [x] Fácil entendimento para o grupo  
 
 ---
 

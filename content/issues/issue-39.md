@@ -1,7 +1,7 @@
 ---
 title: "Criando Template da pull request"
-date: 2025-09-26
-milestone: "Sprint_05"
+date: 2025-10-01
+milestone: "Sprint 5"
 type: "issue"
 draft: false
 ---

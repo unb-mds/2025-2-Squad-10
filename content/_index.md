@@ -24,3 +24,24 @@ draft: false
     <p>Nosso propósito é oferecer uma base confiável de dados que possa ser utilizada por pesquisadores, jornalistas, gestores públicos e pela sociedade civil, fortalecendo o controle social, a tomada de decisão informada e a busca por um sistema de saúde mais justo e eficiente.</p>
   </div>
 </section>
+
+<section class="sprint-grid">
+
+  <a href="https://www.figma.com/design/td5oKsmfHCtT9CSPFzKU13/baixa-fidelidada?node-id=0-1&p=f&t=7CVI2N1DhdOeFvar-0" class="sprint-card" style="text-align: center; color: #F4F7F6; background-color: #00e59cf3; font-size: 1.5rem">
+    <div class="card-body">
+        <p>Protótipo de baixa fidelidade</p>
+    </div>
+  </a>
+
+  <a href="https://www.figma.com/design/XyUsffocEKRw7przVsbk0n/alta-fidelidade?node-id=0-1&p=f&t=hJCfCXEJV2H9W3WW-0" class="sprint-card" style="text-align: center; color: #F4F7F6; background-color: #00e59cf3; font-size: 1.5rem">
+    <div class="card-body">
+        <p>Protótipo de alta fidelidade</p>
+    </div>
+  </a>
+
+  <a href="https://www.figma.com/board/8Jsltq8BOL65CsMoRWFjik/Template-MDS--Copy-?node-id=0-1&p=f&t=RaWdiaNkmKOwNKvY-0" class="sprint-card" style="text-align: center; color: #F4F7F6; background-color: #00e59cf3; font-size: 1.5rem">
+    <div class="card-body">
+        <p>Story Map</p>
+    </div>
+  </a>
+</section>

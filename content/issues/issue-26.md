@@ -1,6 +1,6 @@
 ---
-title: "Organização das pastas do repositorio no girhub"
-date: 2025-09-26
+title: "Organização das pastas do repositorio no github"
+date: 2025-10-01
 milestone: "Sprint  3"
 type: "issue"
 draft: false

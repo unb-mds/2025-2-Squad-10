@@ -1,7 +1,7 @@
 ---
 title: "GitHub Pages"
-date: 2025-09-26
-milestone: "Sprint_05"
+date: 2025-10-01
+milestone: "Sprint 5"
 type: "issue"
 draft: false
 ---
@@ -25,12 +25,12 @@ O comportamento esperado é que a página esteja corretamente configurada, funci
 ---
 
 ## 📌 Critérios de Aceitação  
-- [ ] GitHub Pages ativado no repositório  
-- [ ] Página publicada e acessível via link  
-- [ ] Estrutura inicial (index.html ou README.md) visível corretamente  
-- [ ] Fácil entendimento para o grupo replicar em outros repositórios  
+- [x] GitHub Pages ativado no repositório  
+- [x] Página publicada e acessível via link  
+- [x] Estrutura inicial (index.html ou README.md) visível corretamente  
+- [x] Fácil entendimento para o grupo replicar em outros repositórios  
 
 ---
 
 ## 🔗 Link do ambiente / site  
-[Cole aqui o link gerado pelo GitHub Pages]  
+[Cole aqui o link gerado pelo GitHub Pages](https://unb-mds.github.io/2025-2-[OncoMap](https://unb-mds.github.io/2025-2-OncoMap/)/)

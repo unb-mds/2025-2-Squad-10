@@ -1,7 +1,7 @@
 ---
 title: "Página inicial do projeto"
-date: 2025-09-26
-milestone: "Sprint_05"
+date: 2025-10-01
+milestone: "Sprint 5"
 type: "issue"
 draft: false
 ---
@@ -19,9 +19,9 @@ Nessa issue iremos começar a codificar partes do forntend do nosso preojeto
 ---
 
 ### 📌 Critérios de Aceitação  
-- [ ] Terminar a pagina inicial do projeto   
-- [ ] Terminar e testar o painel de informações   
-- [ ] Iniciar o desenvolvimento do mapa  interativo  
+- [x] Terminar a pagina inicial do projeto   
+- [x] Terminar e testar o painel de informações   
+- [x] Iniciar o desenvolvimento do mapa  interativo  
 
 ---
 

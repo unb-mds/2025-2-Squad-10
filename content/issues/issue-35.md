@@ -1,7 +1,7 @@
 ---
 title: "Figma de alta resolução"
-date: 2025-09-26
-milestone: "Sprint_04"
+date: 2025-10-01
+milestone: "Sprint 4"
 type: "issue"
 draft: false
 ---
@@ -25,7 +25,7 @@ Comportamento Esperado: O objetivo é desenvolver um protótipo de baixa fidelid
 
 ### 📌 Critérios de Aceitação  
 - [x] Protótipo disponível: O mapa de alta fidelidade está disponível para visualização e teste.
-- [ ] Interação mapeada: O fluxo de clique/hover nos municípios está claramente definido no protótipo.
+- [x] Interação mapeada: O fluxo de clique/hover nos municípios está claramente definido no protótipo.
 - [x] Legibilidade visual: O esquema de cores para os valores de investimento é intuitivo e fácil de entender.
 - [x] Compreensão do grupo: A proposta de navegação e visualização é compreendida e aprovada pela equipe.
 

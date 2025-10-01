@@ -1,7 +1,7 @@
 ---
 title: "DataBase Local e testes no Postman sobre API"
-date: 2025-09-26
-milestone: "Sprint_04"
+date: 2025-10-01
+milestone: "Sprint 4"
 type: "issue"
 draft: false
 ---

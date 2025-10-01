@@ -10,6 +10,17 @@
     {{ .Content }}
   </article>
 
+    {{ with .Params.ata }}
+        {{ $ataPage := $.Site.GetPage (printf "atas/%s" .) }}
+        {{ if $ataPage }}
+            <div class="sprint-ata-link">
+                <a href="{{ $ataPage.Permalink }}" class="btn-ata">
+                    Acessar a Ata da Reunião
+                </a>
+            </div>
+        {{ end }}
+    {{ end }}
+
 </div>
 {{ end }}
 

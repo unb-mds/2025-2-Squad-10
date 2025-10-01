@@ -1,6 +1,7 @@
 ---
 title: "Sprint 0"
 date: 2025-08-24T07:00:00Z
+ata: "ata_sprint_0"
 draft: false
 ---
 

@@ -1,7 +1,7 @@
 ---
-title: "Ata Sprint_3"
-date: 2025-09-26
-sprint: "Sprint_3"
+title: "Ata da Sprint_3"
+date: 2025-10-01
+sprint: "ata_sprint_3"
 type: "ata"
 ---
 
