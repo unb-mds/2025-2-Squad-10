@@ -25,7 +25,7 @@ html, body {
 
 main {
   flex: 1; /* ocupa todo o espaço disponível */
-  padding-top: 61px;
+  padding-top: 55px;
   border-radius: 0px;
   background: #F4F7F6;
 }
