@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
-import L, { Layer, LeafletMouseEvent } from 'leaflet';
+import L, { Layer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { regioesGeoJson } from '../../data/regioes';
-import { siglaParaNome } from '../../data/mapeamentos';
+import {siglaParaCodigoUF } from '../../data/mapeamentos';
+
 
 // --- Tipagem e Constantes ---
 interface GeoProperties {
@@ -70,7 +71,7 @@ const ChangeView: React.FC<{
 };
 
 // --- Componente Principal ---
-const MapaInterativoLeaflet: React.FC<MapProps> = ({
+const MapaInterativo3D: React.FC<MapProps> = ({
   selectedRegion, setSelectedRegion,
   selectedState, setSelectedState
 }) => {
@@ -85,10 +86,12 @@ const MapaInterativoLeaflet: React.FC<MapProps> = ({
   // Efeito para carregar dados dos municípios
   useEffect(() => {
     if (selectedState) {
-      const nomeEstado = siglaParaNome[selectedState];
-      if (!nomeEstado) return;
-      
-      const nomeDoArquivo = `MU_${nomeEstado}`;
+      const codigoUF = siglaParaCodigoUF[selectedState];
+      if (!codigoUF) {
+          console.error(`Código UF para a sigla ${selectedState} não encontrado.`);
+        return;
+      }
+      const nomeDoArquivo = `geojs-${codigoUF}-mun`;
       import(`../../data/municipios/${nomeDoArquivo}.json`)
         .then(module => {
           setMunicipiosData(module.default || module);
@@ -166,12 +169,12 @@ const MapaInterativoLeaflet: React.FC<MapProps> = ({
       <MapContainer 
         center={INITIAL_VIEW.center} 
         zoom={INITIAL_VIEW.zoom} 
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%', backgroundColor: '#ffffff' }}
       >
-        <TileLayer
+        {/* <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-        />
+        /> */}
 
         {/* Camada de Estados (visível apenas na visão Brasil/Região) */}
         {!selectedState && (
@@ -203,4 +206,4 @@ const MapaInterativoLeaflet: React.FC<MapProps> = ({
   );
 };
 
-export default MapaInterativoLeaflet;
+export default MapaInterativo3D;

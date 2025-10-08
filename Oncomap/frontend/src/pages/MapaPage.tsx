@@ -7,6 +7,8 @@ import '../style/MapaPage.css';
 
 const MapaPege = () => {
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+    const [estadoSelecionado, setEstadoSelecionado] = useState<string | null>(null);
+
 
     return(
         <div className="mapa-page-container">
@@ -14,7 +16,9 @@ const MapaPege = () => {
                 <div className="map-area">
                     <MapaInterativo3D 
                         selectedRegion={selectedRegion}
-                        setSelectedRegion={setSelectedRegion} 
+                        setSelectedRegion={setSelectedRegion}
+                        selectedState={estadoSelecionado}
+                        setSelectedState={setEstadoSelecionado}
                     />
                 </div>
                 
