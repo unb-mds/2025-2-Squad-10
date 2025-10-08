@@ -1,181 +1,206 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import DeckGL from '@deck.gl/react';
-import type { Feature, Geometry } from 'geojson';
-import type { MapViewState, PickingInfo, ViewStateChangeParameters } from '@deck.gl/core';
-import { GeoJsonLayer } from '@deck.gl/layers';
-import StaticMap from 'react-map-gl';
-import type { StyleSpecification } from 'mapbox-gl';
-import { regioesGeoJson } from '../../data/regioes';
+import React, { useState, useEffect, useMemo } from 'react';
+import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
+import L, { Layer, LeafletMouseEvent } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-interface EstadoProperties {
+import { regioesGeoJson } from '../../data/regioes';
+import { siglaParaNome } from '../../data/mapeamentos';
+
+// --- Tipagem e Constantes ---
+interface GeoProperties {
   codarea: string;
   regiao?: string;
   centroide?: [number, number];
-  [key: string]: any;
+  sigla?: string;
+  [key:string]: any;
 }
-type EstadoFeature = Feature<Geometry, EstadoProperties>;
+type GeoFeature = Feature<Geometry, GeoProperties>;
 
-
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
-
-const BLANK_MAP_STYLE: StyleSpecification = {
-  version: 8,
-  name: 'Blank',
-  sources: {},
-  layers: [
-    {
-      id: 'background',
-      type: 'background',
-      paint: {
-        'background-color': '#ffffff',
-      },
-    },
-  ],
+const INITIAL_VIEW = {
+  center: [-15, -54] as L.LatLngTuple,
+  zoom: 4.2,
 };
 
-const INITIAL_VIEW_STATE: MapViewState = {
-  longitude: -54,
-  latitude: -15,
-  zoom: 3.2,
-  minZoom: 3.2,
-  maxZoom: 10,
-  pitch: 30, 
-  bearing: 0,
+const REGION_VIEWS = {
+  norte: { center: [-5, -60] as L.LatLngTuple, zoom: 4.8 },
+  nordeste: { center: [-8, -42] as L.LatLngTuple, zoom: 5.4 },
+  centroOeste: { center: [-15, -54] as L.LatLngTuple, zoom: 5.4 },
+  sudeste: { center: [-20.5, -45.5] as L.LatLngTuple, zoom: 5.4 },
+  sul: { center: [-28.5, -52] as L.LatLngTuple, zoom: 5.8 },
 };
 
-const REGION_VIEW_STATES = {
-  norte: { 
-    longitude: -60,
-    latitude: -5, 
-    zoom: 3.8,      
-    pitch: 30,       
-    bearing: 0 
-  },
-  nordeste: { 
-    longitude: -42, 
-    latitude: -8, 
-    zoom: 4.4,      
-    pitch: 30,
-    bearing: 0 
-  },
-  centroOeste: { 
-    longitude: -54, 
-    latitude: -15, 
-    zoom: 4.4,      
-    pitch: 30,
-    bearing: 0 
-  },
-  sudeste: { 
-    longitude: -45.5, 
-    latitude: -20.5,
-    zoom: 4.4,      
-    pitch: 30,
-    bearing: 0 
-  },
-  sul: { 
-    longitude: -52, 
-    latitude: -28.5, 
-    zoom: 4.8,     
-    pitch: 30,
-    bearing: 0 
-  },
-};
-
+// --- Props do Componente ---
 interface MapProps {
   selectedRegion: string | null;
   setSelectedRegion: (region: string | null) => void;
+  selectedState: string | null;
+  setSelectedState: (state: string | null) => void;
 }
 
-
-const MapaInterativo3D: React.FC<MapProps> = ({ selectedRegion, setSelectedRegion }) => {
-  const [viewState, setViewState] = useState<MapViewState>(INITIAL_VIEW_STATE);
-  const [hoveredState, setHoveredState] = useState<EstadoFeature | null>(null);
+// --- Componente para Animação do Mapa (Agora mais completo) ---
+const ChangeView: React.FC<{ 
+  region: string | null; 
+  state: string | null;
+  allStates: GeoFeature[];
+}> = ({ region, state, allStates }) => {
+  const map = useMap();
 
   useEffect(() => {
-    if (selectedRegion) {
-      const newViewState = REGION_VIEW_STATES[selectedRegion as keyof typeof REGION_VIEW_STATES];
-      setViewState(vs => ({ ...vs, ...newViewState, bearing: 0, transitionDuration: 800 }));
-    } else {
-      setViewState(vs => ({ ...vs, ...INITIAL_VIEW_STATE, transitionDuration: 800 }));
+    // Nível 3: Zoom no Estado
+    if (state) {
+      const stateFeature = allStates.find(f => f.properties.sigla === state);
+      if (stateFeature?.properties.centroide) {
+        const [lon, lat] = stateFeature.properties.centroide;
+        map.flyTo([lat, lon], 7, { duration: 0.8 });
+      }
+    } 
+    // Nível 2: Zoom na Região
+    else if (region) {
+      const { center, zoom } = REGION_VIEWS[region as keyof typeof REGION_VIEWS];
+      map.flyTo(center, zoom, { duration: 0.8 });
+    } 
+    // Nível 1: Visão do Brasil
+    else {
+      map.flyTo(INITIAL_VIEW.center, INITIAL_VIEW.zoom, { duration: 0.8 });
     }
-  }, [selectedRegion]);
+  }, [region, state, map, allStates]);
 
-  const allStatesFeatures = useMemo<EstadoFeature[]>(
-    () => Object.values(regioesGeoJson).flatMap(region => region.features as EstadoFeature[]),
+  return null;
+};
+
+// --- Componente Principal ---
+const MapaInterativoLeaflet: React.FC<MapProps> = ({
+  selectedRegion, setSelectedRegion,
+  selectedState, setSelectedState
+}) => {
+  const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
+  const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
+
+  const allStatesFeatures = useMemo<GeoFeature[]>(
+    () => Object.values(regioesGeoJson).flatMap(r => r.features as GeoFeature[]),
     []
   );
 
-  const layers = [
-    new GeoJsonLayer({
-      id: 'geojson-layer',
-      data: selectedRegion
-        ? regioesGeoJson[selectedRegion as keyof typeof regioesGeoJson].features
-        : allStatesFeatures,
-      pickable: true,
-      stroked: true,
-      filled: true,
-      extruded: true,
-      wireframe: true,
-      getElevation: 20000,
-      lineWidthMinPixels: 1,
-      getFillColor: f => {
-        if (!hoveredState) return [13, 75, 85, 255];
-        if (selectedRegion) {
-          return hoveredState.properties.codarea === f.properties.codarea
-            ? [255, 140, 0, 255] : [13, 75, 85, 255];
-        } else {
-          return hoveredState.properties.regiao === f.properties.regiao
-            ? [255, 140, 0, 255] : [13, 75, 85, 255];
+  // Efeito para carregar dados dos municípios
+  useEffect(() => {
+    if (selectedState) {
+      const nomeEstado = siglaParaNome[selectedState];
+      if (!nomeEstado) return;
+      
+      const nomeDoArquivo = `MU_${nomeEstado}`;
+      import(`../../data/municipios/${nomeDoArquivo}.json`)
+        .then(module => {
+          setMunicipiosData(module.default || module);
+        })
+        .catch(err => {
+          console.error(`Falha ao carregar municípios para ${selectedState}`, err);
+          setMunicipiosData(null);
+        });
+    } else {
+      // Limpa os dados dos municípios ao voltar para a visão de região/Brasil
+      setMunicipiosData(null);
+    }
+  }, [selectedState]);
+
+  // Lógica de navegação de volta
+  const handleBackClick = () => {
+    if (selectedState) {
+      setSelectedState(null);
+    } else if (selectedRegion) {
+      setSelectedRegion(null);
+    }
+  };
+
+  // --- Funções de Estilo e Eventos para ESTADOS ---
+  const statesStyle = (feature?: GeoFeature) => {
+    if (!feature) return {};
+    let fillColor = '#0D4B55'; // Cor Padrão
+    const highlightColor = '#FF8C00'; // Cor de Destaque
+
+    if (hoveredObject) {
+      if (selectedRegion) { // Visão de Região
+        if (hoveredObject.properties.codarea === feature.properties.codarea) {
+          fillColor = highlightColor;
         }
-      },
-      getLineColor: [255, 255, 255, 255],
-      getLineWidth: 1,
-      updateTriggers: {
-        getFillColor: [hoveredState, selectedRegion],
-      },
-      onHover: (info: PickingInfo<EstadoFeature>) => setHoveredState(info.object || null),
-      onClick: (info: PickingInfo<EstadoFeature>) => {
+      } else { // Visão do Brasil
+        if (hoveredObject.properties.regiao === feature.properties.regiao) {
+          fillColor = highlightColor;
+        }
+      }
+    }
+    
+    return { fillColor, weight: 1, color: 'white', fillOpacity: 1 };
+  };
+
+  const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
+    layer.on({
+      mouseover: () => setHoveredObject(feature),
+      mouseout: () => setHoveredObject(null),
+      click: () => {
         if (!selectedRegion) {
-          const region = info.object?.properties.regiao;
-          if (region) {
-            setSelectedRegion(region);
-          }
+          setSelectedRegion(feature.properties.regiao || null);
+        } else {
+          setSelectedState(feature.properties.sigla || null);
         }
       },
-    }),
-  ];
+    });
+  };
+
+  const dataForStatesLayer = selectedRegion 
+    ? regioesGeoJson[selectedRegion as keyof typeof regioesGeoJson]
+    : { type: 'FeatureCollection', features: allStatesFeatures };
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      {selectedRegion && (
-        <button
-          onClick={() => setSelectedRegion(null)}
-          style={{
-            position: 'absolute', top: '20px', left: '20px', zIndex: 1,
-            padding: '10px 15px', cursor: 'pointer', borderRadius: '8px',
-            border: '1px solid #ccc', backgroundColor: 'white', fontWeight: 'bold',
-          }}
-        >
-          Ver Brasil
+      {(selectedRegion || selectedState) && (
+        <button onClick={handleBackClick} style={{
+          position: 'absolute', top: '20px', left: '20px', zIndex: 1000,
+          padding: '10px 15px', cursor: 'pointer', borderRadius: '8px',
+          border: '1px solid #ccc', backgroundColor: 'white', fontWeight: 'bold',
+        }}>
+          {selectedState ? 'Ver Região' : 'Ver Brasil'}
         </button>
       )}
 
-      <DeckGL
-        initialViewState={INITIAL_VIEW_STATE}
-        controller={true}
-        layers={layers}
-        viewState={viewState}
-        onViewStateChange={(params: ViewStateChangeParameters) => {
-          setViewState(params.viewState as MapViewState);
-        }}
+      <MapContainer 
+        center={INITIAL_VIEW.center} 
+        zoom={INITIAL_VIEW.zoom} 
+        style={{ height: '100%', width: '100%' }}
       >
-        <StaticMap
-          mapboxAccessToken={MAPBOX_TOKEN}
-          mapStyle={BLANK_MAP_STYLE}
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
         />
-      </DeckGL>
+
+        {/* Camada de Estados (visível apenas na visão Brasil/Região) */}
+        {!selectedState && (
+          <GeoJSON
+            key={selectedRegion || 'brasil'}
+            data={dataForStatesLayer as any}
+            style={statesStyle}
+            onEachFeature={onEachStateFeature}
+          />
+        )}
+
+        {/* Camada de Municípios (visível apenas na visão de Estado) */}
+        {municipiosData && (
+          <GeoJSON
+            key={selectedState}
+            data={municipiosData as any}
+            style={{
+              weight: 0.5,
+              color: '#666',
+              fillColor: '#0D4B55',
+              fillOpacity: 0.6
+            }}
+          />
+        )}
+        
+        <ChangeView region={selectedRegion} state={selectedState} allStates={allStatesFeatures} />
+      </MapContainer>
     </div>
   );
 };
 
-export default MapaInterativo3D;
+export default MapaInterativoLeaflet;
