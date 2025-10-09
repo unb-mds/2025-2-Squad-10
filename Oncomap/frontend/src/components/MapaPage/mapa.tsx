@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
-import L, { Layer } from 'leaflet';
+import L, { type Layer, type LeafletMouseEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { regioesGeoJson } from '../../data/regioes';
-import {siglaParaCodigoUF } from '../../data/mapeamentos';
-
 
 // --- Tipagem e Constantes ---
 interface GeoProperties {
-  codarea: string;
+  codarea?: string;
   regiao?: string;
   centroide?: [number, number];
   sigla?: string;
+  id?: string;
+  name?: string;
   [key:string]: any;
 }
 type GeoFeature = Feature<Geometry, GeoProperties>;
@@ -24,11 +24,11 @@ const INITIAL_VIEW = {
 };
 
 const REGION_VIEWS = {
-  norte: { center: [-5, -60] as L.LatLngTuple, zoom: 4.8 },
-  nordeste: { center: [-8, -42] as L.LatLngTuple, zoom: 5.4 },
-  centroOeste: { center: [-15, -54] as L.LatLngTuple, zoom: 5.4 },
-  sudeste: { center: [-20.5, -45.5] as L.LatLngTuple, zoom: 5.4 },
-  sul: { center: [-28.5, -52] as L.LatLngTuple, zoom: 5.8 },
+  norte: { center: [-5.5, -57] as L.LatLngTuple, zoom: 4.3 },
+  nordeste: { center: [-9, -42] as L.LatLngTuple, zoom: 4.7 },
+  centroOeste: { center: [-15, -54] as L.LatLngTuple, zoom: 4.6 },
+  sudeste: { center: [-20.2, -45.5] as L.LatLngTuple, zoom: 5 },
+  sul: { center: [-28, -52] as L.LatLngTuple, zoom: 5 },
 };
 
 // --- Props do Componente ---
@@ -39,100 +39,65 @@ interface MapProps {
   setSelectedState: (state: string | null) => void;
 }
 
-// --- Componente para Animação do Mapa (Agora mais completo) ---
-const ChangeView: React.FC<{ 
-  region: string | null; 
-  state: string | null;
-  allStates: GeoFeature[];
-}> = ({ region, state, allStates }) => {
+// --- Componente para Animação do Mapa ---
+const ChangeView: React.FC<{ region: string | null }> = ({ region }) => {
   const map = useMap();
 
   useEffect(() => {
-    // Nível 3: Zoom no Estado
-    if (state) {
-      const stateFeature = allStates.find(f => f.properties.sigla === state);
-      if (stateFeature?.properties.centroide) {
-        const [lon, lat] = stateFeature.properties.centroide;
-        map.flyTo([lat, lon], 7, { duration: 0.8 });
-      }
-    } 
-    // Nível 2: Zoom na Região
-    else if (region) {
+    if (region) {
       const { center, zoom } = REGION_VIEWS[region as keyof typeof REGION_VIEWS];
       map.flyTo(center, zoom, { duration: 0.8 });
-    } 
-    // Nível 1: Visão do Brasil
-    else {
+    } else {
       map.flyTo(INITIAL_VIEW.center, INITIAL_VIEW.zoom, { duration: 0.8 });
     }
-  }, [region, state, map, allStates]);
+  }, [region, map]);
 
   return null;
 };
 
 // --- Componente Principal ---
-const MapaInterativo3D: React.FC<MapProps> = ({
+const MapaInterativo: React.FC<MapProps> = ({
   selectedRegion, setSelectedRegion,
   selectedState, setSelectedState
 }) => {
+  const [map, setMap] = useState<L.Map | null>(null);
   const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
   const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
+  const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
 
   const allStatesFeatures = useMemo<GeoFeature[]>(
     () => Object.values(regioesGeoJson).flatMap(r => r.features as GeoFeature[]),
     []
   );
 
-  // Efeito para carregar dados dos municípios
   useEffect(() => {
     if (selectedState) {
-      const codigoUF = siglaParaCodigoUF[selectedState];
-      if (!codigoUF) {
-          console.error(`Código UF para a sigla ${selectedState} não encontrado.`);
-        return;
-      }
+      const codigoUF = selectedState;
       const nomeDoArquivo = `geojs-${codigoUF}-mun`;
+      
       import(`../../data/municipios/${nomeDoArquivo}.json`)
-        .then(module => {
-          setMunicipiosData(module.default || module);
-        })
+        .then(module => setMunicipiosData(module.default || module))
         .catch(err => {
-          console.error(`Falha ao carregar municípios para ${selectedState}`, err);
+          console.error(`Falha ao carregar o arquivo de municípios: geojs-${codigoUF}-mun.json`, err);
           setMunicipiosData(null);
         });
     } else {
-      // Limpa os dados dos municípios ao voltar para a visão de região/Brasil
       setMunicipiosData(null);
     }
   }, [selectedState]);
-
-  // Lógica de navegação de volta
-  const handleBackClick = () => {
-    if (selectedState) {
-      setSelectedState(null);
-    } else if (selectedRegion) {
-      setSelectedRegion(null);
-    }
-  };
-
-  // --- Funções de Estilo e Eventos para ESTADOS ---
+  
+  // Funções para a camada de ESTADOS
   const statesStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
-    let fillColor = '#0D4B55'; // Cor Padrão
-    const highlightColor = '#FF8C00'; // Cor de Destaque
-
+    let fillColor = '#0D4B55';
+    const highlightColor = '#FF8C00';
     if (hoveredObject) {
-      if (selectedRegion) { // Visão de Região
-        if (hoveredObject.properties.codarea === feature.properties.codarea) {
-          fillColor = highlightColor;
-        }
-      } else { // Visão do Brasil
-        if (hoveredObject.properties.regiao === feature.properties.regiao) {
-          fillColor = highlightColor;
-        }
+      if (selectedRegion) {
+        if (hoveredObject.properties.codarea === feature.properties.codarea) fillColor = highlightColor;
+      } else {
+        if (hoveredObject.properties.regiao === feature.properties.regiao) fillColor = highlightColor;
       }
     }
-    
     return { fillColor, weight: 1, color: 'white', fillOpacity: 1 };
   };
 
@@ -140,12 +105,42 @@ const MapaInterativo3D: React.FC<MapProps> = ({
     layer.on({
       mouseover: () => setHoveredObject(feature),
       mouseout: () => setHoveredObject(null),
-      click: () => {
+      click: (event: LeafletMouseEvent) => {
         if (!selectedRegion) {
           setSelectedRegion(feature.properties.regiao || null);
         } else {
-          setSelectedState(feature.properties.sigla || null);
+          if (map) {
+            map.flyToBounds(event.target.getBounds(), { padding: [50, 50], duration: 0.8 });
+          }
+          setSelectedState(feature.properties.codarea || null);
         }
+      },
+    });
+  };
+
+  // Funções para a camada de MUNICÍPIOS
+  const municipiosStyle = (feature?: GeoFeature) => {
+    if (!feature) return {};
+    const isHovered = hoveredMunicipio?.properties.id === feature.properties.id;
+    return {
+      weight: 1,
+      color: 'white',
+      fillColor: isHovered ? '#FF8C00' : '#0D4B55',
+      fillOpacity: 1,
+    };
+  };
+
+  const onEachMunicipioFeature = (feature: GeoFeature, layer: Layer) => {
+    const municipioName = feature.properties.name || 'Nome não disponível';
+    layer.bindTooltip(municipioName, { sticky: true });
+    layer.on({
+      mouseover: (event: LeafletMouseEvent) => {
+        setHoveredMunicipio(feature);
+        event.target.setStyle({ weight: 2, color: '#FF8C00' });
+      },
+      mouseout: (event: LeafletMouseEvent) => {
+        setHoveredMunicipio(null);
+        event.target.setStyle({ weight: 1, color: 'white' });
       },
     });
   };
@@ -156,27 +151,14 @@ const MapaInterativo3D: React.FC<MapProps> = ({
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      {(selectedRegion || selectedState) && (
-        <button onClick={handleBackClick} style={{
-          position: 'absolute', top: '20px', left: '20px', zIndex: 1000,
-          padding: '10px 15px', cursor: 'pointer', borderRadius: '8px',
-          border: '1px solid #ccc', backgroundColor: 'white', fontWeight: 'bold',
-        }}>
-          {selectedState ? 'Ver Região' : 'Ver Brasil'}
-        </button>
-      )}
-
       <MapContainer 
         center={INITIAL_VIEW.center} 
         zoom={INITIAL_VIEW.zoom} 
-        style={{ height: '100%', width: '100%', backgroundColor: '#ffffff' }}
+        style={{ height: '100%', width: '100%', backgroundColor: '#fff' }}
+        ref={setMap}
+        zoomControl={false}
+        attributionControl={false}
       >
-        {/* <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-        /> */}
-
-        {/* Camada de Estados (visível apenas na visão Brasil/Região) */}
         {!selectedState && (
           <GeoJSON
             key={selectedRegion || 'brasil'}
@@ -186,24 +168,19 @@ const MapaInterativo3D: React.FC<MapProps> = ({
           />
         )}
 
-        {/* Camada de Municípios (visível apenas na visão de Estado) */}
         {municipiosData && (
           <GeoJSON
             key={selectedState}
             data={municipiosData as any}
-            style={{
-              weight: 0.5,
-              color: '#666',
-              fillColor: '#0D4B55',
-              fillOpacity: 0.6
-            }}
+            style={municipiosStyle}
+            onEachFeature={onEachMunicipioFeature}
           />
         )}
         
-        <ChangeView region={selectedRegion} state={selectedState} allStates={allStatesFeatures} />
+        <ChangeView region={selectedRegion} />
       </MapContainer>
     </div>
   );
 };
 
-export default MapaInterativo3D;
+export default MapaInterativo;

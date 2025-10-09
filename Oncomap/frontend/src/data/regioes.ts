@@ -1,5 +1,3 @@
-
-
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 
 
