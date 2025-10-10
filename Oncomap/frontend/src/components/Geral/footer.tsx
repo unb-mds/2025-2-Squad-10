@@ -35,13 +35,13 @@ const Footer = () => {
 
         <div className="footer-column">
           <h4>Onco Mapa</h4>
-          <p>Mapa Interativo de Incidência e Mortalidade por Câncer.</p>
+          <p>Transparência nos investimentos em saúde oncológica</p>
         </div>
 
       </div>
 
       <div className="footer-bottom">
-        <p>© ONCOMAP 2024. All rights reserved.</p>
+        <p>© 2025 OncoMap - Todos os direitos reservados.</p>
         <p>Contact us: +55 (XX) XXXX-XXXX</p>
       </div>
     </footer>
