@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { MapContainer, GeoJSON } from 'react-leaflet';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import L, { type Layer, type LeafletMouseEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import '../../style/MapaPage.css';
 
 import { regioesGeoJson } from '../../data/regioes';
 
@@ -23,14 +24,6 @@ const INITIAL_VIEW = {
   zoom: 4.2,
 };
 
-const REGION_VIEWS = {
-  norte: { center: [-5.5, -57] as L.LatLngTuple, zoom: 4.3 },
-  nordeste: { center: [-9, -42] as L.LatLngTuple, zoom: 4.7 },
-  centroOeste: { center: [-15, -54] as L.LatLngTuple, zoom: 4.6 },
-  sudeste: { center: [-20.2, -45.5] as L.LatLngTuple, zoom: 5 },
-  sul: { center: [-28, -52] as L.LatLngTuple, zoom: 5 },
-};
-
 // --- Props do Componente ---
 interface MapProps {
   selectedRegion: string | null;
@@ -39,21 +32,13 @@ interface MapProps {
   setSelectedState: (state: string | null) => void;
 }
 
-// --- Componente para Animação do Mapa ---
-const ChangeView: React.FC<{ region: string | null }> = ({ region }) => {
-  const map = useMap();
-
-  useEffect(() => {
-    if (region) {
-      const { center, zoom } = REGION_VIEWS[region as keyof typeof REGION_VIEWS];
-      map.flyTo(center, zoom, { duration: 0.8 });
-    } else {
-      map.flyTo(INITIAL_VIEW.center, INITIAL_VIEW.zoom, { duration: 0.8 });
-    }
-  }, [region, map]);
-
-  return null;
-};
+const ZoomOutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <div className="zoom-out-button-container">
+    <button onClick={onClick} className="zoom-out-button">
+      Voltar Zoom
+    </button>
+  </div>
+);
 
 // --- Componente Principal ---
 const MapaInterativo: React.FC<MapProps> = ({
@@ -64,11 +49,37 @@ const MapaInterativo: React.FC<MapProps> = ({
   const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
   const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
+  
+  const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
 
   const allStatesFeatures = useMemo<GeoFeature[]>(
     () => Object.values(regioesGeoJson).flatMap(r => r.features as GeoFeature[]),
     []
   );
+
+  useEffect(() => {
+    if (map) {
+      // Atraso para garantir que a transição do painel CSS seja concluída
+      // antes de redimensionar o mapa, para que ele se centralize corretamente.
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 500);
+    }
+  }, [map, selectedRegion, selectedState]);
+  
+  useEffect(() => {
+    if (!map) return;
+
+    if (selectedRegion && !selectedState && geoJsonLayerRef.current) {
+      const bounds = geoJsonLayerRef.current.getBounds();
+      if (bounds.isValid()) {
+        map.flyToBounds(bounds, { padding: [50, 50], duration: 1.0 });
+      }
+    } 
+    else if (!selectedRegion && !selectedState) {
+      map.flyTo(INITIAL_VIEW.center, INITIAL_VIEW.zoom, { duration: 1.0 });
+    }
+  }, [selectedRegion, selectedState, map]);
 
   useEffect(() => {
     if (selectedState) {
@@ -77,16 +88,25 @@ const MapaInterativo: React.FC<MapProps> = ({
       
       import(`../../data/municipios/${nomeDoArquivo}.json`)
         .then(module => setMunicipiosData(module.default || module))
-        .catch(err => {
-          console.error(`Falha ao carregar o arquivo de municípios: geojs-${codigoUF}-mun.json`, err);
+        .catch(_err => {
+          console.error(`Falha ao carregar o arquivo de municípios: geojs-${codigoUF}-mun.json`);
           setMunicipiosData(null);
         });
     } else {
       setMunicipiosData(null);
     }
   }, [selectedState]);
+
+  const handleResetView = () => {
+    if (map) {
+      if (selectedState) {
+        setSelectedState(null);
+      } else if (selectedRegion) {
+        setSelectedRegion(null);
+      }
+    }
+  };
   
-  // Funções para a camada de ESTADOS
   const statesStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
     let fillColor = '#0D4B55';
@@ -108,17 +128,14 @@ const MapaInterativo: React.FC<MapProps> = ({
       click: (event: LeafletMouseEvent) => {
         if (!selectedRegion) {
           setSelectedRegion(feature.properties.regiao || null);
-        } else {
-          if (map) {
-            map.flyToBounds(event.target.getBounds(), { padding: [50, 50], duration: 0.8 });
-          }
+        } else if (map) {
+          map.flyToBounds(event.target.getBounds(), { padding: [50, 50], duration: 0.8 });
           setSelectedState(feature.properties.codarea || null);
         }
       },
     });
   };
 
-  // Funções para a camada de MUNICÍPIOS
   const municipiosStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
     const isHovered = hoveredMunicipio?.properties.id === feature.properties.id;
@@ -161,6 +178,7 @@ const MapaInterativo: React.FC<MapProps> = ({
       >
         {!selectedState && (
           <GeoJSON
+            ref={geoJsonLayerRef}
             key={selectedRegion || 'brasil'}
             data={dataForStatesLayer as any}
             style={statesStyle}
@@ -177,7 +195,7 @@ const MapaInterativo: React.FC<MapProps> = ({
           />
         )}
         
-        <ChangeView region={selectedRegion} />
+        {(selectedRegion || selectedState) && <ZoomOutButton onClick={handleResetView} />}
       </MapContainer>
     </div>
   );
