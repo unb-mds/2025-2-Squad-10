@@ -6,38 +6,38 @@ const teamMembers = [
   { 
     name: 'Felype Carrijo', 
     role: 'Desenvolvedor', 
-    img: 'https://placehold.co/300x200/2a2a2a/FFF?text=FC', 
-    githubUrl: 'https://github.com' 
+    img: 'https://avatars.githubusercontent.com/u/168106790?v=4', 
+    githubUrl: 'https://github.com/Flyxs' 
   },
   { 
     name: 'Artur Galdino', 
     role: 'Desenvolvedor', 
-    img: 'https://i.imgur.com/eBOUX2i.png', 
-    githubUrl: 'https://github.com' 
+    img: 'https://avatars.githubusercontent.com/u/187340217?v=4', 
+    githubUrl: 'https://github.com/ArturFGaldino' 
   },
   { 
     name: 'João Pedro', 
     role: 'Desenvolvedor', 
-    img: 'https://placehold.co/300x200/e0e0e0/000?text=JP', 
-    githubUrl: 'https://github.com' 
+    img: 'https://avatars.githubusercontent.com/u/178330046?v=4', 
+    githubUrl: 'https://github.com/joaoPedro-201' 
   },
   { 
     name: 'Gabriel Alexandroni', 
     role: 'Desenvolvedor', 
-    img: 'https://placehold.co/300x200/c5e8c7/000?text=GA', 
-    githubUrl: 'https://github.com' 
+    img: 'https://avatars.githubusercontent.com/u/170197026?v=4', 
+    githubUrl: 'https://github.com/Alexandroni07' 
   },
   { 
     name: 'Luis Henrique', 
     role: 'Desenvolvedor', 
-    img: 'https://placehold.co/300x200/2a2a2a/FFF?text=FC',
-    githubUrl: 'https://github.com' 
+    img: 'https://avatars.githubusercontent.com/u/212640680?v=4',
+    githubUrl: 'https://github.com/Luizz97' 
   },
   { 
     name: 'Giovani Coelho', 
     role: 'Desenvolvedor', 
-    img: 'https://placehold.co/300x200/2a2a2a/FFF?text=FC',
-    githubUrl: 'https://github.com' 
+    img: 'https://avatars.githubusercontent.com/u/176083022?v=4',
+    githubUrl: 'https://github.com/Gotc2607' 
   },
 ];
 
