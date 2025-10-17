@@ -2,7 +2,7 @@
   "norte": {
     "regiao": "Norte",
     "investimentos": [
-      { "nome": "Medicamentos", "valor": "R$ 15.200.000,00" },
+      { "nome": "Medicamentos", "valor": "R$ 1300" },
       { "nome": "Equipamentos", "valor": "R$ 8.750.000,00" }
     ],
     "municipios": ["Manaus", "Belém", "Porto Velho"]

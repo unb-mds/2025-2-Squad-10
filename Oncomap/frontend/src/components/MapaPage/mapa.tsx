@@ -1,3 +1,5 @@
+// frontend/src/components/MapaPage/MapaInterativo.tsx
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, GeoJSON } from 'react-leaflet';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
@@ -5,9 +7,10 @@ import L, { type Layer, type LeafletMouseEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../../style/MapaPage.css';
 
+// Esta importação de dados geográficos continua aqui, está correto.
 import { regioesGeoJson } from '../../data/regioes';
 
-// --- Tipagem e Constantes ---
+// --- Tipagem ---
 interface GeoProperties {
   codarea?: string;
   regiao?: string;
@@ -18,6 +21,19 @@ interface GeoProperties {
   [key:string]: any;
 }
 type GeoFeature = Feature<Geometry, GeoProperties>;
+
+interface Investimento {
+  nome: string;
+  valor: string;
+}
+interface DadosRegiao {
+  regiao: string;
+  investimentos: Investimento[];
+  municipios: string[];
+}
+interface DadosInvestimentos {
+  [key: string]: DadosRegiao;
+}
 
 const INITIAL_VIEW = {
   center: [-15, -54] as L.LatLngTuple,
@@ -30,6 +46,8 @@ interface MapProps {
   setSelectedRegion: (region: string | null) => void;
   selectedState: string | null;
   setSelectedState: (state: string | null) => void;
+  // NOVO: Prop para passar os dados de investimento para o componente pai
+  setDadosInvestimentos: (dados: DadosInvestimentos | null) => void;
 }
 
 const ZoomOutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
@@ -43,12 +61,14 @@ const ZoomOutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
 // --- Componente Principal ---
 const MapaInterativo: React.FC<MapProps> = ({
   selectedRegion, setSelectedRegion,
-  selectedState, setSelectedState
+  selectedState, setSelectedState,
+  setDadosInvestimentos // NOVO
 }) => {
   const [map, setMap] = useState<L.Map | null>(null);
   const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
   const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
+  const [loadingInvestimentos, setLoadingInvestimentos] = useState(true);
   
   const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
 
@@ -56,27 +76,42 @@ const MapaInterativo: React.FC<MapProps> = ({
     () => Object.values(regioesGeoJson).flatMap(r => r.features as GeoFeature[]),
     []
   );
+  
+  // NOVO: useEffect para buscar os dados de investimento do backend
+  useEffect(() => {
+    async function fetchInvestimentos() {
+        try {
+            const response = await fetch('http://localhost:3001/api/map/investimentos');
+            if (!response.ok) {
+                throw new Error('Falha na resposta da API de investimentos.');
+            }
+            const data: DadosInvestimentos = await response.json();
+            setDadosInvestimentos(data); // Atualiza o estado do componente pai
+        } catch (error) {
+            console.error("Erro ao buscar dados de investimentos do backend:", error);
+            setDadosInvestimentos(null); // Informa o pai que a busca falhou
+        } finally {
+            setLoadingInvestimentos(false);
+        }
+    }
+
+    fetchInvestimentos();
+  }, [setDadosInvestimentos]);
 
   useEffect(() => {
     if (map) {
-      // Atraso para garantir que a transição do painel CSS seja concluída
-      // antes de redimensionar o mapa, para que ele se centralize corretamente.
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 500);
+      setTimeout(() => { map.invalidateSize(); }, 500);
     }
   }, [map, selectedRegion, selectedState]);
   
   useEffect(() => {
     if (!map) return;
-
     if (selectedRegion && !selectedState && geoJsonLayerRef.current) {
       const bounds = geoJsonLayerRef.current.getBounds();
       if (bounds.isValid()) {
         map.flyToBounds(bounds, { padding: [50, 50], duration: 1.0 });
       }
-    } 
-    else if (!selectedRegion && !selectedState) {
+    } else if (!selectedRegion && !selectedState) {
       map.flyTo(INITIAL_VIEW.center, INITIAL_VIEW.zoom, { duration: 1.0 });
     }
   }, [selectedRegion, selectedState, map]);
@@ -165,6 +200,10 @@ const MapaInterativo: React.FC<MapProps> = ({
   const dataForStatesLayer = selectedRegion 
     ? regioesGeoJson[selectedRegion as keyof typeof regioesGeoJson]
     : { type: 'FeatureCollection', features: allStatesFeatures };
+
+  if (loadingInvestimentos) {
+    return <div className="mapa-loading">Carregando dados...</div>;
+  }
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
