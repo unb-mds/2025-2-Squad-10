@@ -1,58 +1,83 @@
-// frontend/src/pages/MapaPege.tsx
-
+// src/pages/MapaPage.tsx
 import React, { useState } from 'react';
 import MapaInterativo3D from "../components/MapaPage/mapa";
 import Footer from "../components/Geral/footer";
-import TabelaInfo from '../components/MapaPage/TabelaInfo';
+// Importamos os 'types' que TabelaInfo exporta
+import TabelaInfo, { type DadosRegiao, type DadosInvestimentos } from '../components/MapaPage/TabelaInfo';
 import '../style/MapaPage.css';
 
-// REMOVIDA A IMPORTAÇÃO LOCAL DE DADOS
-// import { dadosDasRegioes } from '../data/dados_regioes';
-
-// NOVO: Tipagem para os dados de investimento que virão do backend
-interface Investimento {
-  nome: string;
-  valor: string;
-}
-interface DadosRegiao {
-  regiao: string;
-  investimentos: Investimento[];
-  municipios: string[];
-}
-interface DadosInvestimentos {
-  [key: string]: DadosRegiao;
-}
-
-const MapaPege = () => {
+const MapaPege: React.FC = () => {
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-    const [estadoSelecionado, setEstadoSelecionado] = useState<string | null>(null);
     
-    // NOVO: Estado para armazenar os dados de investimento que o componente do mapa vai buscar
+    // ATUALIZADO: Renomeamos o estado para 'estadoCodarea' para ficar claro
+    const [estadoCodarea, setEstadoCodarea] = useState<string | null>(null);
+    
     const [dadosInvestimentos, setDadosInvestimentos] = useState<DadosInvestimentos | null>(null);
+    const [loadingDados, setLoadingDados] = useState<boolean>(true);
+    const [fetchError, setFetchError] = useState<string | null>(null);
 
-    return(
+    const getRegiaoData = (): DadosRegiao | null => {
+        if (!selectedRegion || !dadosInvestimentos) return null;
+        const chaveNormalizada = selectedRegion.trim().toLowerCase();
+        const keys = Object.keys(dadosInvestimentos);
+        const matchKey = keys.find(k => k.toLowerCase() === chaveNormalizada);
+        return matchKey ? dadosInvestimentos[matchKey] : null;
+    };
+
+    const dadosDaRegiao = getRegiaoData();
+
+    return (
         <div className="mapa-page-container">
             <div className={selectedRegion ? "content-wrapper region-selected" : "content-wrapper"}>
                 <div className="map-area">
+                
+                    {/* ATUALIZADO: Passamos as props com os nomes corretos */}
                     <MapaInterativo3D 
                         selectedRegion={selectedRegion}
                         setSelectedRegion={setSelectedRegion}
-                        selectedState={estadoSelecionado}
-                        setSelectedState={setEstadoSelecionado}
-                        // NOVO: Passando a função para que o mapa possa atualizar os dados de investimento
-                        setDadosInvestimentos={setDadosInvestimentos}
+                        selectedState={estadoCodarea}      // Passa o código do estado
+                        setSelectedState={setEstadoCodarea}  // Passa a função de setar o código
+                        setDadosInvestimentos={(dados: DadosInvestimentos | null) => { // Tipado 'dados'
+                          setDadosInvestimentos(dados); 
+                          setLoadingDados(false);
+                          setFetchError(null);
+                        }}
                     />
                 </div>
-                
-                {/* LÓGICA ATUALIZADA: Usa o estado 'dadosInvestimentos' em vez da importação local */}
-                {selectedRegion && dadosInvestimentos && dadosInvestimentos[selectedRegion] && (
-                    <div className="panel-area">
-                        <TabelaInfo 
-                            dadosDaRegiao={dadosInvestimentos[selectedRegion]} 
-                            onClose={() => setSelectedRegion(null)} 
-                        />
+
+                <div className="panel-area">
+                  {loadingDados && (
+                    <div style={{ padding: 20, color: '#333' }}>
+                      <strong>Carregando dados de investimentos...</strong>
                     </div>
-                )}
+                  )}
+                  {!loadingDados && !dadosInvestimentos && (
+                    <div style={{ padding: 20, color: '#b00' }}>
+                      <strong>Não foi possível obter os dados de investimentos.</strong>
+                      <div style={{ marginTop: 8 }}>
+                        {fetchError ? <span>{fetchError}</span> : <span>Verifique o backend ou o arquivo local.</span>}
+                      </div>
+                    </div>
+                  )}
+
+                  {dadosDaRegiao && (
+                    <div style={{ width: '100%' }}>
+                    
+                      {/* ATUALIZADO: Passamos a prop 'estadoCodarea' */}
+                      <TabelaInfo
+                        dadosDaRegiao={dadosDaRegiao}
+                        
+                        // Passamos o código do estado que veio do mapa
+                        estadoCodarea={estadoCodarea}
+                        
+                        onClose={() => {
+                          setEstadoCodarea(null); // Limpa o código do estado
+                          setSelectedRegion(null); 
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
             </div>
             <Footer />
         </div>

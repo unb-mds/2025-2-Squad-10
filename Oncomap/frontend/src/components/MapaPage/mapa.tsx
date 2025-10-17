@@ -1,16 +1,16 @@
-// frontend/src/components/MapaPage/MapaInterativo.tsx
-
+// src/components/MapaPage/mapa.tsx
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, GeoJSON } from 'react-leaflet';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import L, { type Layer, type LeafletMouseEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../../style/MapaPage.css';
-
-// Esta importação de dados geográficos continua aqui, está correto.
 import { regioesGeoJson } from '../../data/regioes';
+import localInvestimentos from '../../data/investimentos_fallback.json';
 
-// --- Tipagem ---
+// Importamos nossos tipos centralizados (do TabelaInfo.tsx)
+import { type DadosInvestimentos } from './TabelaInfo';
+
 interface GeoProperties {
   codarea?: string;
   regiao?: string;
@@ -22,31 +22,18 @@ interface GeoProperties {
 }
 type GeoFeature = Feature<Geometry, GeoProperties>;
 
-interface Investimento {
-  nome: string;
-  valor: string;
-}
-interface DadosRegiao {
-  regiao: string;
-  investimentos: Investimento[];
-  municipios: string[];
-}
-interface DadosInvestimentos {
-  [key: string]: DadosRegiao;
-}
-
 const INITIAL_VIEW = {
   center: [-15, -54] as L.LatLngTuple,
   zoom: 4.2,
 };
 
-// --- Props do Componente ---
+// --- INTERFACE (ATUALIZADA) ---
 interface MapProps {
   selectedRegion: string | null;
   setSelectedRegion: (region: string | null) => void;
   selectedState: string | null;
   setSelectedState: (state: string | null) => void;
-  // NOVO: Prop para passar os dados de investimento para o componente pai
+  // 1. CORRIGIDO: Adicionada a prop que faltava
   setDadosInvestimentos: (dados: DadosInvestimentos | null) => void;
 }
 
@@ -58,52 +45,50 @@ const ZoomOutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   </div>
 );
 
-// --- Componente Principal ---
 const MapaInterativo: React.FC<MapProps> = ({
   selectedRegion, setSelectedRegion,
   selectedState, setSelectedState,
-  setDadosInvestimentos // NOVO
+  setDadosInvestimentos // 2. CORRIGIDO: Recebida a prop
 }) => {
   const [map, setMap] = useState<L.Map | null>(null);
   const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
   const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
   const [loadingInvestimentos, setLoadingInvestimentos] = useState(true);
-  
   const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
 
   const allStatesFeatures = useMemo<GeoFeature[]>(
     () => Object.values(regioesGeoJson).flatMap(r => r.features as GeoFeature[]),
     []
   );
-  
-  // NOVO: useEffect para buscar os dados de investimento do backend
+
   useEffect(() => {
     async function fetchInvestimentos() {
         try {
-            const response = await fetch('http://localhost:3001/api/map/investimentos');
-            if (!response.ok) {
-                throw new Error('Falha na resposta da API de investimentos.');
-            }
-            const data: DadosInvestimentos = await response.json();
-            setDadosInvestimentos(data); // Atualiza o estado do componente pai
+            const response = await fetch('http://localhost:3001/api/map/investimentos'); 
+            if (!response.ok) throw new Error(`Resposta não-ok: ${response.status}`);
+            const data: DadosInvestimentos = await response.json(); 
+            console.info('Investimentos (backend):', data);
+            setDadosInvestimentos(data);
         } catch (error) {
-            console.error("Erro ao buscar dados de investimentos do backend:", error);
-            setDadosInvestimentos(null); // Informa o pai que a busca falhou
+            console.warn("Erro ao buscar dados do backend, usando fallback local:", error);
+            
+            // 3. CORRIGIDO: O cast agora funciona pois o JSON tem 'codarea'
+            setDadosInvestimentos(localInvestimentos as DadosInvestimentos); 
         } finally {
             setLoadingInvestimentos(false);
         }
     }
 
     fetchInvestimentos();
-  }, [setDadosInvestimentos]);
+  }, [setDadosInvestimentos]); // 4. CORRIGIDO: Adicionado como dependência
 
   useEffect(() => {
     if (map) {
       setTimeout(() => { map.invalidateSize(); }, 500);
     }
   }, [map, selectedRegion, selectedState]);
-  
+
   useEffect(() => {
     if (!map) return;
     if (selectedRegion && !selectedState && geoJsonLayerRef.current) {
@@ -118,7 +103,14 @@ const MapaInterativo: React.FC<MapProps> = ({
 
   useEffect(() => {
     if (selectedState) {
-      const codigoUF = selectedState;
+      const codigoUF = selectedState; // 'selectedState' é o 'codarea'
+      
+      // Se for DF, não tente carregar municípios
+      if (codigoUF === '53') {
+        setMunicipiosData(null);
+        return;
+      }
+      
       const nomeDoArquivo = `geojs-${codigoUF}-mun`;
       
       import(`../../data/municipios/${nomeDoArquivo}.json`)
@@ -130,7 +122,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     } else {
       setMunicipiosData(null);
     }
-  }, [selectedState]);
+  }, [selectedState]); // A lógica original estava correta
 
   const handleResetView = () => {
     if (map) {
@@ -157,6 +149,10 @@ const MapaInterativo: React.FC<MapProps> = ({
   };
 
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
+    // 5. CORRIGIDO: Adicionado tooltip com o nome
+    const stateName = feature.properties.name || 'Estado';
+    layer.bindTooltip(stateName, { sticky: true });
+
     layer.on({
       mouseover: () => setHoveredObject(feature),
       mouseout: () => setHoveredObject(null),
@@ -165,6 +161,7 @@ const MapaInterativo: React.FC<MapProps> = ({
           setSelectedRegion(feature.properties.regiao || null);
         } else if (map) {
           map.flyToBounds(event.target.getBounds(), { padding: [50, 50], duration: 0.8 });
+          // O envio do 'codarea' está correto
           setSelectedState(feature.properties.codarea || null);
         }
       },
@@ -198,7 +195,7 @@ const MapaInterativo: React.FC<MapProps> = ({
   };
 
   const dataForStatesLayer = selectedRegion 
-    ? regioesGeoJson[selectedRegion as keyof typeof regioesGeoJson]
+    ? (regioesGeoJson[selectedRegion as keyof typeof regioesGeoJson] || { type: 'FeatureCollection', features: allStatesFeatures })
     : { type: 'FeatureCollection', features: allStatesFeatures };
 
   if (loadingInvestimentos) {
@@ -215,15 +212,14 @@ const MapaInterativo: React.FC<MapProps> = ({
         zoomControl={false}
         attributionControl={false}
       >
-        {!selectedState && (
-          <GeoJSON
-            ref={geoJsonLayerRef}
-            key={selectedRegion || 'brasil'}
-            data={dataForStatesLayer as any}
-            style={statesStyle}
-            onEachFeature={onEachStateFeature}
-          />
-        )}
+        {/* 6. CORRIGIDO: Lógica de renderização para não sumir com o mapa */}
+        <GeoJSON
+          ref={geoJsonLayerRef}
+          key={selectedRegion || 'brasil'}
+          data={dataForStatesLayer as any}
+          style={statesStyle}
+          onEachFeature={onEachStateFeature}
+        />
 
         {municipiosData && (
           <GeoJSON
