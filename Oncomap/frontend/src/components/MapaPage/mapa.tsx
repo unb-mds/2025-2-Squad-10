@@ -33,7 +33,7 @@ interface MapProps {
   setSelectedRegion: (region: string | null) => void;
   selectedState: string | null;
   setSelectedState: (state: string | null) => void;
-  // 1. CORRIGIDO: Adicionada a prop que faltava
+  // 1. CORRIGIDO: Adicionada a prop que faltava (corrigindo ts 2322)
   setDadosInvestimentos: (dados: DadosInvestimentos | null) => void;
 }
 
@@ -73,7 +73,7 @@ const MapaInterativo: React.FC<MapProps> = ({
         } catch (error) {
             console.warn("Erro ao buscar dados do backend, usando fallback local:", error);
             
-            // 3. CORRIGIDO: O cast agora funciona pois o JSON tem 'codarea'
+            // O cast agora funciona pois o JSON tem 'codarea'
             setDadosInvestimentos(localInvestimentos as DadosInvestimentos); 
         } finally {
             setLoadingInvestimentos(false);
@@ -81,7 +81,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     }
 
     fetchInvestimentos();
-  }, [setDadosInvestimentos]); // 4. CORRIGIDO: Adicionado como dependência
+  }, [setDadosInvestimentos]); // 3. CORRIGIDO: Adicionado como dependência
 
   useEffect(() => {
     if (map) {
@@ -105,7 +105,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     if (selectedState) {
       const codigoUF = selectedState; // 'selectedState' é o 'codarea'
       
-      // Se for DF, não tente carregar municípios
+      // Se for DF ("53"), não tente carregar municípios
       if (codigoUF === '53') {
         setMunicipiosData(null);
         return;
@@ -122,7 +122,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     } else {
       setMunicipiosData(null);
     }
-  }, [selectedState]); // A lógica original estava correta
+  }, [selectedState]); 
 
   const handleResetView = () => {
     if (map) {
@@ -149,7 +149,7 @@ const MapaInterativo: React.FC<MapProps> = ({
   };
 
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
-    // 5. CORRIGIDO: Adicionado tooltip com o nome
+    // Adicionado tooltip com o nome
     const stateName = feature.properties.name || 'Estado';
     layer.bindTooltip(stateName, { sticky: true });
 
@@ -212,7 +212,7 @@ const MapaInterativo: React.FC<MapProps> = ({
         zoomControl={false}
         attributionControl={false}
       >
-        {/* 6. CORRIGIDO: Lógica de renderização para não sumir com o mapa */}
+        {/* CORRIGIDO: Lógica de renderização para não sumir com o mapa */}
         <GeoJSON
           ref={geoJsonLayerRef}
           key={selectedRegion || 'brasil'}

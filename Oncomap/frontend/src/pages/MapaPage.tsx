@@ -9,7 +9,7 @@ import '../style/MapaPage.css';
 const MapaPege: React.FC = () => {
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
     
-    // ATUALIZADO: Renomeamos o estado para 'estadoCodarea' para ficar claro
+    // ATUALIZADO: Renomeado para 'estadoCodarea' (correto)
     const [estadoCodarea, setEstadoCodarea] = useState<string | null>(null);
     
     const [dadosInvestimentos, setDadosInvestimentos] = useState<DadosInvestimentos | null>(null);
@@ -31,13 +31,17 @@ const MapaPege: React.FC = () => {
             <div className={selectedRegion ? "content-wrapper region-selected" : "content-wrapper"}>
                 <div className="map-area">
                 
-                    {/* ATUALIZADO: Passamos as props com os nomes corretos */}
+                    {/* Passamos as props com os nomes corretos */}
                     <MapaInterativo3D 
                         selectedRegion={selectedRegion}
                         setSelectedRegion={setSelectedRegion}
                         selectedState={estadoCodarea}      // Passa o código do estado
                         setSelectedState={setEstadoCodarea}  // Passa a função de setar o código
-                        setDadosInvestimentos={(dados: DadosInvestimentos | null) => { // Tipado 'dados'
+                        
+                        // --- CORRIGIDO AQUI ---
+                        // 1. Corrigido o erro ts 7006 tipando 'dados'
+                        // 2. Corrigido o erro ts 2345 garantindo que o tipo é o importado
+                        setDadosInvestimentos={(dados: DadosInvestimentos | null) => { 
                           setDadosInvestimentos(dados); 
                           setLoadingDados(false);
                           setFetchError(null);
@@ -63,7 +67,6 @@ const MapaPege: React.FC = () => {
                   {dadosDaRegiao && (
                     <div style={{ width: '100%' }}>
                     
-                      {/* ATUALIZADO: Passamos a prop 'estadoCodarea' */}
                       <TabelaInfo
                         dadosDaRegiao={dadosDaRegiao}
                         
