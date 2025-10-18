@@ -1,20 +1,33 @@
 // src/pages/MapaPage.tsx
+
+// --- ALTERAÇÃO 1: Removido 'useEffect' da importação ---
 import React, { useState } from 'react';
-import MapaInterativo3D from "../components/MapaPage/mapa";
+import MapaInterativo from "../components/MapaPage/mapa";
 import Footer from "../components/Geral/footer";
-// Importamos os 'types' que TabelaInfo exporta
 import TabelaInfo, { type DadosRegiao, type DadosInvestimentos } from '../components/MapaPage/TabelaInfo';
 import '../style/MapaPage.css';
+import type { FeatureCollection } from 'geojson';
 
 const MapaPege: React.FC = () => {
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-    
-    // ATUALIZADO: Renomeado para 'estadoCodarea' (correto)
     const [estadoCodarea, setEstadoCodarea] = useState<string | null>(null);
-    
     const [dadosInvestimentos, setDadosInvestimentos] = useState<DadosInvestimentos | null>(null);
     const [loadingDados, setLoadingDados] = useState<boolean>(true);
     const [fetchError, setFetchError] = useState<string | null>(null);
+    
+    const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
+    const [searchedMunicipioName, setSearchedMunicipioName] = useState<string | null>(null);
+
+    const handleSetSelectedRegion = (region: string | null) => {
+        setSelectedRegion(region);
+        setEstadoCodarea(null);
+        setSearchedMunicipioName(null);
+    };
+    
+    const handleSetEstadoCodarea = (codarea: string | null) => {
+        setEstadoCodarea(codarea);
+        setSearchedMunicipioName(null);
+    }
 
     const getRegiaoData = (): DadosRegiao | null => {
         if (!selectedRegion || !dadosInvestimentos) return null;
@@ -30,53 +43,52 @@ const MapaPege: React.FC = () => {
         <div className="mapa-page-container">
             <div className={selectedRegion ? "content-wrapper region-selected" : "content-wrapper"}>
                 <div className="map-area">
-                
-                    {/* Passamos as props com os nomes corretos */}
-                    <MapaInterativo3D 
+                    <MapaInterativo
                         selectedRegion={selectedRegion}
-                        setSelectedRegion={setSelectedRegion}
-                        selectedState={estadoCodarea}      // Passa o código do estado
-                        setSelectedState={setEstadoCodarea}  // Passa a função de setar o código
-                        
-                        // --- CORRIGIDO AQUI ---
-                        // 1. Corrigido o erro ts 7006 tipando 'dados'
-                        // 2. Corrigido o erro ts 2345 garantindo que o tipo é o importado
-                        setDadosInvestimentos={(dados: DadosInvestimentos | null) => { 
-                          setDadosInvestimentos(dados); 
-                          setLoadingDados(false);
-                          setFetchError(null);
+                        setSelectedRegion={handleSetSelectedRegion}
+                        selectedState={estadoCodarea}
+                        setSelectedState={handleSetEstadoCodarea}
+                        setDadosInvestimentos={(dados: DadosInvestimentos | null) => {
+                          setDadosInvestimentos(dados);
+                          setLoadingDados(false); // Esta linha já estava correta
+                          // Adicionamos a lógica de erro aqui também
+                          if (!dados) {
+                            setFetchError("Falha ao carregar os dados de investimentos.");
+                          }
                         }}
+                        setMunicipiosData={setMunicipiosData}
+                        searchedMunicipioName={searchedMunicipioName}
                     />
                 </div>
 
                 <div className="panel-area">
+                  {/* --- ALTERAÇÃO 2: Usando as variáveis de estado para feedback --- */}
                   {loadingDados && (
-                    <div style={{ padding: 20, color: '#333' }}>
-                      <strong>Carregando dados de investimentos...</strong>
-                    </div>
-                  )}
-                  {!loadingDados && !dadosInvestimentos && (
-                    <div style={{ padding: 20, color: '#b00' }}>
-                      <strong>Não foi possível obter os dados de investimentos.</strong>
-                      <div style={{ marginTop: 8 }}>
-                        {fetchError ? <span>{fetchError}</span> : <span>Verifique o backend ou o arquivo local.</span>}
-                      </div>
+                    <div className="panel-message">
+                      <strong>Carregando dados...</strong>
                     </div>
                   )}
 
-                  {dadosDaRegiao && (
+                  {fetchError && !loadingDados && (
+                    <div className="panel-message error">
+                      <strong>Erro ao carregar dados.</strong>
+                      <span>{fetchError}</span>
+                    </div>
+                  )}
+
+                  {/* A TabelaInfo só aparece se os dados existirem */}
+                  {!loadingDados && !fetchError && dadosDaRegiao && (
                     <div style={{ width: '100%' }}>
-                    
                       <TabelaInfo
                         dadosDaRegiao={dadosDaRegiao}
-                        
-                        // Passamos o código do estado que veio do mapa
                         estadoCodarea={estadoCodarea}
-                        
                         onClose={() => {
-                          setEstadoCodarea(null); // Limpa o código do estado
-                          setSelectedRegion(null); 
+                          setEstadoCodarea(null);
+                          setSelectedRegion(null);
+                          setSearchedMunicipioName(null);
                         }}
+                        municipiosDoEstadoGeoJSON={municipiosData}
+                        setSearchedMunicipioName={setSearchedMunicipioName}
                       />
                     </div>
                   )}
