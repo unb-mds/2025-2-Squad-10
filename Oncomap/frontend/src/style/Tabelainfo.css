@@ -70,36 +70,23 @@
   border-top: 1px solid #eee;
 }
 
-.municipio-search-section h4 {
+.search-input-group {
+  display: flex;
+  gap: 8px;
   margin-bottom: 10px;
-  color: #333;
 }
 
-.municipio-search-results {
-  list-style-type: none;
-  padding: 0;
-  margin-top: 10px;
-  max-height: 150px; /* Evita que a lista fique muito grande */
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.municipio-search-results li {
-  padding: 8px 12px;
+.btn-pesquisar {
+  background-color: #ffb800;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  border-bottom: 1px solid #eee;
+  font-weight: bold;
+  color: #333;
+  transition: 0.2s;
 }
 
-.municipio-search-results li:last-child {
-  border-bottom: none;
-}
-
-.municipio-search-results li:hover {
-  background-color: #f0f0f0;
-}
-
-.municipio-search-results li.no-results {
-  cursor: default;
-  color: #888;
+.btn-pesquisar:hover {
+  background-color: #ffd45e;
 }

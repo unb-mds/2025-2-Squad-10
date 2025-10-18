@@ -135,25 +135,39 @@ const TabelaInfo = ({
 
           <div className="municipio-search-section">
             <h4>Pesquisar Município no Mapa</h4>
-            <input
-              type="text"
-              placeholder="Digite o nome de um município..."
-              className="search-bar"
-              value={termoBuscaMunicipio}
-              onChange={e => setTermoBuscaMunicipio(e.target.value)}
-            />
+
+            <div className="search-input-group">
+              <input
+                type="text"
+                placeholder="Digite o nome de um município..."
+                className="search-bar"
+                value={termoBuscaMunicipio}
+                onChange={e => setTermoBuscaMunicipio(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSearchedMunicipioName(termoBuscaMunicipio);
+                  }
+                }}
+              />
+              <button
+                className="btn-pesquisar"
+                onClick={() => setSearchedMunicipioName(termoBuscaMunicipio)}
+              >
+                Pesquisar
+              </button>
+            </div>
+
             <ul className="municipio-search-results">
               {municipiosGeoFiltrados.map((municipio, index) => (
                 <li
                   key={index}
-                  onMouseOver={() => setSearchedMunicipioName(municipio.properties?.name)}
-                  onMouseOut={() => setSearchedMunicipioName(null)}
+                  onClick={() => setSearchedMunicipioName(municipio.properties?.name)}
                 >
                   {municipio.properties?.name}
                 </li>
               ))}
               {termoBuscaMunicipio.length > 1 && municipiosGeoFiltrados.length === 0 && (
-                 <li className="no-results">Nenhum município encontrado.</li>
+                <li className="no-results">Nenhum município encontrado.</li>
               )}
             </ul>
           </div>

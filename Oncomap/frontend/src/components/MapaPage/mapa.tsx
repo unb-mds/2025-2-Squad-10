@@ -1,8 +1,5 @@
-// src/components/MapaPage/mapa.tsx
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, GeoJSON } from 'react-leaflet';
-// --- CORREÇÃO: Removido 'LeafletMouseEvent' que não estava sendo usado ---
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import L, { type Layer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -11,7 +8,6 @@ import { regioesGeoJson } from '../../data/regioes';
 import localInvestimentos from '../../data/investimentos_fallback.json';
 import { type DadosInvestimentos } from './TabelaInfo';
 
-// ... (interfaces GeoProperties e GeoFeature sem alterações) ...
 interface GeoProperties {
   codarea?: string;
   regiao?: string;
@@ -19,27 +15,24 @@ interface GeoProperties {
   sigla?: string;
   id?: string;
   name?: string;
-  [key:string]: any;
+  [key: string]: any;
 }
 type GeoFeature = Feature<Geometry, GeoProperties>;
-
 
 const INITIAL_VIEW = {
   center: [-15, -54] as L.LatLngTuple,
   zoom: 4.2,
 };
 
-// ... (interface MapProps sem alterações, mas as props serão usadas agora) ...
 interface MapProps {
   selectedRegion: string | null;
   setSelectedRegion: (region: string | null) => void;
   selectedState: string | null;
   setSelectedState: (state: string | null) => void;
   setDadosInvestimentos: (dados: DadosInvestimentos | null) => void;
-  setMunicipiosData: (data: FeatureCollection | null) => void; // Prop que estava faltando
-  searchedMunicipioName: string | null; // Prop que estava faltando
+  setMunicipiosData: (data: FeatureCollection | null) => void;
+  searchedMunicipioName: string | null;
 }
-
 
 const ZoomOutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <div className="zoom-out-button-container">
@@ -50,57 +43,62 @@ const ZoomOutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
 );
 
 const MapaInterativo: React.FC<MapProps> = ({
-  selectedRegion, setSelectedRegion,
-  selectedState, setSelectedState,
-  setDadosInvestimentos
+  selectedRegion,
+  setSelectedRegion,
+  selectedState,
+  setSelectedState,
+  setDadosInvestimentos,
+  searchedMunicipioName,
 }) => {
   const [map, setMap] = useState<L.Map | null>(null);
   const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
   const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
   const [loadingInvestimentos, setLoadingInvestimentos] = useState(true);
-  const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
+
+  const geoJsonLayerRef = useRef<L.GeoJSON | null>(null); // ref para estados
+  const municipiosLayerRef = useRef<L.GeoJSON | null>(null); // ref para municípios
 
   const allStatesFeatures = useMemo<GeoFeature[]>(
-    () => Object.values(regioesGeoJson).flatMap(r => r.features as GeoFeature[]),
+    () => Object.values(regioesGeoJson).flatMap((r) => r.features as GeoFeature[]),
     []
   );
 
+  // Carregar investimentos
   useEffect(() => {
     async function fetchInvestimentos() {
-        try {
-            const response = await fetch('http://localhost:3001/api/map/investimentos');
-            if (!response.ok) throw new Error(`Resposta não-ok: ${response.status}`);
-            const data: DadosInvestimentos = await response.json();
-            setDadosInvestimentos(data);
-        } catch (error) {
-            console.warn("Erro ao buscar dados do backend, usando fallback local:", error);
-            setDadosInvestimentos(localInvestimentos as DadosInvestimentos);
-        } finally {
-            setLoadingInvestimentos(false);
-        }
+      try {
+        const response = await fetch('http://localhost:3001/api/map/investimentos');
+        if (!response.ok) throw new Error(`Resposta não-ok: ${response.status}`);
+        const data: DadosInvestimentos = await response.json();
+        setDadosInvestimentos(data);
+      } catch (error) {
+        console.warn('Erro ao buscar dados do backend, usando fallback local:', error);
+        setDadosInvestimentos(localInvestimentos as DadosInvestimentos);
+      } finally {
+        setLoadingInvestimentos(false);
+      }
     }
     fetchInvestimentos();
   }, [setDadosInvestimentos]);
 
+  // Corrigir tamanho do mapa ao mudar de estado/região
   useEffect(() => {
-    if (map) {
-      setTimeout(() => { map.invalidateSize(); }, 500);
-    }
+    if (map) setTimeout(() => map.invalidateSize(), 500);
   }, [map, selectedRegion, selectedState]);
 
+  // Foco na região ou estado selecionado
   useEffect(() => {
     if (!map) return;
     if (selectedRegion && !selectedState && geoJsonLayerRef.current) {
       const bounds = geoJsonLayerRef.current.getBounds();
-      if (bounds.isValid()) {
-        map.flyToBounds(bounds, { padding: [50, 50], duration: 1.0 });
-      }
+      if (bounds.isValid()) map.flyToBounds(bounds, { padding: [50, 50], duration: 1.0 });
     } else if (!selectedRegion && !selectedState) {
       map.flyTo(INITIAL_VIEW.center, INITIAL_VIEW.zoom, { duration: 1.0 });
     }
   }, [selectedRegion, selectedState, map]);
 
+  // Carregar municípios do estado selecionado
   useEffect(() => {
     if (selectedState) {
       const codigoUF = selectedState;
@@ -110,8 +108,8 @@ const MapaInterativo: React.FC<MapProps> = ({
       }
       const nomeDoArquivo = `geojs-${codigoUF}-mun`;
       import(`../../data/municipios/${nomeDoArquivo}.json`)
-        .then(module => setMunicipiosData(module.default || module))
-        .catch(_err => {
+        .then((module) => setMunicipiosData(module.default || module))
+        .catch((_err) => {
           console.error(`Falha ao carregar o arquivo de municípios: geojs-${codigoUF}-mun.json`);
           setMunicipiosData(null);
         });
@@ -120,13 +118,11 @@ const MapaInterativo: React.FC<MapProps> = ({
     }
   }, [selectedState]);
 
+  // Função de resetar o zoom
   const handleResetView = () => {
     if (map) {
-      if (selectedState) {
-        setSelectedState(null);
-      } else if (selectedRegion) {
-        setSelectedRegion(null);
-      }
+      if (selectedState) setSelectedState(null);
+      else if (selectedRegion) setSelectedRegion(null);
     }
   };
 
@@ -141,9 +137,11 @@ const MapaInterativo: React.FC<MapProps> = ({
 
     if (hoveredObject) {
       if (selectedRegion) {
-        if (hoveredObject.properties.codarea === feature.properties.codarea) fillColor = highlightColor;
+        if (hoveredObject.properties.codarea === feature.properties.codarea)
+          fillColor = highlightColor;
       } else {
-        if (hoveredObject.properties.regiao === feature.properties.regiao) fillColor = highlightColor;
+        if (hoveredObject.properties.regiao === feature.properties.regiao)
+          fillColor = highlightColor;
       }
     }
     return { fillColor, weight: 1, color: 'white', fillOpacity: 1 };
@@ -156,7 +154,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     layer.on({
       mouseover: () => setHoveredObject(feature),
       mouseout: () => setHoveredObject(null),
-      click: (event: any) => { // L.LeafletMouseEvent
+      click: (event: any) => {
         if (!selectedRegion) {
           setSelectedRegion(feature.properties.regiao || null);
         } else if (map && !selectedState) {
@@ -182,24 +180,58 @@ const MapaInterativo: React.FC<MapProps> = ({
     const municipioName = feature.properties.name || 'Nome não disponível';
     layer.bindTooltip(municipioName, { sticky: true });
     layer.on({
-      mouseover: (event: any) => { // L.LeafletMouseEvent
+      mouseover: (event: any) => {
         setHoveredMunicipio(feature);
         event.target.setStyle({ weight: 2, color: '#FF8C00' });
       },
-      mouseout: (event: any) => { // L.LeafletMouseEvent
+      mouseout: (event: any) => {
         setHoveredMunicipio(null);
         event.target.setStyle({ weight: 1, color: 'white' });
       },
     });
   };
 
+  // --- NOVO USEEFFECT: DESTACAR MUNICÍPIO PESQUISADO (SEM ZOOM) ---
+  useEffect(() => {
+    if (!municipiosData || !municipiosLayerRef.current) return;
+
+    const nomeBusca = searchedMunicipioName
+      ? searchedMunicipioName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      : null;
+
+    municipiosLayerRef.current.eachLayer((layer: any) => {
+      const nomeMunicipio = layer.feature?.properties?.name
+        ?.toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+      if (nomeBusca && nomeMunicipio === nomeBusca) {
+        layer.setStyle({
+          color: '#FFD700',
+          weight: 3,
+          fillColor: '#FFB800',
+          fillOpacity: 1,
+        });
+      } else {
+        layer.setStyle(municipiosStyle(layer.feature));
+      }
+    });
+  }, [searchedMunicipioName, municipiosData]);
+
   const dataForStatesLayer = useMemo(() => {
     if (selectedState) {
-      const stateFeature = allStatesFeatures.find(f => f.properties.codarea === selectedState);
-      return stateFeature ? { type: 'FeatureCollection', features: [stateFeature] } : { type: 'FeatureCollection', features: [] };
+      const stateFeature = allStatesFeatures.find((f) => f.properties.codarea === selectedState);
+      return stateFeature
+        ? { type: 'FeatureCollection', features: [stateFeature] }
+        : { type: 'FeatureCollection', features: [] };
     }
     if (selectedRegion) {
-      return regioesGeoJson[selectedRegion as keyof typeof regioesGeoJson] || { type: 'FeatureCollection', features: [] };
+      return (
+        regioesGeoJson[selectedRegion as keyof typeof regioesGeoJson] || {
+          type: 'FeatureCollection',
+          features: [],
+        }
+      );
     }
     return { type: 'FeatureCollection', features: allStatesFeatures };
   }, [selectedRegion, selectedState, allStatesFeatures]);
@@ -218,21 +250,22 @@ const MapaInterativo: React.FC<MapProps> = ({
         zoomControl={false}
         attributionControl={false}
       >
+        {/* CAMADA DE ESTADOS */}
         <GeoJSON
           ref={geoJsonLayerRef}
           key={`${selectedRegion || 'brasil'}-${selectedState || 'none'}`}
-          // --- CORREÇÃO: Passando as props que estavam faltando ---
           data={dataForStatesLayer as any}
           style={statesStyle}
           onEachFeature={onEachStateFeature}
         />
 
+        {/* CAMADA DE MUNICÍPIOS */}
         {municipiosData && (
           <GeoJSON
+            ref={municipiosLayerRef}
             key={selectedState}
             data={municipiosData as any}
             style={municipiosStyle}
-            // --- CORREÇÃO: Renomeando a prop para o nome correto ---
             onEachFeature={onEachMunicipioFeature}
           />
         )}
