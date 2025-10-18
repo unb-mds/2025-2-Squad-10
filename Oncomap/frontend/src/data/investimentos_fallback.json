@@ -1,0 +1,72 @@
+
+{
+  "norte": {
+    "regiao": "Norte",
+    "investimentosGerais": [
+      { "nome": "Medicamentos (Regional)", "valor": "R$ 1.300" },
+      { "nome": "Equipamentos (Regional)", "valor": "R$ 8.750.000,00" }
+    ],
+    "municipios": [
+      { "codarea": "13", "nome": "Manaus", "investimentos": [] },
+      { "codarea": "15", "nome": "Belém", "investimentos": [] },
+      { "codarea": "11", "nome": "Porto Velho", "investimentos": [] }
+    ]
+  },
+  "nordeste": {
+    "regiao": "Nordeste",
+    "investimentosGerais": [
+      { "nome": "Medicamentos (Regional)", "valor": "R$ 35.800.000,00" },
+      { "nome": "Infraestrutura (Regional)", "valor": "R$ 12.100.000,00" }
+    ],
+    "municipios": [
+      { "codarea": "29", "nome": "Salvador", "investimentos": [] },
+      { "codarea": "26", "nome": "Recife", "investimentos": [] },
+      { "codarea": "23", "nome": "Fortaleza", "investimentos": [] }
+    ]
+  },
+  "sul": {
+    "regiao": "Sul",
+    "investimentosGerais": [
+      { "nome": "Medicamentos (Regional)", "valor": "R$ 28.500.000,00" },
+      { "nome": "Serviços de Saúde (Regional)", "valor": "R$ 15.300.000,00" }
+    ],
+    "municipios": [
+      { "codarea": "41", "nome": "Curitiba", "investimentos": [] },
+      { "codarea": "43", "nome": "Porto Alegre", "investimentos": [] },
+      { "codarea": "42", "nome": "Florianópolis", "investimentos": [] }
+    ]
+  },
+  "sudeste": {
+    "regiao": "Sudeste",
+    "investimentosGerais": [
+      { "nome": "Medicamentos (Regional)", "valor": "R$ 55.100.000,00" },
+      { "nome": "Equipamentos (Regional)", "valor": "R$ 23.400.000,00" }
+    ],
+    "municipios": [
+      { "codarea": "35", "nome": "São Paulo", "investimentos": [] },
+      { "codarea": "33", "nome": "Rio de Janeiro", "investimentos": [] },
+      { "codarea": "31", "nome": "Belo Horizonte", "investimentos": [] }
+    ]
+  },
+  "centroOeste": {
+    "regiao": "Centro-Oeste",
+    "investimentosGerais": [
+      { "nome": "Medicamentos (Regional)", "valor": "R$ 18.900.000,00" },
+      { "nome": "Serviços de Saúde (Regional)", "valor": "R$ 7.600.000,00" }
+    ],
+    "municipios": [
+      { "codarea": "53", "nome": "Brasília", "investimentos": [
+          { "nome": "Aquisição de Tomógrafo", "valor": "R$ 1.500.000,00" }
+        ] 
+      },
+      { "codarea": "52", "nome": "Goiânia",  "investimentos": [
+          { "nome": "Centro de Radioterapia", "valor": "R$ 3.000.000,00" }
+        ] 
+      },
+      { "codarea": "51", "nome": "Cuiabá",   "investimentos": [
+          { "nome": "Unidade Móvel", "valor": "R$ 850.000,00" }
+        ] 
+      }
+    ]
+  }
+}

@@ -1,20 +1,21 @@
+/* Mantive suas regras e adicionei ajustes para garantir visibilidade do painel */
 .mapa-page-container {
   width: 100%;
   background-color: #f0f2f5;
 }
 
-
 .content-wrapper {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   width: 100%;
-  height: 100vh; 
+  height: 100vh;
   padding: 2rem;
   box-sizing: border-box;
-  transition: all 0.8s ease-in-out;
+  transition: all 0.4s ease-in-out;
 }
 
+/* Map area keeps espaço controlado */
 .map-area {
   position: relative;
   width: 100%;
@@ -23,24 +24,27 @@
   background-color: white;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
   border-radius: 15px;
-  transition: flex 0.8s ease-in-out;
+  transition: flex 0.4s ease-in-out;
   flex: 1 0 100%;
+  overflow: hidden;
+  z-index: 1;
 }
 
+/* Painel inicialmente oculto (colapsado) */
 .panel-area {
   display: flex;
   align-items: flex-start;
   justify-content: center;
   box-sizing: border-box;
-  transition: flex 0.8s ease-in-out;
+  transition: flex 0.4s ease-in-out, min-width 0.4s ease-in-out;
   flex: 0 0 0%;
   overflow: hidden;
   height: 100%;
-  overflow-y: auto; 
+  overflow-y: auto;
+  z-index: 2000; /* bem acima do mapa */
 }
 
-
-
+/* Quando uma região é selecionada, ajusta as proporções */
 .content-wrapper.region-selected .map-area {
   flex: 1 0 60%;
 }
@@ -48,7 +52,21 @@
 .content-wrapper.region-selected .panel-area {
   flex: 1 0 40%;
   padding-left: 2rem;
+  min-width: 320px; /* garante que o painel seja visível */
 }
+
+/* Se preferir que o painel apareça sobre o mapa (em vez de ocupar espaço), descomente abaixo */
+/*
+.panel-area {
+  position: absolute;
+  right: 2rem;
+  top: 2rem;
+  width: 360px;
+  height: calc(100% - 4rem);
+  background: transparent;
+  z-index: 3000;
+}
+*/
 
 .zoom-out-button-container {
   position: absolute;
