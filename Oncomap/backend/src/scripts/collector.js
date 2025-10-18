@@ -1,43 +1,61 @@
 // backend/src/collector.js
 
-// 2.1: Importações e Configurações Iniciais
 const axios = require('axios');
-const db = require('./config/database.js');
+const db = require('../src/config/database');
 
-// Lista de municípios que queremos monitorar. 
-// Para começar, vamos focar em alguns para testar.
-const MUNICIPALITIES_TO_MONITOR = [
-    { ibgeCode: '3304557', name: 'Rio de Janeiro', uf: 'RJ' },
-    { ibgeCode: '3550308', name: 'São Paulo', uf: 'SP' },
-    { ibgeCode: '2927408', name: 'Salvador', uf: 'BA' }
-];
-
-// Função de atraso para sermos "educados" com a API do Querido Diário
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-
-// 2.2: A Função Principal de Coleta
 async function collectData() {
-    console.log('✅ Iniciando o processo de coleta de dados...');
+    console.log('✅ Iniciando o coletor de dados resiliente...');
 
-    // O loop 'for...of' garante que processaremos uma cidade de cada vez, sequencialmente.
-    for (const city of MUNICIPALITIES_TO_MONITOR) {
+    // --- MUDANÇA PRINCIPAL AQUI ---
+    // Definimos a data de início da busca como uma string fixa.
+    const sinceDate = '2022-01-01';
+    // --- FIM DA MUDANÇA ---
+
+    console.log(`ℹ️  Período de busca: de ${sinceDate} até hoje.`);
+
+    while (true) {
+        let city = null;
+
         try {
-            const querystring = 'quimioterapia,radioterapia,oncologia,oncológico';
-            const searchUrl = `https://queridodiario.ok.org.br/api/gazettes?territory_ids=${city.ibgeCode}&published_since=2024-01-01&querystring=${querystring}&size=100`;
+            // 1. Busca a próxima cidade que AINDA NÃO foi processada
+            const nextCityQuery = `
+                SELECT ibge_code, name, state_uf 
+                FROM municipalities_status 
+                WHERE last_processed_at IS NULL 
+                LIMIT 1;
+            `;
+            const result = await db.query(nextCityQuery);
 
-            console.log(`🔎 Buscando diários para: ${city.name}...`);
+            // 2. Verifica se o trabalho acabou
+            if (result.rows.length === 0) {
+                console.log('🎉 Todas os municípios foram processados. Encerrando o coletor.');
+                break; // Sai do loop 'while (true)'
+            }
+            
+            city = result.rows[0];
+
+            // 3. Imediatamente marca a cidade como "em processamento"
+            const updateStatusQuery = `
+                UPDATE municipalities_status 
+                SET last_processed_at = NOW() 
+                WHERE ibge_code = $1;
+            `;
+            await db.query(updateStatusQuery, [city.ibge_code]);
+
+            // --- A LÓGICA DE COLETA ORIGINAL COMEÇA AQUI ---
+            const querystring = 'saude,quimioterapia,radioterapia,oncologia,oncológico';
+            const searchUrl = `https://queridodiario.ok.org.br/api/gazettes?territory_ids=${city.ibge_code}&published_since=${sinceDate}&querystring=${querystring}&size=200`;
+
+            console.log(`🔎 Processando: ${city.name} - ${city.state_uf}...`);
             const response = await axios.get(searchUrl);
             const gazettes = response.data.gazettes;
 
             if (gazettes && gazettes.length > 0) {
-                console.log(`  -> ${gazettes.length} diários encontrados. Processando...`);
-
-                // Loop interno para processar cada diário encontrado para a cidade
+                console.log(`  -> ${gazettes.length} diários encontrados.`);
                 for (const gazette of gazettes) {
-                    const fullExcerpt = gazette.excerpts.join('\n\n---\n\n'); // Junta os trechos em um só texto
-
-                    // A query SQL para inserir os dados na nossa tabela 'mentions'
+                    const fullExcerpt = gazette.excerpts.join('\n\n---\n\n');
                     const insertQuery = `
                         INSERT INTO mentions (
                             municipality_ibge_code, municipality_name, state_uf,
@@ -47,41 +65,25 @@ async function collectData() {
                         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                         ON CONFLICT (source_url) DO NOTHING;
                     `;
-                    // 'ON CONFLICT (source_url) DO NOTHING' é crucial: se já inserimos um diário
-                    // com essa URL, ele simplesmente ignora, evitando duplicatas.
-
-                    // Os valores a serem inseridos, na ordem correta dos '$'
-                    const values = [
-                        gazette.territory_id,
-                        gazette.territory_name,
-                        gazette.state_code,
-                        gazette.date,
-                        gazette.edition,
-                        gazette.is_extra_edition || false, // Garante um valor booleano
-                        fullExcerpt,
-                        gazette.url
-                    ];
-
-                    await db.query(insertQuery, values);
+                    await db.query(insertQuery, [
+                        gazette.territory_id, gazette.territory_name, gazette.state_code,
+                        gazette.date, gazette.edition, gazette.is_extra_edition || false,
+                        fullExcerpt, gazette.url
+                    ]);
                 }
-                console.log(`  -> Finalizado o processamento para ${city.name}.`);
-            } else {
-                console.log(`  -> Nenhum diário encontrado para ${city.name} no período.`);
             }
+            // --- FIM DA LÓGICA ORIGINAL ---
 
-            // Pausa de meio segundo entre as requisições para cidades diferentes
             await delay(500);
 
         } catch (error) {
-            console.error(`❌ Erro ao processar a cidade ${city.name}:`, error.message);
-            await delay(2000); // Se der erro, espera um pouco mais antes de continuar
+            const cityName = city ? city.name : 'cidade desconhecida';
+            console.error(`❌ Erro ao processar a cidade ${cityName}:`, error.message);
+            await delay(2000);
         }
     }
-
-    console.log('🎉 Processo de coleta de dados finalizado com sucesso!');
 }
 
-// 2.3: Executando a Função
 collectData().catch(error => {
     console.error("💥 Falha fatal no processo do coletor:", error);
 });
