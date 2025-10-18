@@ -56,8 +56,8 @@ const MapaInterativo: React.FC<MapProps> = ({
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
   const [loadingInvestimentos, setLoadingInvestimentos] = useState(true);
 
-  const geoJsonLayerRef = useRef<L.GeoJSON | null>(null); // ref para estados
-  const municipiosLayerRef = useRef<L.GeoJSON | null>(null); // ref para municípios
+  const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
+  const municipiosLayerRef = useRef<L.GeoJSON | null>(null);
 
   const allStatesFeatures = useMemo<GeoFeature[]>(
     () => Object.values(regioesGeoJson).flatMap((r) => r.features as GeoFeature[]),
@@ -147,10 +147,17 @@ const MapaInterativo: React.FC<MapProps> = ({
     return { fillColor, weight: 1, color: 'white', fillOpacity: 1 };
   };
 
+  // --- ALTERAÇÃO PRINCIPAL AQUI ---
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
-    const stateName = feature.properties.name || 'Estado';
-    layer.bindTooltip(stateName, { sticky: true });
+    // 1. Decide qual nome exibir com base na seleção da região
+    const tooltipContent = selectedRegion
+      ? feature.properties.name || 'Estado' // Se uma região está selecionada, mostra o nome do estado
+      : feature.properties.regiao || 'Região'; // Se não, mostra o nome da região
 
+    // 2. Aplica o conteúdo correto ao tooltip
+    layer.bindTooltip(tooltipContent, { sticky: true });
+
+    // 3. O resto da lógica de interação permanece a mesma
     layer.on({
       mouseover: () => setHoveredObject(feature),
       mouseout: () => setHoveredObject(null),
@@ -167,56 +174,55 @@ const MapaInterativo: React.FC<MapProps> = ({
 
   const municipiosStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
+
+    const nome = feature.properties?.name?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const nomeBusca = searchedMunicipioName
+      ? searchedMunicipioName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      : null;
     const isHovered = hoveredMunicipio?.properties.id === feature.properties.id;
+
+    if (nomeBusca && nome === nomeBusca) {
+      return {
+        weight: 2.5, color: '#FFD700', fillColor: '#FFB800', fillOpacity: 1,
+      };
+    }
+
+    if (isHovered) {
+      return {
+        weight: 2, color: '#FFD700', fillColor: '#09353bff', fillOpacity: 1,
+      };
+    }
+
     return {
-      weight: 1,
-      color: 'white',
-      fillColor: isHovered ? '#FF8C00' : '#0D4B55',
-      fillOpacity: 1,
+      weight: 1, color: 'white', fillColor: '#0D4B55', fillOpacity: 1,
     };
   };
 
   const onEachMunicipioFeature = (feature: GeoFeature, layer: Layer) => {
     const municipioName = feature.properties.name || 'Nome não disponível';
     layer.bindTooltip(municipioName, { sticky: true });
+
     layer.on({
       mouseover: (event: any) => {
         setHoveredMunicipio(feature);
-        event.target.setStyle({ weight: 2, color: '#FF8C00' });
+        event.target.setStyle({
+          weight: 2, color: '#FFD700', fillColor: '#FFB800', fillOpacity: 1,
+        });
       },
       mouseout: (event: any) => {
         setHoveredMunicipio(null);
-        event.target.setStyle({ weight: 1, color: 'white' });
+        const nome = feature.properties?.name?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const nomeBusca = searchedMunicipioName ? searchedMunicipioName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : null;
+        if (nomeBusca && nome === nomeBusca) {
+          event.target.setStyle({
+            color: '#FF8C00', weight: 3, fillColor: '#66CCFF', fillOpacity: 1,
+          });
+        } else {
+          event.target.setStyle(municipiosStyle(feature));
+        }
       },
     });
   };
-
-  // --- NOVO USEEFFECT: DESTACAR MUNICÍPIO PESQUISADO (SEM ZOOM) ---
-  useEffect(() => {
-    if (!municipiosData || !municipiosLayerRef.current) return;
-
-    const nomeBusca = searchedMunicipioName
-      ? searchedMunicipioName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      : null;
-
-    municipiosLayerRef.current.eachLayer((layer: any) => {
-      const nomeMunicipio = layer.feature?.properties?.name
-        ?.toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-
-      if (nomeBusca && nomeMunicipio === nomeBusca) {
-        layer.setStyle({
-          color: '#FFD700',
-          weight: 3,
-          fillColor: '#FFB800',
-          fillOpacity: 1,
-        });
-      } else {
-        layer.setStyle(municipiosStyle(layer.feature));
-      }
-    });
-  }, [searchedMunicipioName, municipiosData]);
 
   const dataForStatesLayer = useMemo(() => {
     if (selectedState) {
@@ -250,7 +256,6 @@ const MapaInterativo: React.FC<MapProps> = ({
         zoomControl={false}
         attributionControl={false}
       >
-        {/* CAMADA DE ESTADOS */}
         <GeoJSON
           ref={geoJsonLayerRef}
           key={`${selectedRegion || 'brasil'}-${selectedState || 'none'}`}
@@ -259,7 +264,6 @@ const MapaInterativo: React.FC<MapProps> = ({
           onEachFeature={onEachStateFeature}
         />
 
-        {/* CAMADA DE MUNICÍPIOS */}
         {municipiosData && (
           <GeoJSON
             ref={municipiosLayerRef}
