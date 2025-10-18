@@ -1,0 +1,42 @@
+{
+  "norte": {
+    "regiao": "Norte",
+    "investimentos": [
+      { "nome": "Medicamentos", "valor": "R$ 1300" },
+      { "nome": "Equipamentos", "valor": "R$ 8.750.000,00" }
+    ],
+    "municipios": ["Manaus", "Belém", "Porto Velho"]
+  },
+  "nordeste": {
+    "regiao": "Nordeste",
+    "investimentos": [
+      { "nome": "Medicamentos", "valor": "R$ 35.800.000,00" },
+      { "nome": "Infraestrutura", "valor": "R$ 12.100.000,00" }
+    ],
+    "municipios": ["Salvador", "Recife", "Fortaleza"]
+  },
+  "sul": {
+    "regiao": "Sul",
+    "investimentos": [
+      { "nome": "Medicamentos", "valor": "R$ 28.500.000,00" },
+      { "nome": "Serviços de Saúde", "valor": "R$ 15.300.000,00" }
+    ],
+    "municipios": ["Curitiba", "Porto Alegre", "Florianópolis"]
+  },
+  "sudeste": {
+    "regiao": "Sudeste",
+    "investimentos": [
+      { "nome": "Medicamentos", "valor": "R$ 55.100.000,00" },
+      { "nome": "Equipamentos", "valor": "R$ 23.400.000,00" }
+    ],
+    "municipios": ["São Paulo", "Rio de Janeiro", "Belo Horizonte"]
+  },
+  "centroOeste": {
+    "regiao": "Centro-Oeste",
+    "investimentos": [
+      { "nome": "Medicamentos", "valor": "R$ 18.900.000,00" },
+      { "nome": "Serviços de Saúde", "valor": "R$ 7.600.000,00" }
+    ],
+    "municipios": ["Brasília", "Goiânia", "Cuiabá"]
+  }
+}

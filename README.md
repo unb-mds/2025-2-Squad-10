@@ -73,7 +73,7 @@ Antes de começar, certifique-se de que você tem as seguintes ferramentas insta
     ```bash
     cd Oncomap/backend
     ```
-    b. Crie um arquivo `.env` a partir do exemplo fornecido. Você pode criar o arquivo e colar o conteúdo abaixo, substituindo com suas credenciais do PostgreSQL:
+    b. Crie um arquivo `.env` a partir do exemplo. Você pode criar o arquivo e colar o conteúdo abaixo, substituindo com suas credenciais do PostgreSQL:
     ```ini
     # Configurações do Servidor
     PORT=3001
@@ -84,7 +84,7 @@ Antes de começar, certifique-se de que você tem as seguintes ferramentas insta
     # Conexão com o Banco de Dados PostgreSQL
     DB_USER=seu_usuario_postgres
     DB_HOST=localhost
-    DB_DATABASE=querido_diario_db
+    DB_DATABASE=oncomap_db
     DB_PASSWORD=sua_senha_postgres
     DB_PORT=5432
     ```
@@ -110,7 +110,7 @@ Antes de começar, certifique-se de que você tem as seguintes ferramentas insta
         # No terminal do diretório /Oncomap/backend
         npm run dev 
         ```
-        O servidor estará rodando. Para verificar, acesse `http://localhost:3001/api/health` em seu navegador. Você deve ver a mensagem: `{"message":"Backend está funcionando!"}`.
+        O servidor, inicializado pelo `server.js`, estará rodando. Para verificar, acesse `http://localhost:3001/api/health` em seu navegador. Você deve ver a mensagem: `{"message":"Backend está funcionando!"}`.
 
     * **Para rodar o frontend:**
         ```bash
@@ -118,27 +118,34 @@ Antes de começar, certifique-se de que você tem as seguintes ferramentas insta
         npm run dev
         ```
         Acesse o endereço que aparecer no terminal (geralmente `http://localhost:5173`) para ver a aplicação.
-
 ---
 
 ## 📁 Estrutura do Projeto
-A estrutura do repositório organiza o código-fonte, a documentação e os artefatos do projeto de forma clara.
+A estrutura do repositório organiza o código-fonte, a documentação e os artefatos do projeto de forma clara. A arquitetura do backend segue o padrão de camadas para separação de responsabilidades.
 
-```
+```plaintext
 .
 └── 2025-2-OncoMap/
-    ├── ATA DE REUNIÕES/     # Atas e registros das reuniões de Sprint
-    ├── doc/                 # Documentação técnica (arquitetura, requisitos, etc.)
-    ├── Oncomap/             # Diretório principal com o código-fonte da aplicação
-    │   ├── backend/         # Código do servidor (API, banco de dados)
-    │   └── frontend/        # Código da interface do usuário (React + TS)
-    ├── CODE_OF_CONDUCT.md   # Código de conduta para contribuidores
-    ├── CONTRIBUTING.md      # Guia de como contribuir com o projeto
-    ├── LICENSE              # Licença do projeto
-    ├── README.md            # Este arquivo
-    └── SECURITY.md          # Política de segurança
+    ├── ATA DE REUNIÕES/
+    ├── doc/
+    ├── Oncomap/
+    │   ├── backend/
+    │   │   ├── src/
+    │   │   │   ├── api/             # Camada da API: rotas, controllers e middlewares
+    │   │   │   ├── config/          # Arquivos de configuração (ex: conexão com banco)
+    │   │   │   ├── database/        # Models, migrations e seeders do Sequelize
+    │   │   │   ├── scripts/         # Scripts utilitários (ex: coletor de dados da API externa)
+    │   │   │   └── app.js           # Arquivo principal de configuração do Express
+    │   │   ├── .env               # Arquivo de variáveis de ambiente (NÃO versionado)
+    │   │   ├── package.json
+    │   │   └── server.js          # Ponto de entrada da aplicação (inicializa o servidor)
+    │   └── frontend/              # Código da interface do usuário (React + TS)
+    ├── CODE_OF_CONDUCT.md
+    ├── CONTRIBUTING.md
+    ├── LICENSE
+    ├── README.md
+    └── SECURITY.md
 ```
----
 
 ## 👥 Equipe
 | [![Felype Carrijo](https://avatars.githubusercontent.com/u/168106790?v=4)](https://github.com/Flyxs) | [![Giovani Coelho](https://avatars.githubusercontent.com/u/176083022?v=4)](https://github.com/Gotc2607) | [![Artur Galdino](https://avatars.githubusercontent.com/u/187340217?v=4)](https://github.com/ArturFGaldino) | [![Luiz](https://avatars.githubusercontent.com/u/212640680?v=4)](https://github.com/Luizz97) | [![João Pedro](https://avatars.githubusercontent.com/u/178330046?v=4)](https://github.com/joaoPedro-201) | [![Gabriel Alexandroni](https://avatars.githubusercontent.com/u/170197026?v=4)](https://github.com/Alexandroni07) |
