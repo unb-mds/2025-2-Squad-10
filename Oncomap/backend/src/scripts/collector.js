@@ -1,7 +1,8 @@
 // backend/src/collector.js
 
 const axios = require('axios');
-const db = require('../src/config/database');
+// scripts/collector.js
+const db = require('../config/database'); 
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -45,7 +46,7 @@ async function collectData() {
             await db.query(updateStatusQuery, [city.ibge_code]);
 
             // --- A LÓGICA DE COLETA ORIGINAL COMEÇA AQUI ---
-            const querystring = 'saude,quimioterapia,radioterapia,oncologia,oncológico';
+            const querystring = 'quimioterapia,radioterapia,oncologia,oncológico';
             const searchUrl = `https://queridodiario.ok.org.br/api/gazettes?territory_ids=${city.ibge_code}&published_since=${sinceDate}&querystring=${querystring}&size=200`;
 
             console.log(`🔎 Processando: ${city.name} - ${city.state_uf}...`);
