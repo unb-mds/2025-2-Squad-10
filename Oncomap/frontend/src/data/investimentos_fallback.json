@@ -1,15 +1,39 @@
-
 {
   "norte": {
     "regiao": "Norte",
     "investimentosGerais": [
-      { "nome": "Medicamentos (Regional)", "valor": "R$ 1.300" },
+      { "nome": "Medicamentos (Regional)", "valor": "R$ 9.300.000,00" },
       { "nome": "Equipamentos (Regional)", "valor": "R$ 8.750.000,00" }
     ],
     "municipios": [
-      { "codarea": "13", "nome": "Manaus", "investimentos": [] },
-      { "codarea": "15", "nome": "Belém", "investimentos": [] },
-      { "codarea": "11", "nome": "Porto Velho", "investimentos": [] }
+      { "codarea": "11", "nome": "Rondônia", "investimentos": [
+          { "nome": "Ampliação do Hospital de Câncer de Barretos (unidade Porto Velho)", "valor": "R$ 2.500.000,00" }
+        ]
+      },
+      { "codarea": "12", "nome": "Acre", "investimentos": [
+          { "nome": "Aquisição de Acelerador Linear para o UNACON", "valor": "R$ 1.800.000,00" }
+        ]
+      },
+      { "codarea": "13", "nome": "Amazonas", "investimentos": [
+          { "nome": "Barco Hospital para Atendimento Ribeirinho", "valor": "R$ 1.200.000,00" }
+        ]
+      },
+      { "codarea": "14", "nome": "Roraima", "investimentos": [
+          { "nome": "Construção de Ala Oncológica no Hospital Geral", "valor": "R$ 3.000.000,00" }
+        ]
+      },
+      { "codarea": "15", "nome": "Pará", "investimentos": [
+          { "nome": "Compra de Equipamentos de Mamografia Digital", "valor": "R$ 950.000,00" }
+        ]
+      },
+      { "codarea": "16", "nome": "Amapá", "investimentos": [
+          { "nome": "Capacitação de Profissionais em Oncologia Pediátrica", "valor": "R$ 450.000,00" }
+        ]
+      },
+      { "codarea": "17", "nome": "Tocantins", "investimentos": [
+          { "nome": "Modernização do Laboratório de Patologia", "valor": "R$ 700.000,00" }
+        ]
+      }
     ]
   },
   "nordeste": {
@@ -19,9 +43,42 @@
       { "nome": "Infraestrutura (Regional)", "valor": "R$ 12.100.000,00" }
     ],
     "municipios": [
-      { "codarea": "29", "nome": "Salvador", "investimentos": [] },
-      { "codarea": "26", "nome": "Recife", "investimentos": [] },
-      { "codarea": "23", "nome": "Fortaleza", "investimentos": [] }
+      { "codarea": "21", "nome": "Maranhão", "investimentos": [
+          { "nome": "Programa de Rastreamento de Câncer de Colo de Útero", "valor": "R$ 1.100.000,00" }
+        ]
+      },
+      { "codarea": "22", "nome": "Piauí", "investimentos": [
+          { "nome": "Centro de Pesquisa em Células-Tronco", "valor": "R$ 4.200.000,00" }
+        ]
+      },
+      { "codarea": "23", "nome": "Ceará", "investimentos": [
+          { "nome": "Digitalização de Exames de Imagem", "valor": "R$ 800.000,00" }
+        ]
+      },
+      { "codarea": "24", "nome": "Rio Grande do Norte", "investimentos": [
+          { "nome": "Unidade de Cuidados Paliativos", "valor": "R$ 1.500.000,00" }
+        ]
+      },
+      { "codarea": "25", "nome": "Paraíba", "investimentos": [
+          { "nome": "Aquisição de PET-CT", "valor": "R$ 2.800.000,00" }
+        ]
+      },
+      { "codarea": "26", "nome": "Pernambuco", "investimentos": [
+          { "nome": "Reforma do Centro de Oncologia do HC", "valor": "R$ 3.500.000,00" }
+        ]
+      },
+      { "codarea": "27", "nome": "Alagoas", "investimentos": [
+          { "nome": "Campanha de Prevenção ao Câncer de Pele", "valor": "R$ 300.000,00" }
+        ]
+      },
+      { "codarea": "28", "nome": "Sergipe", "investimentos": [
+          { "nome": "Construção de Casa de Apoio para Pacientes", "valor": "R$ 900.000,00" }
+        ]
+      },
+      { "codarea": "29", "nome": "Bahia", "investimentos": [
+          { "nome": "Expansão do Serviço de Quimioterapia", "valor": "R$ 2.000.000,00" }
+        ]
+      }
     ]
   },
   "sul": {
@@ -31,9 +88,18 @@
       { "nome": "Serviços de Saúde (Regional)", "valor": "R$ 15.300.000,00" }
     ],
     "municipios": [
-      { "codarea": "41", "nome": "Curitiba", "investimentos": [] },
-      { "codarea": "43", "nome": "Porto Alegre", "investimentos": [] },
-      { "codarea": "42", "nome": "Florianópolis", "investimentos": [] }
+      { "codarea": "41", "nome": "Paraná", "investimentos": [
+          { "nome": "Hospital Erasto Gaertner - ala de transplante de medula óssea", "valor": "R$ 5.000.000,00" }
+        ]
+      },
+      { "codarea": "42", "nome": "Santa Catarina", "investimentos": [
+          { "nome": "Pesquisa em imunoterapia no CEPON", "valor": "R$ 1.800.000,00" }
+        ]
+      },
+      { "codarea": "43", "nome": "Rio Grande do Sul", "investimentos": [
+          { "nome": "Aquisição de robô cirúrgico Da Vinci", "valor": "R$ 7.000.000,00" }
+        ]
+      }
     ]
   },
   "sudeste": {
@@ -43,9 +109,22 @@
       { "nome": "Equipamentos (Regional)", "valor": "R$ 23.400.000,00" }
     ],
     "municipios": [
-      { "codarea": "35", "nome": "São Paulo", "investimentos": [] },
-      { "codarea": "33", "nome": "Rio de Janeiro", "investimentos": [] },
-      { "codarea": "31", "nome": "Belo Horizonte", "investimentos": [] }
+      { "codarea": "31", "nome": "Minas Gerais", "investimentos": [
+          { "nome": "Ampliação do Hospital da Baleia", "valor": "R$ 4.000.000,00" }
+        ]
+      },
+      { "codarea": "32", "nome": "Espírito Santo", "investimentos": [
+          { "nome": "Centro de Diagnóstico Precoce", "valor": "R$ 2.200.000,00" }
+        ]
+      },
+      { "codarea": "33", "nome": "Rio de Janeiro", "investimentos": [
+          { "nome": "Modernização do INCA", "valor": "R$ 10.000.000,00" }
+        ]
+      },
+      { "codarea": "35", "nome": "São Paulo", "investimentos": [
+          { "nome": "Pesquisa no A.C.Camargo Cancer Center", "valor": "R$ 15.000.000,00" }
+        ]
+      }
     ]
   },
   "centroOeste": {
@@ -55,17 +134,21 @@
       { "nome": "Serviços de Saúde (Regional)", "valor": "R$ 7.600.000,00" }
     ],
     "municipios": [
-      { "codarea": "53", "nome": "Brasília", "investimentos": [
-          { "nome": "Aquisição de Tomógrafo", "valor": "R$ 1.500.000,00" }
+      { "codarea": "50", "nome": "Mato Grosso do Sul", "investimentos": [
+          { "nome": "Hospital de Câncer de Campo Grande Alfredo Abrão", "valor": "R$ 2.800.000,00" }
+        ]
+      },
+      { "codarea": "51", "nome": "Mato Grosso", "investimentos": [
+          { "nome": "Unidade Móvel de Prevenção", "valor": "R$ 850.000,00" }
         ] 
       },
-      { "codarea": "52", "nome": "Goiânia",  "investimentos": [
-          { "nome": "Centro de Radioterapia", "valor": "R$ 3.000.000,00" }
+      { "codarea": "52", "nome": "Goiás", "investimentos": [
+          { "nome": "Centro de Radioterapia no Hospital Araújo Jorge", "valor": "R$ 3.000.000,00" }
         ] 
       },
-      { "codarea": "51", "nome": "Cuiabá",   "investimentos": [
-          { "nome": "Unidade Móvel", "valor": "R$ 850.000,00" }
-        ] 
+      { "codarea": "53", "nome": "Distrito Federal", "investimentos": [
+          { "nome": "Aquisição de Tomógrafo para o Hospital de Base", "valor": "R$ 1.500.000,00" }
+        ]
       }
     ]
   }
