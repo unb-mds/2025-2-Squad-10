@@ -166,9 +166,6 @@ const TabelaInfo = ({
                   {municipio.properties?.name}
                 </li>
               ))}
-              {termoBuscaMunicipio.length > 1 && municipiosGeoFiltrados.length === 0 && (
-                <li className="no-results">Nenhum município encontrado.</li>
-              )}
             </ul>
           </div>
 
