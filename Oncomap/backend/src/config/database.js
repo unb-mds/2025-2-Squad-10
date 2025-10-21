@@ -1,19 +1,20 @@
-// backend/src/config/database.js
+// Oncomap/backend/src/config/database.js
 const { Pool } = require('pg');
-require('dotenv').config();
+require('dotenv').config(); // Garante que o .env seja lido
 
-// O objeto Pool do 'pg' gerencia múltiplas conexões para nós,
-// o que é mais eficiente do que criar uma nova conexão a cada consulta.
 const pool = new Pool({
-  // Se você tiver a variável DATABASE_URL no seu .env, 
-  // o 'pg' a utiliza automaticamente.
-  // Caso contrário, ele usará as variáveis DB_USER, DB_HOST, etc.
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  // Esta é a mudança principal:
+  // O 'pg' automaticamente entende a variável DATABASE_URL
+  // e pega todas as informações (host, porta, usuário, senha, ssl) dela.
+  connectionString: process.env.DATABASE_URL, 
+  
+  // Nós ainda forçamos o SSL, o que é uma boa prática
+  // para garantir a conexão com o Supabase Pooler.
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-// Exportamos um objeto com um método 'query' que usaremos em todo o projeto
-// para interagir com o banco de dados.
 module.exports = {
   query: (text, params) => pool.query(text, params),
 };
