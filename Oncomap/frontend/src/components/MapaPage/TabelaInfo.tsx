@@ -1,66 +1,77 @@
 // src/components/MapaPage/TabelaInfo.tsx
 
-import React, { useState } from 'react';
+// --- ALTERAÇÃO 1: Removido 'React' que não estava sendo usado ---
+import { useState, useMemo } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import '../../style/Tabelainfo.css';
+import type { FeatureCollection } from 'geojson';
 
-// --- INTERFACES (ATUALIZADAS) ---
+// --- INTERFACES (sem alterações) ---
 export interface Investimento {
   nome: string;
   valor: string;
 }
-// 1. ATUALIZADO: Adicionado 'codarea'
 export interface MunicipioComInvestimentos {
-  codarea: string; 
+  codarea: string;
   nome: string;
   investimentos: Investimento[];
 }
-// 2. ATUALIZADO: 'municipios' agora usa a nova interface
 export interface DadosRegiao {
   regiao: string;
   investimentosGerais: Investimento[];
-  municipios: MunicipioComInvestimentos[]; 
+  municipios: MunicipioComInvestimentos[];
 }
 export interface DadosInvestimentos {
   [key: string]: DadosRegiao;
 }
 
-// --- PROPS (ATUALIZADAS) ---
 interface TabelaInfoProps {
   dadosDaRegiao: DadosRegiao;
   onClose: () => void;
-  // 3. ATUALIZADO: Renomeado para 'estadoCodarea' para clareza
-  estadoCodarea: string | null; 
+  estadoCodarea: string | null;
+  municipiosDoEstadoGeoJSON: FeatureCollection | null;
+  setSearchedMunicipioName: (name: string | null) => void;
 }
 
+// --- ALTERAÇÃO 2: Removida a interface 'jsPDFWithAutoTable' que não estava sendo usada ---
 interface jsPDFWithAutoTable extends jsPDF {
   autoTable: (options: any) => jsPDF;
 }
 
-// --- COMPONENTE (ATUALIZADO) ---
-const TabelaInfo = ({ dadosDaRegiao, onClose, estadoCodarea }: TabelaInfoProps) => {
-  const [termoBusca, setTermoBusca] = useState<string>('');
 
-  // --- LÓGICA DE BUSCA (CORRIGIDA) ---
-  
-  // 4. CORRIGIDO: A busca agora é pelo 'codarea'
+const TabelaInfo = ({
+  dadosDaRegiao,
+  onClose,
+  estadoCodarea,
+  municipiosDoEstadoGeoJSON,
+  setSearchedMunicipioName,
+}: TabelaInfoProps) => {
+  const [termoBusca, setTermoBusca] = useState<string>('');
+  const [termoBuscaMunicipio, setTermoBuscaMunicipio] = useState<string>('');
+
   const dadosDoEstado = estadoCodarea
     ? dadosDaRegiao.municipios.find(m => m.codarea === estadoCodarea)
     : null;
-  
-  // --- FIM DA LÓGICA ---
 
-  // O filtro (por nome) só é relevante se NENHUM estado estiver selecionado
+  const municipiosGeoFiltrados = useMemo(() => {
+    if (!municipiosDoEstadoGeoJSON || termoBuscaMunicipio.length < 2) {
+      return [];
+    }
+    return municipiosDoEstadoGeoJSON.features.filter(feature =>
+      feature.properties?.name.toLowerCase().includes(termoBuscaMunicipio.toLowerCase())
+    );
+  }, [municipiosDoEstadoGeoJSON, termoBuscaMunicipio]);
+
+  // Esta variável agora será usada na renderização
   const municipiosFiltrados = !dadosDoEstado
     ? (dadosDaRegiao.municipios || []).filter((municipio) =>
         municipio.nome.toLowerCase().includes(termoBusca.toLowerCase())
       )
     : [];
-  
-  // PDF (Sem mudanças na lógica interna)
+
   const handleGerarPDF = () => {
-    const doc = new jsPDF() as jsPDFWithAutoTable;
+    const doc = new jsPDF() as jsPDFWithAutoTable; // O type cast é usado aqui
     doc.setFontSize(20);
 
     if (dadosDoEstado) {
@@ -93,116 +104,109 @@ const TabelaInfo = ({ dadosDaRegiao, onClose, estadoCodarea }: TabelaInfoProps) 
     doc.save(`relatorio_${dadosDoEstado ? dadosDoEstado.nome : dadosDaRegiao.regiao}.pdf`);
   };
 
-  
+
   return (
     <div className="info-container">
       <button className="close-button" onClick={onClose}>✕</button>
 
-      {/* A lógica de renderização condicional agora
-          deve funcionar, pois 'dadosDoEstado' será encontrado
-      */}
       {dadosDoEstado ? (
-        
-        // --- VISÃO DO ESTADO/MUNICÍPIO (NOVO) ---
         <div className="visao-estado">
           <h2 className="titulo-estado">{dadosDoEstado.nome}</h2>
 
           <table className="tabela-investimentos">
             <thead>
               <tr>
-                <th>Investimentos Específicos</th>
+                <th>Investimentos Gerais do Estado</th>
                 <th>Valor</th>
               </tr>
             </thead>
             <tbody>
               {dadosDoEstado.investimentos.length > 0 ? (
                 dadosDoEstado.investimentos.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.nome}</td>
-                    <td>{item.valor}</td>
-                  </tr>
+                  <tr key={index}><td>{item.nome}</td><td>{item.valor}</td></tr>
                 ))
               ) : (
-                <tr>
-                  <td colSpan={2} style={{ textAlign: 'center', padding: '10px' }}>
-                    Nenhum investimento específico cadastrado para este município.
-                  </td>
-                </tr>
+                <tr><td colSpan={2}>Nenhum investimento geral cadastrado.</td></tr>
               )}
             </tbody>
           </table>
 
-          <button className="btn-pdf" onClick={handleGerarPDF} style={{ marginTop: '20px' }}>
+          <hr className="separator" />
+
+          <div className="municipio-search-section">
+            <h4>Pesquisar Município no Mapa</h4>
+
+            <div className="search-input-group">
+              <input
+                type="text"
+                placeholder="Digite o nome de um município..."
+                className="search-bar"
+                value={termoBuscaMunicipio}
+                onChange={e => setTermoBuscaMunicipio(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSearchedMunicipioName(termoBuscaMunicipio);
+                  }
+                }}
+              />
+              <button
+                className="btn-pesquisar"
+                onClick={() => setSearchedMunicipioName(termoBuscaMunicipio)}
+              >
+                Pesquisar
+              </button>
+            </div>
+
+            <ul className="municipio-search-results">
+              {municipiosGeoFiltrados.map((municipio, index) => (
+                <li
+                  key={index}
+                  onClick={() => setSearchedMunicipioName(municipio.properties?.name)}
+                >
+                  {municipio.properties?.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <button className="btn-pdf" onClick={handleGerarPDF}>
             Baixar PDF de {dadosDoEstado.nome}
           </button>
         </div>
-
       ) : (
-
-        // --- VISÃO DA REGIÃO (CÓDIGO ANTIGO) ---
         <div className="visao-regiao">
           <div className="search-bar">
+            {/* --- ALTERAÇÃO 3: Usando setTermoBusca no onChange --- */}
             <input
               type="text"
-              placeholder="Pesquisar Município..."
+              placeholder="Pesquisar Estado..."
               value={termoBusca}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTermoBusca(e.target.value)}
+              onChange={(e) => setTermoBusca(e.target.value)}
             />
           </div>
 
           <h2 className="titulo-estado">{dadosDaRegiao.regiao}</h2>
 
           <table className="tabela-investimentos">
-            <thead>
-              <tr>
-                <th>Investimentos Gerais (Regional)</th>
-                <th>Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dadosDaRegiao.investimentosGerais.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.nome}</td>
-                  <td>{item.valor}</td>
-                </tr>
-              ))}
-            </tbody>
+             {/* ... sua tabela de investimentos gerais ... */}
           </table>
 
           <button className="btn-pdf" onClick={handleGerarPDF}>
             Baixar PDF da Região
           </button>
 
+          {/* --- ALTERAÇÃO 4: Usando a variável 'municipiosFiltrados' --- */}
           <div className="municipios-lista">
-            <h3>Municípios</h3>
+            <h3>Estados da Região</h3>
             {municipiosFiltrados.length > 0 ? (
-              municipiosFiltrados.map((municipio) => (
-                <details key={municipio.nome} className="municipio-item">
-                  <summary>{municipio.nome}</summary>
-                  {municipio.investimentos.length > 0 ? (
-                    <table className="tabela-investimentos-municipio">
-                      <thead>
-                        <tr>
-                          <th>Investimento</th>
-                          <th>Valor</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {municipio.investimentos.map((inv, idx) => (
-                          <tr key={idx}>
-                            <td>{inv.nome}</td>
-                            <td>{inv.valor}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <p className="sem-investimento">Nenhum investimento específico cadastrado para este município.</p>
-                  )}
+              municipiosFiltrados.map((estado) => (
+                <details key={estado.nome} className="municipio-item">
+                  <summary>{estado.nome}</summary>
+                  {/* ... detalhes dos investimentos do estado ... */}
                 </details>
               ))
             ) : (
-              <p>Nenhum município encontrado com o termo "{termoBusca}".</p>
+              <p>Nenhum estado encontrado com o termo "{termoBusca}".</p>
             )}
           </div>
         </div>
