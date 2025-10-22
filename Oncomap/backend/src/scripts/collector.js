@@ -1,7 +1,6 @@
 // Oncomap/backend/src/scripts/collector.js
 
 const axios = require('axios');
-// O caminho correto para o config, subindo um nível de 'scripts' para 'src'
 const db = require('../config/database');
 
 /**
