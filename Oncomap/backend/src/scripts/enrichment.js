@@ -2,15 +2,19 @@
 
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const db = require('../config/database'); // Ajuste o caminho
-const axios = require('axios'); // Precisamos do axios para baixar o .txt
+const axios = require('axios');
 require('dotenv').config();
 
+// Configuração do cliente Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+
+// Função de atraso
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// O prompt para o Gemini permanece o mesmo
-function getGeminiPrompt(textContent) { 
+// Função getGeminiPrompt permanece a mesma
+function getGeminiPrompt(textContent) {
+    // ... (cole o prompt refinado aqui) ...
     return `
         **Tarefa:** Analise o seguinte texto extraído de um Diário Oficial Municipal brasileiro. Seu objetivo é identificar e extrair TODOS os valores monetários (em Reais) que representem gastos ou investimentos DIRETAMENTE relacionados à área de ONCOLOGIA. Após identificar os valores, some-os e categorize-os de acordo com as regras abaixo.
 
@@ -39,8 +43,7 @@ function getGeminiPrompt(textContent) {
             * **"outros_relacionados":** Use como um "catch-all" para gastos claramente oncológicos que não se encaixam perfeitamente nas categorias acima (ex: campanhas de prevenção específicas de câncer, software de gestão oncológica, etc.).
             * **"total_gasto_oncologico":** Deve ser a SOMA EXATA de todas as outras categorias ('medicamentos + equipamentos + estadia_paciente + obras_infraestrutura + servicos_saude + outros_relacionados'). Se múltiplos valores forem encontrados para uma mesma categoria no texto, some-os antes de colocar no JSON.
         4.  **Nenhum Valor Encontrado:** Se o texto não contiver NENHUM valor monetário relacionado à oncologia, retorne o JSON com todos os campos zerados (0.00).
-        5.  **Precisão e Validação:** Certifique-se de que o JSON retornado é válido. Se houver qualquer dúvida sobre a categorização de um valor, use o campo "outros_relacionados".
-        6.  **Exclusão de Texto Adicional:** Não inclua nenhuma explicação, comentário ou texto adicional fora do objeto JSON. Apenas o JSON puro.
+        5.  **JSON Puro:** Repetindo: a resposta deve começar com '{' e terminar com '}' e conter apenas o JSON válido.
 
         **Texto para Análise:**
         """
@@ -49,93 +52,164 @@ function getGeminiPrompt(textContent) {
     `;
 }
 
+
+// Função extractJsonFromString permanece a mesma
+function extractJsonFromString(text) {
+    // ... (código da função de limpeza) ...
+    if (!text) return null;
+    const startIndex = text.indexOf('{');
+    const endIndex = text.lastIndexOf('}');
+    if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
+        const cleanedText = text.replace(/^```json\s*/, '').replace(/```$/, '');
+        if (cleanedText.startsWith('{') && cleanedText.endsWith('}')) {
+             return cleanedText.trim();
+        }
+        return null;
+    }
+    return text.substring(startIndex, endIndex + 1).trim();
+}
+
+
+/**
+ * Processa uma única menção, incluindo lógica de retry para rate limits (429).
+ */
+async function processMention(mention, maxRetries = 3) {
+    let textToAnalyze = null;
+    let sourceUsed = 'excerpt';
+    let attempt = 0;
+
+    // Lógica para obter o texto (txt ou excerpt)
+     if (mention.txt_url) {
+        try {
+            console.log(`  -> Tentando baixar .txt de: ${mention.txt_url}`);
+            const response = await axios.get(mention.txt_url);
+            textToAnalyze = response.data;
+            sourceUsed = 'txt';
+            console.log(`  -> Sucesso ao baixar .txt (${(textToAnalyze?.length / 1024)?.toFixed(2)} KB).`);
+        } catch (txtDownloadError) {
+             console.warn(`  -> Aviso: Falha ao baixar .txt (${txtDownloadError.message}). Usando excerpt como fallback.`);
+             textToAnalyze = mention.excerpt;
+        }
+    } else {
+         console.log('  -> .txt URL não disponível. Usando excerpt.');
+         textToAnalyze = mention.excerpt;
+    }
+
+    if (!textToAnalyze || textToAnalyze.trim() === '') {
+        console.warn('  -> Aviso: Fonte de texto vazia. Pulando análise.');
+        await db.query(
+           `UPDATE mentions SET gemini_analysis = $1, extracted_value = 0.00 WHERE id = $2`,
+           [JSON.stringify({ error: 'Texto fonte vazio', source: sourceUsed }), mention.id]
+        );
+        return true; // Indica que foi processado (pulado) com sucesso
+    }
+
+    // Loop de tentativas para a chamada ao Gemini
+    while (attempt < maxRetries) {
+        try {
+            const prompt = getGeminiPrompt(textToAnalyze);
+            const result = await model.generateContent(prompt);
+            const rawResponseText = result.response.text();
+            const jsonString = extractJsonFromString(rawResponseText);
+
+            let analysisData = {};
+            let calculatedTotal = 0.00;
+
+            if (jsonString) {
+                try {
+                    analysisData = JSON.parse(jsonString);
+                    calculatedTotal =
+                        (parseFloat(analysisData.medicamentos) || 0) +
+                        (parseFloat(analysisData.equipamentos) || 0) +
+                        (parseFloat(analysisData.estadia_paciente) || 0) +
+                        (parseFloat(analysisData.obras_infraestrutura) || 0) +
+                        (parseFloat(analysisData.servicos_saude) || 0) +
+                        (parseFloat(analysisData.outros_relacionados) || 0);
+                    analysisData.total_gasto_oncologico_calculado = parseFloat(calculatedTotal.toFixed(2));
+                } catch (parseError) {
+                    console.error('❌ Erro ao analisar o JSON (após limpeza). JSON extraído:', jsonString);
+                    analysisData = { error: 'JSON parse error after cleaning', extractedJson: jsonString, rawResponse: rawResponseText, source: sourceUsed };
+                }
+            } else {
+                 console.error('❌ Não foi possível extrair um JSON válido da resposta do Gemini. Resposta bruta:', rawResponseText);
+                 analysisData = { error: 'No valid JSON extracted', rawResponse: rawResponseText, source: sourceUsed };
+            }
+
+            await db.query(
+                `UPDATE mentions SET gemini_analysis = $1, extracted_value = $2 WHERE id = $3`,
+                [JSON.stringify(analysisData), calculatedTotal, mention.id]
+            );
+
+            console.log(`  -> Sucesso (fonte: ${sourceUsed})! Total calculado: R$ ${calculatedTotal.toFixed(2)}`);
+            return true; // Sucesso, sai do loop de tentativas
+
+        } catch (error) {
+            // **NOVO: Tratamento Específico do Erro 429**
+            // Verifica se é um erro da API e se o status é 429
+            // (A estrutura exata do erro pode variar um pouco com o SDK, ajuste se necessário)
+            if (error.message && error.message.includes('429')) {
+                attempt++;
+                console.warn(`🚦 Rate limit atingido (Tentativa ${attempt}/${maxRetries}). Esperando para tentar novamente...`);
+                // Extrai o tempo de espera sugerido da mensagem ou usa um padrão
+                const retryMatch = error.message.match(/Please retry in (\d+\.?\d*)s/);
+                const waitTimeSeconds = retryMatch ? parseFloat(retryMatch[1]) + 1 : Math.pow(2, attempt) * 5; // Pega o tempo sugerido +1s ou usa backoff exponencial (5s, 10s, 20s)
+                
+                console.log(`   -> Aguardando ${waitTimeSeconds.toFixed(1)} segundos.`);
+                await delay(waitTimeSeconds * 1000);
+                // O loop 'while' continuará para a próxima tentativa
+            } else {
+                // Se for outro tipo de erro, registra e desiste desta menção
+                console.error(`❌ ERRO FATAL (não 429) ao processar a menção ID ${mention.id}:`, error.message);
+                // Poderia marcar no banco com um erro específico se quisesse
+                return false; // Indica falha, sai do loop de tentativas
+            }
+        }
+    }
+     // Se chegou aqui, excedeu o número máximo de retries para erro 429
+     console.error(`❌ Excedido número máximo de retries (${maxRetries}) para a menção ID ${mention.id} devido a rate limits.`);
+     return false; // Indica falha
+}
+
+
+/**
+ * Função principal do script de enriquecimento.
+ */
 async function enrichData() {
-    console.log('✅ Iniciando script de enriquecimento (usando .txt com fallback para excerpt)...');
-    
-    // Busca menções não processadas, AGORA INCLUINDO txt_url
+    console.log('✅ Iniciando script de enriquecimento (v3 - com retry para 429)...');
+
     const mentionsToProcess = await db.query(
-        'SELECT id, excerpt, txt_url FROM mentions WHERE gemini_analysis IS NULL' 
+        'SELECT id, excerpt, txt_url FROM mentions WHERE gemini_analysis IS NULL'
     );
 
     if (mentionsToProcess.rows.length === 0) {
-        // ... (mensagem de conclusão) ...
+        console.log('🎉 Nenhum dado novo para processar.');
         return;
     }
 
     console.log(`ℹ️  Encontradas ${mentionsToProcess.rows.length} menções para processar.`);
 
+    let successCount = 0;
+    let failureCount = 0;
+
     for (const [index, mention] of mentionsToProcess.rows.entries()) {
-        console.log(`\n[${index + 1}/${mentionsToProcess.rows.length}] Processando menção ID: ${mention.id}...`);
-        
-        let textToAnalyze = null;
-        let sourceUsed = 'excerpt'; // Para logar qual fonte foi usada
+        console.log(`\n[${index + 1}/${mentionsToProcess.rows.length}] Iniciando processamento da menção ID: ${mention.id}...`);
 
-        try {
-            // --- LÓGICA DE SELEÇÃO DA FONTE ---
-            if (mention.txt_url) {
-                try {
-                    console.log(`  -> Tentando baixar .txt de: ${mention.txt_url}`);
-                    const response = await axios.get(mention.txt_url);
-                    textToAnalyze = response.data; // Pega o conteúdo de texto
-                    sourceUsed = 'txt';
-                    console.log(`  -> Sucesso ao baixar .txt (${(textToAnalyze.length / 1024).toFixed(2)} KB).`);
-                } catch (txtDownloadError) {
-                    console.warn(`  -> Aviso: Falha ao baixar .txt (${txtDownloadError.message}). Usando excerpt como fallback.`);
-                    textToAnalyze = mention.excerpt; // Fallback para o excerpt
-                }
-            } else {
-                console.log('  -> .txt URL não disponível. Usando excerpt.');
-                textToAnalyze = mention.excerpt; // Usa o excerpt se não houver txt_url
-            }
-            // --- FIM DA LÓGICA DE SELEÇÃO ---
+        const success = await processMention(mention); // Chama a função que contém a lógica de retry
 
-            // Garante que temos algum texto para analisar
-            if (!textToAnalyze || textToAnalyze.trim() === '') {
-                 console.warn('  -> Aviso: Fonte de texto vazia. Pulando análise.');
-                 // Marca como processado com erro ou dados vazios para não tentar de novo
-                 await db.query(
-                    `UPDATE mentions SET gemini_analysis = $1, extracted_value = 0.00 WHERE id = $2`,
-                    [JSON.stringify({ error: 'Texto fonte vazio', source: sourceUsed }), mention.id]
-                 );
-                 continue; // Pula para a próxima menção
-            }
-
-            // ---- ANÁLISE COM GEMINI ----
-            // ATENÇÃO: Verificar tamanho do texto antes de enviar para o Gemini!
-            // Uma versão mais robusta adicionaria lógica de chunking aqui se 'textToAnalyze' for muito grande.
-            // Por simplicidade, vamos assumir que cabe (o que é provável para a maioria dos .txt).
-
-            const prompt = getGeminiPrompt(textToAnalyze);
-            const result = await model.generateContent(prompt);
-            const responseText = result.response.text();
-            
-            // ... (Lógica para parsear o JSON e salvar no banco, igual à anterior) ...
-            let analysisData;
-            try {
-                analysisData = JSON.parse(responseText);
-            } catch (parseError) {
-                // ... (Tratamento de erro de parse) ...
-                analysisData = { error: 'JSON parse error', response: responseText, source: sourceUsed };
-            }
-
-            const totalValue = analysisData.total_gasto || 0.00;
-            await db.query(
-                `UPDATE mentions SET gemini_analysis = $1, extracted_value = $2 WHERE id = $3`,
-                [JSON.stringify(analysisData), totalValue, mention.id]
-            );
-
-            console.log(`  -> Sucesso (fonte: ${sourceUsed})! Total extraído: R$ ${totalValue}`);
-
-            await delay(500); // Mantém a pausa
-
-        } catch (error) {
-            // ... (Tratamento de erro fatal, igual ao anterior) ...
-            console.error(`❌ ERRO FATAL ao processar a menção ID ${mention.id}:`, error.message);
-            await delay(1000);
+        if(success) {
+            successCount++;
+        } else {
+            failureCount++;
         }
+
+        // **Ajuste no Delay Padrão**
+        // Aumenta a pausa padrão entre menções *diferentes* para ajudar a evitar o limite de tokens/min
+        await delay(1500); // Ex: 1.5 segundos entre cada menção
     }
 
-    console.log('🎉 Processo de enriquecimento de dados finalizado!');
+    console.log(`\n🎉 Processo de enriquecimento finalizado!`);
+    console.log(`   - Sucesso: ${successCount}`);
+    console.log(`   - Falhas (após retries): ${failureCount}`);
 }
 
 enrichData().catch(console.error);
