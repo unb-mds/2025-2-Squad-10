@@ -1,6 +1,6 @@
-# 📌 Ata de Reunião - Squad 10 (Sprint 09)
+# 📌 Ata de Reunião - Squad 10 (Sprint 10)
 
-**Data:** 20/10/2025
+**Data:** 27/10/2025
 
 **Participantes:**  
 - Luiz Henrique Pallavicini
@@ -13,25 +13,25 @@
 ---
 
 ## 🎯 Objetivo(s) da Reunião
-- [Definir os objetivos da semana, implementar a api do gemini para o banco de dados .]
+- [Definir os objetivos da semana.]
 
 ---
 
 ## 📋 Pautas e Definições  
 
-- **Pauta 1:** [ implemetação do bds com a api do gemini ]  
-  - **Definição:** [Realizar um novo banco de dados com um melhor scprit  ]
+- **Pauta 1:** [alterações no frontend  ]  
+  - **Definição:** [barra branca , botao de cmc , zoom , nomeclatura dos estados , esticar a tabela (msm tamanho do  mapa )]
 
-- **Pauta 2:** [definir a cor da paleta de cores do front ]  
-  - **Definição:** [Definir com o gp a nova cor do projeto para melhor visualização .]  
+- **Pauta 2:** []  
+  - **Definição:** []  
 
 
 ## ✅ Ações / Próximos Passos  
 
-- - - **[giovani]:** [Realizar a implementação da paleta de cores ]  
+- - - **[giovani]:** [Realizar a implementação da paleta de cores, e alterações da pagina . ]  
 - **[gabriel]:** [ Realizar a implemantação da saida do pdf, e implementação da api do gemini para tratamentos de dados ]
-- **[Luiz]:** [Realizar a implementação da paleta de cores  ]  
-- **[felype]:** [Realizar a implementação da paleta de cores ]  
+- **[Luiz]:** [Realizar a implementação da paleta de cores, e alterações da pagina . ]   
+- **[felype]:** [Realizar a implementação da paleta de cores no figma, arrumar o git pages .]  
 - **[joão]:**[Realizar a implemantação da saida do pdf, e implementação da api do gemini para tratamentos de dados  ]
 - **[artur]:**[Realizar a implemantação da saida do pdf, e implementação da api do gemini para tratamentos de dados  ]
 - **[Todos]:** [Realizar implementação do codigo ]  
@@ -41,6 +41,6 @@
 ---
 
 ## 📝 Observações
-- [Refatorar o banco de dadaos .]  
+- [Impletar as mudanças do frontend .]  
 
 ---
