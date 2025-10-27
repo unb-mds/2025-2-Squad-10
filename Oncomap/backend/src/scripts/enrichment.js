@@ -18,8 +18,10 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // para acomodar o prompt, a resposta e diferenças na tokenização.
 const MAX_TOKENS_PER_CHUNK = 800000; // 800k Tokens (ajuste se necessário)
 const MAX_RETRIES = 3;
-const DELAY_BETWEEN_MENTIONS = 1500;
-const DELAY_BETWEEN_CHUNKS = 1000;
+// Pausa entre processar menções DIFERENTES
+const DELAY_BETWEEN_MENTIONS = 3000;
+// Pausa entre processar chunks DENTRO da mesma menção
+const DELAY_BETWEEN_CHUNKS = 2000;
 // --- FIM DAS CONSTANTES ---
 
 // Instância do Tokenizer (cl100k_base é usado por GPT-4/3.5, uma boa aproximação)
