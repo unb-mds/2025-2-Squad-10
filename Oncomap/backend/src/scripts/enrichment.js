@@ -6,7 +6,7 @@ const axios = require('axios'); // Precisamos do axios para baixar o .txt
 require('dotenv').config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // O prompt para o Gemini permanece o mesmo
