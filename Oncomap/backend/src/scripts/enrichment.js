@@ -16,7 +16,15 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 function getGeminiPrompt(textContent) {
     // ... (cole o prompt refinado aqui) ...
     return `
-        **Tarefa:** Analise o seguinte texto extraído de um Diário Oficial Municipal brasileiro. Seu objetivo é identificar e extrair TODOS os valores monetários (em Reais) que representem gastos ou investimentos DIRETAMENTE relacionados à área de ONCOLOGIA. Após identificar os valores, some-os e categorize-os de acordo com as regras abaixo.
+        **Tarefa:** VOCÊ É UM ANALISTA FINANCEIRO ESPECIALIZADO EM ORÇAMENTO PÚBLICO DE SAÚDE. Analise CUIDADOSAMENTE o seguinte texto extraído de um Diário Oficial Municipal brasileiro. Seu objetivo é identificar, extrair e somar TODOS os valores monetários (em Reais) que representem gastos ou investimentos DIRETAMENTE relacionados à área de ONCOLOGIA. Categorize os valores somados conforme as regras.
+
+        **Formatos de Valor a Procurar (Exemplos):**
+        * R$ 1.234,56
+        * R$1.234,56
+        * Valor: 1.234,56
+        * Custo total de 1.234,56
+        * Valor adjudicado: R$ 1.234,56
+        * (Procure por números com vírgula decimal próximos a palavras como "valor", "custo", "total", "R$")
 
         **Formato OBRIGATÓRIO da Resposta:**
         Sua resposta deve ser **EXCLUSIVAMENTE um objeto JSON válido**, sem nenhum texto antes ou depois, e sem usar markdown (como \`\`\`json). O formato deve ser EXATAMENTE este:
@@ -32,18 +40,18 @@ function getGeminiPrompt(textContent) {
         }
 
         **Regras Detalhadas:**
-        1.  **Foco em Oncologia:** Considere APENAS valores explicitamente ligados a oncologia, câncer, quimioterapia, radioterapia, medicamentos oncológicos, equipamentos para diagnóstico/tratamento de câncer, etc. Ignore outros gastos de saúde não relacionados.
-        2.  **Formato Numérico:** Todos os valores no JSON devem ser números (float ou integer), usando ponto (.) como separador decimal. Não inclua "R$" ou separadores de milhar. Exemplo: 1500.50.
-        3.  **Categorização:**
-            * **"medicamentos":** Some aqui valores de compra de quimioterápicos, imunoterápicos, fármacos de suporte direto ao tratamento oncológico.
-            * **"equipamentos":** Some valores de aquisição, aluguel ou manutenção de equipamentos usados em oncologia (ex: acelerador linear, mamógrafo, tomógrafo para radioterapia, PET-CT).
-            * **"estadia_paciente":** Some valores explicitamente mencionados como custo de internação, diária de leito hospitalar, ou acomodação de pacientes oncológicos (menos comum em diários, mas inclua se encontrar).
-            * **"obras_infraestrutura":** Some valores de construção, reforma ou ampliação de alas, centros ou hospitais oncológicos.
-            * **"servicos_saude":** Some valores de contratação de serviços médicos oncológicos, exames de diagnóstico (patologia, imagem para oncologia), serviços de radioterapia/quimioterapia, transporte de pacientes oncológicos (TFD).
-            * **"outros_relacionados":** Use como um "catch-all" para gastos claramente oncológicos que não se encaixam perfeitamente nas categorias acima (ex: campanhas de prevenção específicas de câncer, software de gestão oncológica, etc.).
-            * **"total_gasto_oncologico":** Deve ser a SOMA EXATA de todas as outras categorias ('medicamentos + equipamentos + estadia_paciente + obras_infraestrutura + servicos_saude + outros_relacionados'). Se múltiplos valores forem encontrados para uma mesma categoria no texto, some-os antes de colocar no JSON.
-        4.  **Nenhum Valor Encontrado:** Se o texto não contiver NENHUM valor monetário relacionado à oncologia, retorne o JSON com todos os campos zerados (0.00).
-        5.  **JSON Puro:** Repetindo: a resposta deve começar com '{' e terminar com '}' e conter apenas o JSON válido.
+        1.  **Foco Estrito em Oncologia:** Considere APENAS valores explicitamente ligados a oncologia, câncer, quimioterapia, radioterapia, medicamentos oncológicos, equipamentos para diagnóstico/tratamento de câncer, etc. Ignore outros gastos de saúde mencionados que não sejam oncológicos. SEJA PRECISO.
+        2.  **Extração e Conversão Numérica:** Encontre TODOS os valores relevantes no texto. Converta-os para números (float), usando ponto (.) como separador decimal. Remova "R$" e separadores de milhar. Some todos os valores encontrados para cada categoria.
+        3.  **Categorização (Revise com Atenção):**
+            * "medicamentos": Compra/fornecimento de quimioterápicos, imunoterápicos, fármacos de suporte oncológico.
+            * "equipamentos": Aquisição, aluguel, manutenção de equipamentos oncológicos (acelerador linear, mamógrafo, PET-CT, etc.).
+            * "estadia_paciente": Custo de internação, diária de leito, acomodação de pacientes oncológicos.
+            * "obras_infraestrutura": Construção, reforma, ampliação de instalações oncológicas.
+            * "servicos_saude": Contratação de serviços médicos/exames oncológicos, radioterapia, quimioterapia, transporte (TFD).
+            * "outros_relacionados": Gastos oncológicos que não se encaixam acima (campanhas, software, etc.).
+            * "total_gasto_oncologico": SOMA EXATA de todas as outras categorias calculada por você. VERIFIQUE A SOMA.
+        4.  **Nenhum Valor Encontrado:** Se, após análise cuidadosa, o texto não contiver NENHUM valor monetário ligado à oncologia, retorne o JSON com todos os campos zerados (0.00).
+        5.  **JSON Puro:** A resposta DEVE ser apenas o JSON, começando com { e terminando com }.
 
         **Texto para Análise:**
         """
