@@ -1,0 +1,25 @@
+{{/* Define o "miolo" para páginas de listagem (seções) */}}
+{{ define "main" }}
+
+    <div class="container page-list">
+        <h1>{{ .Title }}</h1>
+        
+        <div class="content">
+            {{ .Content }}
+        </div>
+
+        <hr>
+        <h2>Páginas nesta seção:</h2>
+        
+        <ul>
+            {{ range .Pages }}
+                <li>
+                    <a href="{{ .RelPermalink }}">
+                        {{ .Title }}
+                    </a>
+                    </li>
+            {{ end }}
+        </ul>
+    </div>
+
+{{ end }}
