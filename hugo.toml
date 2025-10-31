@@ -8,25 +8,3 @@ canonifyURLs = true
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
-
-[menu]
-  [[menu.main]]
-    name = "Início"
-    url = "/"
-    weight = 10
-  [[menu.main]]
-    name = "Sprints"
-    url = "/sprints/"
-    weight = 20
-  [[menu.main]]
-    name = "Issues"
-    url = "/issues/"
-    weight = 30
-  [[menu.main]]
-    name = "Guia de Configuração"
-    url = "/requisitos/" # Ajuste a URL se for diferente
-    weight = 40
-  [[menu.main]]
-    name = "Arquitetura"
-    url = "/arquitetura/"
-    weight = 50
