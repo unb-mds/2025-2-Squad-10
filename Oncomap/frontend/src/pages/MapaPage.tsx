@@ -1,9 +1,10 @@
 // src/pages/MapaPage.tsx
 
-// --- ALTERAÇÃO 1: Removido 'useEffect' da importação ---
+
 import React, { useState } from 'react';
 import MapaInterativo from "../components/MapaPage/mapa";
 import Footer from "../components/Geral/footer";
+import Layout from '../components/Geral/layout_sidebar';
 import TabelaInfo, { type DadosRegiao, type DadosInvestimentos } from '../components/MapaPage/TabelaInfo';
 import '../style/MapaPage.css';
 import type { FeatureCollection } from 'geojson';
@@ -39,8 +40,9 @@ const MapaPege: React.FC = () => {
 
     const dadosDaRegiao = getRegiaoData();
 
-    return (
+  return (
         <div className="mapa-page-container">
+            <Layout/>
             <div className={selectedRegion ? "content-wrapper region-selected" : "content-wrapper"}>
                 <div className="map-area">
                     <MapaInterativo
@@ -62,7 +64,6 @@ const MapaPege: React.FC = () => {
                 </div>
 
                 <div className="panel-area">
-                  {/* --- ALTERAÇÃO 2: Usando as variáveis de estado para feedback --- */}
                   {loadingDados && (
                     <div className="panel-message">
                       <strong>Carregando dados...</strong>
@@ -94,9 +95,10 @@ const MapaPege: React.FC = () => {
                   )}
                 </div>
             </div>
+
             <Footer />
         </div>
-    );
+  );
 };
 
 export default MapaPege;

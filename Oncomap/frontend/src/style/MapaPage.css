@@ -1,4 +1,4 @@
-/* Mantive suas regras e adicionei ajustes para garantir visibilidade do painel */
+
 .mapa-page-container {
   width: 100%;
   background-color: #f0f2f5;
@@ -15,7 +15,7 @@
   transition: all 0.4s ease-in-out;
 }
 
-/* Map area keeps espaço controlado */
+
 .map-area {
   position: relative;
   width: 100%;
@@ -30,7 +30,7 @@
   z-index: 1;
 }
 
-/* Painel inicialmente oculto (colapsado) */
+
 .panel-area {
   display: flex;
   align-items: flex-start;
