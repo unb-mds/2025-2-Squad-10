@@ -45,14 +45,6 @@ type EstadoFeature = Feature<Geometry, EstadoProperties>;
 
 type EstadoFeatureCollection = FeatureCollection<Geometry, EstadoProperties>;
 
-
-
-/**
- * Adiciona a chave da região dentro das "properties" de cada feature (estado).
- * @param features - O array de features de um estado.
- * @param regionKey - A chave da região (ex: 'norte').
- * @returns - O novo array de features com a propriedade 'regiao' adicionada.
- */
 const addRegionToFeatures = (
   features: EstadoFeature[],
   regionKey: string
@@ -80,7 +72,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...RR.features,
         ...AP.features
       ] as EstadoFeature[],
-      'norte'
+      'Norte'
     ),
   },
   nordeste: {
@@ -97,7 +89,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...AL.features,
         ...SE.features
       ] as EstadoFeature[],
-      'nordeste'
+      'Nordeste'
     ),
   },
   centroOeste: {
@@ -109,7 +101,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...MS.features,
         ...DF.features
       ] as EstadoFeature[],
-      'centroOeste'
+      'Centro Oeste'
     ),
   },
   sudeste: {
@@ -121,7 +113,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...MG.features,
         ...ES.features
       ] as EstadoFeature[],
-      'sudeste'
+      'Sudeste'
     ),
   },
   sul: {
@@ -132,7 +124,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...SC.features, 
         ...RS.features
       ] as EstadoFeature[],
-      'sul'
+      'Sul'
     ),
   },
 };
