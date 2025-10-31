@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/2025-2-OncoMap/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=2025-2-OncoMap/livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        
+            [FEATURE] Teste da alimentacao do banco de dados | OncoMap
+        
+    </title>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/2025-2-OncoMap/css/issues-page-bundle.min.css">
+
+
+
+</head>
+<body>
+
+    <nav class="navbar">
+
+    <a class="navbar-brand" href="http://localhost:1313/2025-2-OncoMap/">
+        OncoMap
+    </a>
+
+    <ul class="navbar-links">
+        <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/sprints/">Sprints</a></li>
+        <li><a href="#link-para-requisitos">Requisitos</a></li>
+        <li><a href="#link-para-arquitetura">Arquitetura</a></li>
+    </ul>
+
+    <div class="navbar-right">
+        <a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a>
+    </div>
+
+</nav>
+
+    <section class="hero">
+    <div class="container">
+        <h1>[FEATURE] Teste da alimentacao do banco de dados</h1>
+        
+        
+        
+        </div>
+</section>
+
+    <main>
+        
+
+    <div class="container page-single">
+        <h1>[FEATURE] Teste da alimentacao do banco de dados</h1>
+        
+        <div class="content">
+            <h2 id="-descrição">🎯 Descrição</h2>
+<p>Adicionar um script de teste automatizado para validar o processo de alimentação do banco de dados. O teste deve simular a execução do <code>collector.js</code> em um escopo limitado, confirmando que ele consegue buscar dados da API do Querido Diário e inseri-los corretamente na tabela <code>mentions</code> do nosso banco de dados PostgreSQL.</p>
+<hr>
+<h2 id="-objetivo">✅ Objetivo</h2>
+<p>O problema que esta feature resolve é a falta de garantia e confiança no nosso pipeline de dados principal. Atualmente, executamos o <code>collector.js</code> e assumimos que ele funcionou, mas não temos uma forma rápida e automática de verificar seu sucesso.</p>
+<p>Esta funcionalidade é importante para o projeto por três razões:</p>
+<ol>
+<li><strong>Confiabilidade:</strong> Garante que a funcionalidade mais crítica do nosso backend (a coleta de dados) está funcionando como esperado.</li>
+<li><strong>Manutenção:</strong> Se a API do Querido Diário mudar seu formato ou se fizermos uma alteração no nosso código que quebre a inserção, o teste irá falhar imediatamente, nos alertando sobre o problema.</li>
+<li><strong>Facilidade de Colaboração:</strong> Permite que qualquer membro da equipe execute o teste para validar se seu ambiente de desenvolvimento (conexão com o banco, variáveis de ambiente) está configurado corretamente.</li>
+</ol>
+<hr>
+<h2 id="-detalhes-da-implementação">📝 Detalhes da Implementação</h2>
+<p>A implementação consistirá em criar um script de teste de integração que executa e verifica a lógica de coleta.</p>
+<ol>
+<li>
+<p><strong>Criar um Script de Teste:</strong></p>
+<ul>
+<li>Criar um novo arquivo, por exemplo, <code>test/collector.test.js</code>. Este script usará as mesmas dependências (<code>pg</code>, <code>axios</code>) do nosso coletor principal.</li>
+</ul>
+</li>
+<li>
+<p><strong>Definir um Escopo de Teste Limitado:</strong></p>
+<ul>
+<li>O teste não irá rodar para todos os 5.570 municípios. Ele será configurado para buscar dados de <strong>apenas três municípios</strong> (ex: Rio de Janeiro, <code>3304557</code>, &hellip;) e para um <strong>período de tempo curto</strong> (ex: os últimos 30 dias). Isso garante que o teste seja rápido.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="-critérios-de-aceitação">📊 Critérios de Aceitação</h2>
+<p>Para considerar esta funcionalidade concluída, os seguintes pontos devem ser atendidos:</p>
+<ul>
+<li><input disabled="" type="checkbox"> Um script de teste dedicado à alimentação do banco de dados existe no projeto.</li>
+<li><input disabled="" type="checkbox"> O script executa a lógica de coleta para um escopo pequeno e predefinido (3 município, período curto).</li>
+<li><input disabled="" type="checkbox"> O script se conecta ao banco de dados para verificar o resultado da inserção após a execução da coleta.</li>
+<li><input disabled="" type="checkbox"> O teste é considerado &ldquo;passou&rdquo; se o número de registros na tabela <code>mentions</code> aumentar após a execução do script.</li>
+<li><input disabled="" type="checkbox"> O teste é considerado &ldquo;falhou&rdquo; se nenhum novo registro for adicionado, exibindo uma mensagem de erro clara no console.</li>
+</ul>
+<hr>
+
+        </div>
+    </div>
+
+
+    </main>
+
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            
+            <div class="footer-column about">
+                <h3>OncoMap</h3>
+                <p>Mapa de investimento em saúde oncológica</p>
+            </div>
+            
+            <div class="footer-column links">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/sprints">Sprints</a></li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+            
+            <div class="footer-column contact">
+                <h3>Contato</h3>
+                <ul>
+                    <li><a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="container">
+            <p>&copy; 2025 OncoMap. Todos os direitos reservados.</p>
+            <p>Desenvolvido pela equipe UnB-MDS</p>
+        </div>
+    </div>
+</footer>
+    
+    <script src="http://localhost:1313/2025-2-OncoMap/js/app.js"></script>
+</body>
+</html>

@@ -1,25 +1,39 @@
-{{/* Define o "miolo" para páginas de listagem (seções) */}}
 {{ define "main" }}
+    
+    {{/* O Hero padronizado (do baseof.html) já aparece aqui */}}
 
-    <div class="container page-list">
-        <h1>{{ .Title }}</h1>
-        
-        <div class="content">
-            {{ .Content }}
-        </div>
+    <section class="content-list">
+        <div class="container">
+            
+            <div class="list-header">
+                {{ if .Content }}
+                    {{ .Content }}
+                {{ else }}
+                    <h2>Conteúdo Disponível</h2>
+                {{ end }}
+            </div>
 
-        <hr>
-        <h2>Páginas nesta seção:</h2>
-        
-        <ul>
-            {{ range .Pages }}
-                <li>
-                    <a href="{{ .RelPermalink }}">
-                        {{ .Title }}
-                    </a>
-                    </li>
+            <div class="card-grid-sprints">
+                {{ range .Pages.ByDate.Reverse }}
+                    <div class="card-sprint">
+                        <div class="card-sprint-header">
+                            <h3>{{ .Title }}</h3>
+                            <span class="date">{{ .Date.Format "02/01/2006" }}</span>
+                        </div>
+                        <div class="card-sprint-body">
+                            <a href="{{ .RelPermalink }}" class="button-access">
+                                → Acessar
+                            </a>
+                        </div>
+                    </div>
+                {{ end }}
+            </div>
+            
+            {{ if eq (len .Pages) 0 }}
+                <p>Nenhuma sprint encontrada nesta seção.</p>
             {{ end }}
-        </ul>
-    </div>
+
+        </div>
+    </section>
 
 {{ end }}

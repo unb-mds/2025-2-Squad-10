@@ -12,7 +12,34 @@
         {{ end }}
     </title>
     
-    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+{{/* --- Carregamento de CSS com Hugo Pipes --- */}}
+    
+    {{/* 1. Carrega o CSS principal */}}
+    {{ $style := resources.Get "css/style.css" }}
+    
+    {{/* 2. Cria uma lista de CSS a serem combinados */}}
+    {{ $cssBundle := slice $style }}
+    
+    {{/* 3. Adiciona CSS específico da seção */}}
+    {{ if eq .Section "sprints" }}
+        {{ $sprintCSS := resources.Get "css/sprints.css" }}
+        {{ $cssBundle = $cssBundle | append $sprintCSS }}
+    {{ end }}
+    
+    {{ if eq .Section "issues" }}
+        {{ $issueCSS := resources.Get "css/issues.css" }}
+        {{ $cssBundle = $cssBundle | append $issueCSS }}
+    {{ end }}
+    
+    {{/* 4. Combina tudo em um arquivo com nome único (baseado na Seção e no Tipo) */}}
+    {{ $nomeBundle := printf "css/%s-%s-bundle.css" .Section .Kind }}
+    {{ $bundle := $cssBundle | resources.Concat $nomeBundle | resources.Minify }}
+    
+    {{/* 5. Gera a tag <link> */}}
+    <link rel="stylesheet" href="{{ $bundle.RelPermalink }}">
+
+{{/* --- Fim do Bloco CSS --- */}}
+
 </head>
 <body>
 
