@@ -72,7 +72,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...RR.features,
         ...AP.features
       ] as EstadoFeature[],
-      'Norte'
+      'norte'
     ),
   },
   nordeste: {
@@ -89,7 +89,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...AL.features,
         ...SE.features
       ] as EstadoFeature[],
-      'Nordeste'
+      'nordeste'
     ),
   },
   centroOeste: {
@@ -101,7 +101,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...MS.features,
         ...DF.features
       ] as EstadoFeature[],
-      'Centro Oeste'
+      'centroOeste'
     ),
   },
   sudeste: {
@@ -113,7 +113,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...MG.features,
         ...ES.features
       ] as EstadoFeature[],
-      'Sudeste'
+      'sudeste'
     ),
   },
   sul: {
@@ -124,7 +124,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...SC.features, 
         ...RS.features
       ] as EstadoFeature[],
-      'Sul'
+      'sul'
     ),
   },
 };
