@@ -1,5 +1,5 @@
 import { FaPlayCircle } from 'react-icons/fa';
-import { HashLink } from 'react-router-hash-link';
+import {Link} from "react-router-dom";
 import '../../style/Hero.css';
 
 const Hero = () => {
@@ -11,10 +11,10 @@ const Hero = () => {
         <p className="hero-description">Ajudamos a transformar dados dos diários oficiais municipais em informação acessível sobre investimentos em saúde oncológica.</p>
         
         
-        <HashLink to="/#sobre" smooth className="hero-start-button">
+        <Link to="/mapa" className="hero-start-button">
           <FaPlayCircle className="hero-start-icon" />
           <span>Começar</span>
-        </HashLink>
+        </Link>
       </div>
     </section>
   );
