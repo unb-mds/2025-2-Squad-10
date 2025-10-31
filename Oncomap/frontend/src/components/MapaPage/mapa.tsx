@@ -118,7 +118,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     }
   }, [selectedState]);
 
-  // Função de resetar o zoom
+  
   const handleResetView = () => {
     if (map) {
       if (selectedState) setSelectedState(null);
@@ -149,15 +149,13 @@ const MapaInterativo: React.FC<MapProps> = ({
 
   // --- ALTERAÇÃO PRINCIPAL AQUI ---
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
-    // 1. Decide qual nome exibir com base na seleção da região
     const tooltipContent = selectedRegion
       ? feature.properties.name || 'Estado' // Se uma região está selecionada, mostra o nome do estado
       : feature.properties.regiao || 'Região'; // Se não, mostra o nome da região
 
-    // 2. Aplica o conteúdo correto ao tooltip
     layer.bindTooltip(tooltipContent, { sticky: true });
 
-    // 3. O resto da lógica de interação permanece a mesma
+   
     layer.on({
       mouseover: () => setHoveredObject(feature),
       mouseout: () => setHoveredObject(null),

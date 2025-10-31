@@ -42,7 +42,6 @@ interface jsPDFWithAutoTable extends jsPDF {
 
 const TabelaInfo = ({
   dadosDaRegiao,
-  onClose,
   estadoCodarea,
   municipiosDoEstadoGeoJSON,
   setSearchedMunicipioName,
@@ -107,7 +106,6 @@ const TabelaInfo = ({
 
   return (
     <div className="info-container">
-      <button className="close-button" onClick={onClose}>✕</button>
 
       {dadosDoEstado ? (
         <div className="visao-estado">
