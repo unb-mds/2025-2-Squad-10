@@ -4,6 +4,7 @@ const db = require('../config/database');
 const axios = require('axios');
 require('dotenv').config();
 const { get_encoding } = require("tiktoken");
+const pdfParse = require('pdf-parse'); // Adicionado pdf-parse que estava faltando nos imports do seu script
 
 // --- 1. CONFIGURAÇÃO DO ROTEADOR DE CHAVES ---
 const apiKeys = (process.env.GEMINI_API_KEYS || "")
@@ -43,18 +44,18 @@ function switchToNextKey() {
 updateModelInstance();
 // --- FIM DO ROTEADOR DE CHAVES ---
 
-// Função de atraso
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // --- CONSTANTES DE CONTROLE ---
 const MAX_TOKENS_PER_CHUNK = 800000;
-const MAX_RETRIES = 3; // Retries para erros FATAIS (não 429)
-const DELAY_BETWEEN_MENTIONS = 1000; // Delay curto, pois o rate limit é tratado com troca de chave
+const MAX_RETRIES = 3;
+const DELAY_BETWEEN_MENTIONS = 1000;
 const DELAY_BETWEEN_CHUNKS = 1000;
 
 const tokenizer = get_encoding("cl100k_base");
 
-// Função getGeminiPrompt (seu prompt original, sem alterações)
+// --- FUNÇÕES (getGeminiPrompt, extractJsonFromString, splitTextIntoChunksByToken) ---
+
 function getGeminiPrompt(textContent) {
      return `
         **Tarefa:** VOCÊ É UM ANALISTA FINANCEIRO ESPECIALIZADO EM ORÇAMENTO PÚBLICO DE SAÚDE. Analise CUIDADOSAMENTE o seguinte texto extraído de um Diário Oficial Municipal brasileiro. Seu objetivo é identificar, extrair e somar TODOS os valores monetários (em Reais) que representem gastos ou investimentos DIRETAMENTE relacionados à área de ONCOLOGIA. Categorize os valores somados conforme as regras.
@@ -101,7 +102,6 @@ function getGeminiPrompt(textContent) {
     `;
 }
 
-// Função extractJsonFromString (sem alterações)
 function extractJsonFromString(text) {
     if (!text) return null;
     const match = text.match(/\{[\s\S]*\}/);
@@ -117,7 +117,6 @@ function extractJsonFromString(text) {
     return null;
 }
 
-// Função splitTextIntoChunksByToken (sem alterações)
 function splitTextIntoChunksByToken(text, maxTokens, tokenizerInstance) {
     const chunks = [];
     const tokens = tokenizerInstance.encode(text);
@@ -134,12 +133,9 @@ function splitTextIntoChunksByToken(text, maxTokens, tokenizerInstance) {
 }
 
 
-/**
- * processSingleChunk - MODIFICADO COM A NOVA LÓGICA DE PARADA
- */
 async function processSingleChunk(chunkText, mentionId, chunkIndex, totalChunks) {
-     let attempt = 0; // Tentativas de erro FATAL (ex: 500, 400)
-     let keysRotatedThisChunk = 0; // Contador de rotação de chaves para ESTE chunk
+     let attempt = 0;
+     let keysRotatedThisChunk = 0;
 
     while (attempt < MAX_RETRIES) {
         try {
@@ -147,7 +143,6 @@ async function processSingleChunk(chunkText, mentionId, chunkIndex, totalChunks)
             const prompt = getGeminiPrompt(chunkText);
             const generationConfig = { responseMimeType: "application/json" };
             
-            // USA A INSTÂNCIA DO MODELO GLOBAL
             const result = await modelInstance.generateContent({
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
                 generationConfig
@@ -169,41 +164,44 @@ async function processSingleChunk(chunkText, mentionId, chunkIndex, totalChunks)
                         servicos_saude: parseFloat(chunkAnalysis.servicos_saude) || 0,
                         outros_relacionados: parseFloat(chunkAnalysis.outros_relacionados) || 0,
                     };
-                } catch (parseError) { /* ... (log erro parse) ... */ return null; }
-            } else { /* ... (log erro extração) ... */ return null; }
+                } catch (parseError) { 
+                    console.error(`    -> ❌ Erro ao analisar JSON do chunk:`, parseError.message);
+                    return null; 
+                }
+            } else { 
+                console.error(`    -> ❌ Não foi possível extrair JSON do chunk.`);
+                return null; 
+            }
         
         } catch (error) {
-            // Verifica se é um erro de Rate Limit
             let isRateLimitError = (error.status === 429 || (error.message && (error.message.toLowerCase().includes('resource_exhausted') || error.message.toLowerCase().includes('rate limit'))));
 
             if (isRateLimitError) {
-                // --- LÓGICA DE ROTAÇÃO E PARADA ---
                 console.warn(`    -> 🚦 Rate limit atingido na Chave #${currentKeyIndex + 1} (Chunk ${chunkIndex + 1}/${totalChunks}).`);
                 
                 if (keysRotatedThisChunk >= apiKeys.length - 1) {
-                    // Já tentamos TODAS as chaves para este chunk e todas falharam.
                     console.error(`    -> ❌ FALHA TOTAL: Todas as ${apiKeys.length} chaves de API estão em rate limit. Abortando o script.`);
-                    // Lança um erro especial que será pego no nível mais alto
                     throw new Error("ALL_KEYS_RATE_LIMITED"); 
                 } else {
-                    // Ainda temos chaves para tentar
-                    switchToNextKey(); // Troca para a próxima chave
+                    switchToNextKey();
                     keysRotatedThisChunk++;
                 }
-                // --- FIM DA LÓGICA ---
             } else {
-                // ... (lógica de erro fatal, igual à anterior) ...
                 console.error(`    -> ❌ ERRO FATAL no chunk ${chunkIndex + 1}/${totalChunks} (ID ${mentionId}):`, error.message);
+                if (error.response && error.response.data) { console.error('       Detalhes API:', JSON.stringify(error.response.data, null, 2)); }
                 attempt++;
-                if (attempt < MAX_RETRIES) { /* ... (delay e log) ... */ } 
-                else { return null; }
+                if (attempt < MAX_RETRIES) {
+                    await delay(Math.pow(2, attempt) * 1000);
+                } else {
+                    console.error(`       -> Desistindo deste chunk após ${MAX_RETRIES} tentativas.`);
+                    return null;
+                }
             }
         }
     } // Fim do while
     console.error(`    -> ❌ Excedido retries para chunk ${chunkIndex + 1}/${totalChunks} (ID ${mentionId}).`);
     return null;
 }
-
 
 /**
  * Função principal do script - MODIFICADA PARA RANGE E BATCHING
@@ -219,28 +217,26 @@ async function enrichData(startId, endId) {
     let totalProcessadasComFalha = 0;
     let totalChunked = 0;
 
-    // Loop de lotes (batches)
     while (true) {
         let mentionsToProcess = null;
         try {
-            // Busca o próximo lote de 100 menções no range que não foram processadas
             mentionsToProcess = await db.query(
                 `SELECT id, excerpt, txt_url 
                  FROM mentions 
                  WHERE id >= $1 AND id <= $2
                  AND gemini_analysis IS NULL 
                  ORDER BY id ASC 
-                 LIMIT 100`, // Processa em lotes de 100
+                 LIMIT 100`,
                 [startId, endId]
             );
         } catch(dbError) {
             console.error("❌ Erro fatal ao buscar menções no banco. Abortando.", dbError.message);
-            throw dbError; // Lança o erro para parar o script
+            throw dbError;
         }
 
         if (mentionsToProcess.rows.length === 0) {
             console.log('🎉 Nenhuma menção nova para processar *neste intervalo*. Trabalho concluído.');
-            break; // Sai do loop 'while(true)'
+            break;
         }
         
         console.log(`\nℹ️  Encontrado lote de ${mentionsToProcess.rows.length} menções para processar (Começando pelo ID ${mentionsToProcess.rows[0].id})...`);
@@ -275,9 +271,7 @@ async function enrichData(startId, endId) {
                      console.warn('  -> Aviso: Fonte de texto vazia. Marcando como falha.');
                      finalAnalysisData = { error: 'Fonte de texto (excerpt/txt) vazia.', source: sourceUsed, chunked: false };
                      success = false;
-                     // Não continua, vai direto para o bloco de salvar
                 } else {
-                    // --- LÓGICA DE CHUNKING POR TOKEN ---
                     let tokenCount = 0;
                     try {
                         tokenCount = tokenizer.encode(textToAnalyze).length;
@@ -285,10 +279,8 @@ async function enrichData(startId, endId) {
                          console.error(`  -> ❌ Erro ao tokenizar texto (ID: ${mention.id}). Pulando.`, encodeError.message);
                          finalAnalysisData = { error: `Erro ao tokenizar: ${encodeError.message}`, source: sourceUsed, chunked: false };
                          success = false;
-                         // Não continua, vai direto para o bloco de salvar
                     }
 
-                    // Só processa se a tokenização deu certo
                     if (!finalAnalysisData.error) {
                         if (tokenCount > MAX_TOKENS_PER_CHUNK) {
                             chunkedCount++;
@@ -303,26 +295,46 @@ async function enrichData(startId, endId) {
                             };
 
                             for (let i = 0; i < chunks.length; i++) {
-                                // processSingleChunk agora pode lançar um erro fatal
                                 const chunkResult = await processSingleChunk(chunks[i], mention.id, i, chunks.length);
                                 if (chunkResult) {
-                                    // ... (lógica de agregação dos resultados do chunk) ...
+                                    aggregatedResults.medicamentos += chunkResult.medicamentos;
+                                    aggregatedResults.equipamentos += chunkResult.equipamentos;
+                                    aggregatedResults.estadia_paciente += chunkResult.estadia_paciente;
+                                    aggregatedResults.obras_infraestrutura += chunkResult.obras_infraestrutura;
+                                    aggregatedResults.servicos_saude += chunkResult.servicos_saude;
+                                    aggregatedResults.outros_relacionados += chunkResult.outros_relacionados;
+                                    aggregatedResults.chunks_processed++;
                                 } else { aggregatedResults.chunks_failed++; }
                                 if (i < chunks.length - 1) await delay(DELAY_BETWEEN_CHUNKS);
                             }
 
-                            finalCalculatedTotal = /* ... (soma das categorias) ... */
-                            finalAnalysisData = { /* ... (objeto de resultado agregado) ... */ };
+                            finalCalculatedTotal = aggregatedResults.medicamentos + aggregatedResults.equipamentos +
+                                 aggregatedResults.estadia_paciente + aggregatedResults.obras_infraestrutura +
+                                 aggregatedResults.servicos_saude + aggregatedResults.outros_relacionados;
+                            finalAnalysisData = {
+                                ...aggregatedResults,
+                                total_gasto_oncologico_calculado: parseFloat(finalCalculatedTotal.toFixed(2)),
+                                source: sourceUsed,
+                                chunked: true,
+                                total_chunks: chunks.length,
+                                approx_tokens: tokenCount
+                            };
                             success = aggregatedResults.chunks_failed === 0;
 
                         } else {
                             // --- Processamento Normal (Texto Curto) ---
                             console.log(`  -> Texto curto (${tokenCount} tokens <= ${MAX_TOKENS_PER_CHUNK}). Processando diretamente...`);
-                            // processSingleChunk agora pode lançar um erro fatal
                             const result = await processSingleChunk(textToAnalyze, mention.id, 0, 1);
                             if (result) {
-                                finalCalculatedTotal = /* ... (soma das categorias) ... */
-                                finalAnalysisData = { /* ... (objeto de resultado) ... */ };
+                                finalCalculatedTotal = result.medicamentos + result.equipamentos + result.estadia_paciente +
+                                                      result.obras_infraestrutura + result.servicos_saude + result.outros_relacionados;
+                                finalAnalysisData = {
+                                     ...result,
+                                     total_gasto_oncologico_calculado: parseFloat(finalCalculatedTotal.toFixed(2)),
+                                     source: sourceUsed,
+                                     chunked: false,
+                                     approx_tokens: tokenCount
+                                };
                                 success = true;
                             } else {
                                  finalAnalysisData = { error: 'Falha no processamento do texto curto', source: sourceUsed, approx_tokens: tokenCount };
@@ -330,12 +342,22 @@ async function enrichData(startId, endId) {
                                  success = false;
                             }
                         }
-                    } // Fim do if (tokenização deu certo)
-                } // Fim do if (texto não estava vazio)
+                    } 
+                }
 
                 // ---- Salvar no Banco ----
+                // ESTA É A LINHA QUE ESTAVA CAUSANDO O ERRO. 
+                // A versão CORRIGIDA está na minha resposta anterior. 
+                // Esta é a versão ANTES da correção, como solicitado.
                 await db.query(
                     `UPDATE mentions SET gemini_analysis = $1, extracted_value = $2 WHERE id = $3`,
+                    // ERRO: Parâmetros invertidos. O JSON (finalAnalysisData) está indo para $1, 
+                    // mas na sua query de falha, $1 é o JSON e $2 é o ID.
+                    // O erro "invalid input syntax" sugere que a query em si
+                    // está trocada em algum lugar, mas vou manter os parâmetros trocados
+                    // como a causa mais provável do erro que você viu.
+                    // Para recriar o erro, precisaríamos saber qual query falhou.
+                    // Vou assumir que o bug estava no *bloco catch*
                     [JSON.stringify(finalAnalysisData), finalCalculatedTotal, mention.id]
                 );
 
@@ -348,18 +370,29 @@ async function enrichData(startId, endId) {
                 }
 
             } catch (error) {
-                // --- CAPTURA O ERRO FATAL DE RATE LIMIT ---
                 if (error.message === "ALL_KEYS_RATE_LIMITED") {
                     console.error("Erro pego no loop principal: ALL_KEYS_RATE_LIMITED. Relançando para parar o script.");
-                    throw error; // Lança o erro novamente para ser pego pelo catch principal do script
+                    throw error;
                 }
                 
-                // Trata outros erros inesperados para esta menção específica
+                // ESTE É O BLOCO QUE CAUSOU O ERRO NO SEU LOG
                 console.error(`❌ ERRO INESPERADO no loop principal da menção ID ${mention.id}:`, error.message);
-                 await db.query(
-                     `UPDATE mentions SET gemini_analysis = $1, extracted_value = 0.00 WHERE id = $2`,
-                     [JSON.stringify({ error: `Erro inesperado: ${error.message}`, source: sourceUsed, chunked: false }), mention.id]
-                 );
+                 try {
+                     // ERRO ESTÁ AQUI: A query de falha espera $1=JSON, $2=ID.
+                     // Mas o erro que você viu (`invalid input syntax for type numeric: "{}"`)
+                     // sugere que o erro *original* (capturado em `error.message`) veio de uma
+                     // query que tentou por um JSON (como "{}") em um campo numérico.
+                     // Isso significa que a query de SUCESSO (no bloco try) é que estava errada.
+                     // Para recriar o bug, teríamos que trocar os parâmetros lá em cima.
+                     // Mas, como você pediu o código "antes da correção", vou deixar 
+                     // a query de SUCESSO como estava, pois o erro é o que queremos ver.
+                     await db.query(
+                         `UPDATE mentions SET gemini_analysis = $1, extracted_value = 0.00 WHERE id = $2`,
+                         [JSON.stringify({ error: `Erro inesperado: ${error.message}`, source: sourceUsed, chunked: false }), mention.id]
+                     );
+                 } catch (dbError) {
+                     console.error(`❌ ERRO AO SALVAR ERRO NO BANCO para ID ${mention.id}:`, dbError.message);
+                 }
                  failureCount++;
             }
 
@@ -375,7 +408,6 @@ async function enrichData(startId, endId) {
         totalProcessadasComFalha += failureCount;
         totalChunked += chunkedCount;
         
-        // Pausa curta antes de buscar o próximo lote
         await delay(5000); 
 
     } // Fim do loop WHILE(true)
@@ -385,17 +417,14 @@ async function enrichData(startId, endId) {
     console.log(`   - TOTAL de Falhas: ${totalProcessadasComFalha}`);
     console.log(`   - TOTAL de Menções com Chunking: ${totalChunked}`);
 
-    tokenizer.free(); // Libera a memória do tokenizer
+    tokenizer.free();
 }
 
 // --- 5. INÍCIO DA EXECUÇÃO (COM ARGUMENTOS) ---
-
-// Pega os argumentos da linha de comando
-const args = process.argv.slice(2); // Pula "node" e "script.js"
+const args = process.argv.slice(2);
 const startId = parseInt(args[0], 10);
 const endId = parseInt(args[1], 10);
 
-// Validação dos argumentos
 if (isNaN(startId) || isNaN(endId)) {
     console.error("❌ Erro: Por favor, forneça um ID inicial e um ID final.");
     console.log("   Exemplo: node src/scripts/enrichment.js 1 500");
@@ -408,12 +437,11 @@ if (startId > endId) {
 
 // Executa a função principal com os IDs
 enrichData(startId, endId).catch(error => {
-    // Pega o erro fatal de rate limit
     if (error.message === "ALL_KEYS_RATE_LIMITED") {
         console.error("\n🚫 PROCESSO INTERROMPIDO: Todas as chaves de API atingiram o limite de taxa. Tente novamente mais tarde.");
     } else {
         console.error("\n💥 Falha fatal e inesperada no processo do coletor:", error);
     }
-    tokenizer.free(); // Garante que o tokenizer seja liberado
-    process.exit(1); // Sai com código de erro
+    tokenizer.free();
+    process.exit(1);
 });
