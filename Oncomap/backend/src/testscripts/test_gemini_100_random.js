@@ -13,7 +13,11 @@ const outputFilePath = path.resolve(__dirname, 'sample_llm_output.json');
 // --- Configurações ---
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Corrigido: Usando gemini-1.5-pro (que sabemos que funciona e tem janela grande)
+<<<<<<< HEAD
 const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+=======
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+>>>>>>> 5fac007 (Fix: update refinamento de dados finais)
 
 // --- Constantes ---
 const MAX_RETRIES = 3;
