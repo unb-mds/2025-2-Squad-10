@@ -58,48 +58,55 @@ const tokenizer = get_encoding("cl100k_base");
 
 function getGeminiPrompt(textContent) {
      return `
-        **Tarefa:** VOCÊ É UM ANALISTA FINANCEIRO ESPECIALIZADO EM ORÇAMENTO PÚBLICO DE SAÚDE. Analise CUIDADOSAMENTE o seguinte texto extraído de um Diário Oficial Municipal brasileiro. Seu objetivo é identificar, extrair e somar TODOS os valores monetários (em Reais) que representem gastos ou investimentos DIRETAMENTE relacionados à área de ONCOLOGIA. Categorize os valores somados conforme as regras.
+      **Tarefa:** VOCÊ É UM ANALISTA FINANCEIRO ESPECIALIZADO EM ORÇAMENTO PÚBLICO DE SAÚDE ONCOLÓGICA. Analise CUIDADOSAMENTE o seguinte texto extraído de um Diário Oficial Municipal brasileiro. Seu objetivo é:
+      1. Identificar, extrair e somar TODOS os valores monetários (em Reais) que representem gastos ou investimentos DIRETAMENTE relacionados à área de ONCOLOGIA.
+      2. Categorizar esses valores somados conforme as regras abaixo.
+      3. Extrair informações contextuais RELEVANTES sobre esses gastos oncológicos, se claramente presentes.
 
-        **Formatos de Valor a Procurar (Exemplos):**
-        * R$ 1.234,56
-        * R$1.234,56
-        * Valor: 1.234,56
-        * Custo total de 1.234,56
-        * Valor adjudicado: R$ 1.234,56
-        * (Procure por números com vírgula decimal próximos a palavras como "valor", "custo", "total", "R$")
+      **Formatos de Valor a Procurar (Exemplos):** R$ 1.234,56, Valor: 1.234,56, custo total de 1.234,56, etc.
 
-        **Formato OBRIGATÓRIO da Resposta:**
-        Sua resposta deve ser **EXCLUSIVAMENTE um objeto JSON válido**, sem nenhum texto antes ou depois, e sem usar markdown (como \`\`\`json). O formato deve ser EXATAMENTE este:
+      **Formato OBRIGATÓRIO da Resposta:**
+      Sua resposta deve ser **EXCLUSIVAMENTE um objeto JSON válido**, sem nenhum texto antes ou depois, e sem usar markdown (como \`\`\`json). A estrutura base é MANDATÓRIA, mas campos adicionais podem ser incluídos se relevantes.
 
-        {
-          "total_gasto_oncologico": 0.00,
-          "medicamentos": 0.00,
-          "equipamentos": 0.00,
-          "estadia_paciente": 0.00,
-          "obras_infraestrutura": 0.00,
-          "servicos_saude": 0.00,
-          "outros_relacionados": 0.00
-        }
+      {
+        "total_gasto_oncologico": 0.00,  // MANDATÓRIO (Soma calculada por você)
+        "medicamentos": 0.00,         // MANDATÓRIO
+        "equipamentos": 0.00,         // MANDATÓRIO
+        "estadia_paciente": 0.00,       // MANDATÓRIO
+        "obras_infraestrutura": 0.00,  // MANDATÓRIO
+        "servicos_saude": 0.00,         // MANDATÓRIO
+        "outros_relacionados": 0.00,    // MANDATÓRIO
+        "detalhes_extraidos": [
+           {
+              "valor_individual": 1234.56,
+              "categoria_estimada": "Medicamentos",
+              "empresa_contratada": "Nome da Empresa LTDA",
+              "objeto_contrato": "Descrição breve do serviço/produto oncológico",
+              "numero_processo": "123/2025"
+           }
+        ]
+      }
 
-        **Regras Detalhadas:**
-        1.  **Foco Estrito em Oncologia:** Considere APENAS valores explicitamente ligados a oncologia, câncer, quimioterapia, radioterapia, medicamentos oncológicos, equipamentos para diagnóstico/tratamento de câncer, etc. Ignore outros gastos de saúde mencionados que não sejam oncológicos. SEJA PRECISO.
-        2.  **Extração e Conversão Numérica:** Encontre TODOS os valores relevantes no texto. Converta-os para números (float), usando ponto (.) como separador decimal. Remova "R$" e separadores de milhar. Some todos os valores encontrados para cada categoria.
-        3.  **Categorização (Revise com Atenção):**
-            * "medicamentos": Compra/fornecimento de quimioterápicos, imunoterápicos, fármacos de suporte oncológico.
-            * "equipamentos": Aquisição, aluguel, manutenção de equipamentos oncológicos (acelerador linear, mamógrafo, PET-CT, etc.).
-            * "estadia_paciente": Custo de internação, diária de leito, acomodação de pacientes oncológicos.
-            * "obras_infraestrutura": Construção, reforma, ampliação de instalações oncológicas.
-            * "servicos_saude": Contratação de serviços médicos/exames oncológicos, radioterapia, quimioterapia, transporte (TFD).
-            * "outros_relacionados": Gastos oncológicos que não se encaixam acima (campanhas, software, etc.).
-            * "total_gasto_oncologico": SOMA EXATA de todas as outras categorias calculada por você. VERIFIQUE A SOMA.
-        4.  **Nenhum Valor Encontrado:** Se, após análise cuidadosa, o texto não contiver NENHUM valor monetário ligado à oncologia, retorne o JSON com todos os campos zerados (0.00).
-        5.  **JSON Puro:** A resposta DEVE ser apenas o JSON, começando com { e terminando com }.
+      **Regras Detalhadas:**
+      1.  **Foco Estrito em Oncologia:** Considere APENAS valores ligados a oncologia, câncer, quimioterapia, radioterapia, etc.
+      2.  **Extração e Conversão Numérica:** Encontre TODOS os valores. Converta para float (ponto decimal).
+      3.  **Categorização:** Siga as definições:
+          * "medicamentos": Compra/fornecimento de quimioterápicos, imunoterápicos.
+          * "equipamentos": Aquisição, aluguel, manutenção de equipamentos oncológicos.
+          * "estadia_paciente": Custo de internação, diária de leito oncológico.
+          * "obras_infraestrutura": Construção, reforma de instalações oncológicas.
+          * "servicos_saude": Contratação de serviços/exames oncológicos (radioterapia, quimioterapia).
+          * "outros_relacionados": Gastos oncológicos que não se encaixam acima.
+      4.  **Soma Total:** Deve ser a soma exata das outras categorias. VERIFIQUE A SOMA.
+      5.  **Detalhes Extraídos:** Adicione um objeto ao array para CADA valor encontrado. Se nenhum valor for encontrado, retorne um array vazio [].
+      6.  **Nenhum Valor Encontrado:** JSON com valores numéricos zerados e array "detalhes_extraidos" vazio [].
+      7.  **JSON Puro:** Apenas o JSON.
 
-        **Texto para Análise:**
-        """
-        ${textContent}
-        """
-    `;
+      **Texto para Análise:**
+      """
+      ${textContent}
+      """
+  `;
 }
 
 function extractJsonFromString(text) {
