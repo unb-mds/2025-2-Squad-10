@@ -27,8 +27,7 @@ function updateModelInstance() {
     const currentKey = apiKeys[currentKeyIndex];
     console.log(`\n🔄 Inicializando/Atualizando instância da API. Usando Chave #${currentKeyIndex + 1} de ${apiKeys.length}.`);
     genAIInstance = new GoogleGenerativeAI(currentKey);
-    // Usando o modelo Pro, que é mais capaz e tem janela de 1M (como o Flash 1.5)
-    modelInstance = genAIInstance.getGenerativeModel({ model: 'gemini-1.5-pro' });
+    modelInstance = genAIInstance.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
 }
 
 /**
