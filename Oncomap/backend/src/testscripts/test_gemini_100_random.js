@@ -13,12 +13,12 @@ const outputFilePath = path.resolve(__dirname, 'sample_llm_output.json');
 // --- Configurações ---
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Corrigido: Usando gemini-1.5-pro (que sabemos que funciona e tem janela grande)
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
 // --- Constantes ---
 const MAX_RETRIES = 3;
 // Mantendo o delay longo para o modelo Pro free tier (~2 RPM)
-const DELAY_BETWEEN_REQUESTS = 31000; // 31 segundos
+const DELAY_BETWEEN_REQUESTS = 4000; // 4 segundos (mais seguro)
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
