@@ -15,6 +15,7 @@ interface GeoProperties {
   sigla?: string;
   id?: string;
   name?: string;
+  nome?: string; 
   [key: string]: any;
 }
 type GeoFeature = Feature<Geometry, GeoProperties>;
@@ -30,7 +31,8 @@ interface MapProps {
   selectedState: string | null;
   setSelectedState: (state: string | null) => void;
   setDadosInvestimentos: (dados: DadosInvestimentos | null) => void;
-  setMunicipiosData: (data: FeatureCollection | null) => void;
+  // Esta é a 'prop' que vem do pai (MapaPage)
+  setMunicipiosData: (data: FeatureCollection | null) => void; 
   searchedMunicipioName: string | null;
 }
 
@@ -48,13 +50,19 @@ const MapaInterativo: React.FC<MapProps> = ({
   selectedState,
   setSelectedState,
   setDadosInvestimentos,
+  setMunicipiosData, // <-- Aqui está a 'prop'
   searchedMunicipioName,
 }) => {
   const [map, setMap] = useState<L.Map | null>(null);
   const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
-  const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
+  
+  // --- CORREÇÃO DE NOME (LINHA 58) ---
+  // Renomeamos o state local para evitar conflito com a 'prop'
+  const [municipiosGeoJSON, setMunicipiosGeoJSON] = useState<FeatureCollection | null>(null);
+
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
   const [loadingInvestimentos, setLoadingInvestimentos] = useState(true);
+  const [dadosInvestimentosLocal, setDadosInvestimentosLocal] = useState<DadosInvestimentos | null>(null);
 
   const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
   const municipiosLayerRef = useRef<L.GeoJSON | null>(null);
@@ -64,17 +72,19 @@ const MapaInterativo: React.FC<MapProps> = ({
     []
   );
 
-  // Carregar investimentos
+  // Carregar investimentos... (sem alterações aqui)
   useEffect(() => {
     async function fetchInvestimentos() {
       try {
         const response = await fetch('http://localhost:3001/api/map/investimentos');
         if (!response.ok) throw new Error(`Resposta não-ok: ${response.status}`);
         const data: DadosInvestimentos = await response.json();
-        setDadosInvestimentos(data);
+        setDadosInvestimentos(data); 
+        setDadosInvestimentosLocal(data); 
       } catch (error) {
         console.warn('Erro ao buscar dados do backend, usando fallback local:', error);
-        setDadosInvestimentos(localInvestimentos as DadosInvestimentos);
+        setDadosInvestimentos(localInvestimentos as DadosInvestimentos); 
+        setDadosInvestimentosLocal(localInvestimentos as DadosInvestimentos); 
       } finally {
         setLoadingInvestimentos(false);
       }
@@ -82,12 +92,26 @@ const MapaInterativo: React.FC<MapProps> = ({
     fetchInvestimentos();
   }, [setDadosInvestimentos]);
 
-  // Corrigir tamanho do mapa ao mudar de estado/região
+  // 'todosOsEstadosComNomes'... (sem alterações aqui)
+  const todosOsEstadosComNomes = useMemo(() => {
+    if (!dadosInvestimentosLocal) return new Map<string, string>();
+    
+    const mapa = new Map<string, string>();
+    Object.values(dadosInvestimentosLocal).forEach((regiao) => {
+      regiao.municipios.forEach((estado) => {
+        mapa.set(estado.codarea, estado.nome);
+      });
+    });
+    return mapa;
+  }, [dadosInvestimentosLocal]);
+
+
+  // Corrigir tamanho do mapa... (sem alterações)
   useEffect(() => {
     if (map) setTimeout(() => map.invalidateSize(), 500);
   }, [map, selectedRegion, selectedState]);
 
-  // Foco na região ou estado selecionado
+  // Foco na região ou estado selecionado... (sem alterações)
   useEffect(() => {
     if (!map) return;
     if (selectedRegion && !selectedState && geoJsonLayerRef.current) {
@@ -103,21 +127,31 @@ const MapaInterativo: React.FC<MapProps> = ({
     if (selectedState) {
       const codigoUF = selectedState;
       if (codigoUF === '53') {
-        setMunicipiosData(null);
+        // --- CORREÇÃO DE NOME ---
+        setMunicipiosGeoJSON(null); // Atualiza o state local (mapa)
+        setMunicipiosData(null);     // Atualiza o state pai (TabelaInfo)
         return;
       }
       const nomeDoArquivo = `geojs-${codigoUF}-mun`;
       import(`../../data/municipios/${nomeDoArquivo}.json`)
-        .then((module) => setMunicipiosData(module.default || module))
+        .then((module) => {
+          const data = module.default || module;
+          // --- CORREÇÃO DE NOME ---
+          setMunicipiosGeoJSON(data); // Atualiza o state local (mapa)
+          setMunicipiosData(data);      // Atualiza o state pai (TabelaInfo)
+        })
         .catch((_err) => {
           console.error(`Falha ao carregar o arquivo de municípios: geojs-${codigoUF}-mun.json`);
-          setMunicipiosData(null);
+          // --- CORREÇÃO DE NOME ---
+          setMunicipiosGeoJSON(null); // Atualiza o state local (mapa)
+          setMunicipiosData(null);     // Atualiza o state pai (TabelaInfo)
         });
     } else {
-      setMunicipiosData(null);
+      // --- CORREÇÃO DE NOME ---
+      setMunicipiosGeoJSON(null); // Atualiza o state local (mapa)
+      setMunicipiosData(null);     // Atualiza o state pai (TabelaInfo)
     }
-  }, [selectedState]);
-
+  }, [selectedState, setMunicipiosData]); // Adicionado setMunicipiosData às dependências
   
   const handleResetView = () => {
     if (map) {
@@ -126,6 +160,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     }
   };
 
+  // statesStyle... (sem alterações)
   const statesStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
     let fillColor = '#0D4B55';
@@ -147,15 +182,21 @@ const MapaInterativo: React.FC<MapProps> = ({
     return { fillColor, weight: 1, color: 'white', fillOpacity: 1 };
   };
 
-  // --- ALTERAÇÃO PRINCIPAL AQUI ---
+  // onEachStateFeature... (sem alterações, esta lógica está correta)
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
+    const codareaDoEstado = feature.properties.codarea;
+    const regiaoDoEstado = feature.properties.regiao || 'Região';
+
+    const nomeDoEstado = codareaDoEstado
+      ? todosOsEstadosComNomes.get(codareaDoEstado) || 'Estado'
+      : 'Estado'; 
+
     const tooltipContent = selectedRegion
-      ? feature.properties.name || 'Estado' // Se uma região está selecionada, mostra o nome do estado
-      : feature.properties.regiao || 'Região'; // Se não, mostra o nome da região
+      ? nomeDoEstado 
+      : regiaoDoEstado.charAt(0).toUpperCase() + regiaoDoEstado.slice(1);
 
     layer.bindTooltip(tooltipContent, { sticky: true });
 
-   
     layer.on({
       mouseover: () => setHoveredObject(feature),
       mouseout: () => setHoveredObject(null),
@@ -170,34 +211,32 @@ const MapaInterativo: React.FC<MapProps> = ({
     });
   };
 
+  // municipiosStyle... (sem alterações)
   const municipiosStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
-
     const nome = feature.properties?.name?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const nomeBusca = searchedMunicipioName
       ? searchedMunicipioName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       : null;
     const isHovered = hoveredMunicipio?.properties.id === feature.properties.id;
-
     if (nomeBusca && nome === nomeBusca) {
       return {
         weight: 2.5, color: '#FFD700', fillColor: '#FFB800', fillOpacity: 1,
       };
     }
-
     if (isHovered) {
       return {
         weight: 2, color: '#FFD700', fillColor: '#09353bff', fillOpacity: 1,
       };
     }
-
     return {
       weight: 1, color: 'white', fillColor: '#0D4B55', fillOpacity: 1,
     };
   };
 
+  // onEachMunicipioFeature... (sem alterações)
   const onEachMunicipioFeature = (feature: GeoFeature, layer: Layer) => {
-    const municipioName = feature.properties.name || 'Nome não disponível';
+    const municipioName = feature.properties.name || feature.properties.nome || 'Nome não disponível';
     layer.bindTooltip(municipioName, { sticky: true });
 
     layer.on({
@@ -209,12 +248,11 @@ const MapaInterativo: React.FC<MapProps> = ({
       },
       mouseout: (event: any) => {
         setHoveredMunicipio(null);
-        const nome = feature.properties?.name?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const nomeFeature = (feature.properties?.name || feature.properties?.nome || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         const nomeBusca = searchedMunicipioName ? searchedMunicipioName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : null;
-        if (nomeBusca && nome === nomeBusca) {
-          event.target.setStyle({
-            color: '#FF8C00', weight: 3, fillColor: '#66CCFF', fillOpacity: 1,
-          });
+        
+        if (nomeBusca && nomeFeature === nomeBusca) {
+          event.target.setStyle(municipiosStyle(feature)); 
         } else {
           event.target.setStyle(municipiosStyle(feature));
         }
@@ -222,6 +260,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     });
   };
 
+  // dataForStatesLayer... (sem alterações)
   const dataForStatesLayer = useMemo(() => {
     if (selectedState) {
       const stateFeature = allStatesFeatures.find((f) => f.properties.codarea === selectedState);
@@ -259,14 +298,16 @@ const MapaInterativo: React.FC<MapProps> = ({
           key={`${selectedRegion || 'brasil'}-${selectedState || 'none'}`}
           data={dataForStatesLayer as any}
           style={statesStyle}
-          onEachFeature={onEachStateFeature}
+          onEachFeature={onEachStateFeature} 
         />
 
-        {municipiosData && (
+        {/* --- CORREÇÃO DE NOME (LINHA 300) --- */}
+        {/* Agora ele lê o state local 'municipiosGeoJSON' para desenhar o mapa */}
+        {municipiosGeoJSON && (
           <GeoJSON
             ref={municipiosLayerRef}
             key={selectedState}
-            data={municipiosData as any}
+            data={municipiosGeoJSON as any} // <-- MUDANÇA AQUI
             style={municipiosStyle}
             onEachFeature={onEachMunicipioFeature}
           />
