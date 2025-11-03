@@ -1,338 +1,396 @@
-// backend/src/scripts/enrichment.js
-
+// Oncomap/backend/src/scripts/enrichment.js
+// VERSÃO: PDF-Direto + Roteador + Range de ID + Pular Longos (v9.1 - Bug de Contagem Corrigido)
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const db = require('../config/database'); // Ajuste o caminho
+const db = require('../config/database');
 const axios = require('axios');
 require('dotenv').config();
-const { get_encoding } = require("tiktoken"); // <-- NOVA IMPORTAÇÃO
+const { get_encoding } = require("tiktoken");
+const pdfParse = require('pdf-parse');
 
-// Configuração do cliente Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' }); // Corrigido
+// --- 1. CONFIGURAÇÃO DO ROTEADOR DE CHAVES ---
+const apiKeys = (process.env.GEMINI_API_KEYS || "")
+    .split(',')
+    .map(key => key.trim())
+    .filter(key => key.length > 0);
 
-// Função de atraso
+if (apiKeys.length === 0) {
+    console.error("❌ ERRO FATAL: Nenhuma GEMINI_API_KEYS encontrada no .env. Adicione-as separadas por vírgula.");
+    process.exit(1);
+}
+
+let currentKeyIndex = 0;
+let genAIInstance = null;
+let modelInstance = null;
+
+function updateModelInstance() {
+    const currentKey = apiKeys[currentKeyIndex];
+    console.log(`\n🔄 Inicializando/Atualizando instância da API. Usando Chave #${currentKeyIndex + 1} de ${apiKeys.length}.`);
+    genAIInstance = new GoogleGenerativeAI(currentKey);
+    modelInstance = genAIInstance.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+}
+
+function switchToNextKey() {
+    currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+    console.warn(`\n-> 🔑 Trocando para a Chave de API #${currentKeyIndex + 1}...\n`);
+    updateModelInstance();
+}
+
+updateModelInstance();
+// --- FIM DO ROTEADOR DE CHAVES ---
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// --- CONSTANTES DE CONTROLE (ATUALIZADAS) ---
-// Limite de tokens por chunk. O Gemini 1.5 tem 1M, mas usamos uma margem GRANDE
-// para acomodar o prompt, a resposta e diferenças na tokenização.
-const MAX_TOKENS_PER_CHUNK = 800000; // 800k Tokens (ajuste se necessário)
+// --- CONSTANTES DE CONTROLE ---
+const MAX_TOKENS_PARA_PROCESSAR = 800000;
 const MAX_RETRIES = 3;
-// Pausa entre processar menções DIFERENTES
-const DELAY_BETWEEN_MENTIONS = 3000;
-// Pausa entre processar chunks DENTRO da mesma menção
-const DELAY_BETWEEN_CHUNKS = 2000;
-// --- FIM DAS CONSTANTES ---
+const DELAY_BETWEEN_MENTIONS = 1000;
 
-// Instância do Tokenizer (cl100k_base é usado por GPT-4/3.5, uma boa aproximação)
-// NOTA: Esta tokenização é uma APROXIMAÇÃO da usada pelo Gemini.
 const tokenizer = get_encoding("cl100k_base");
 
-// Função getGeminiPrompt permanece a mesma
-function getGeminiPrompt(textContent) {
-    // ... (cole o prompt refinado v3 aqui) ...
+// --- FUNÇÕES (getGeminiPrompt, extractJsonFromString) ---
+
+function getGeminiPrompt(textContent, mentionId, municipalityName) {
      return `
-        **Tarefa:** VOCÊ É UM ANALISTA FINANCEIRO ESPECIALIZADO EM ORÇAMENTO PÚBLICO DE SAÚDE. Analise CUIDADOSAMENTE o seguinte texto extraído de um Diário Oficial Municipal brasileiro. Seu objetivo é identificar, extrair e somar TODOS os valores monetários (em Reais) que representem gastos ou investimentos DIRETAMENTE relacionados à área de ONCOLOGIA. Categorize os valores somados conforme as regras.
+      **Tarefa:** VOCÊ É UM ANALISTA FINANCEIRO ESPECIALIZADO EM ORÇAMENTO PÚBLICO DE SAÚDE ONCOLÓGICA. Analise CUIDADOSAMENTE o seguinte texto extraído de um Diário Oficial Municipal brasileiro. Seu objetivo é:
+      1. Identificar, extrair e somar TODOS os valores monetários (em Reais) que representem gastos ou investimentos DIRETAMENTE relacionados à área de ONCOLOGIA.
+      2. Categorizar esses valores somados conforme as regras abaixo.
+      3. Extrair informações contextuais RELEVANTES sobre esses gastos oncológicos, se claramente presentes.
 
-        **Formatos de Valor a Procurar (Exemplos):**
-        * R$ 1.234,56
-        * R$1.234,56
-        * Valor: 1.234,56
-        * Custo total de 1.234,56
-        * Valor adjudicado: R$ 1.234,56
-        * (Procure por números com vírgula decimal próximos a palavras como "valor", "custo", "total", "R$")
+      **Formatos de Valor a Procurar (Exemplos):** R$ 1.234,56, Valor: 1.234,56, custo total de 1.234,56, etc.
 
-        **Formato OBRIGATÓRIO da Resposta:**
-        Sua resposta deve ser **EXCLUSIVAMENTE um objeto JSON válido**, sem nenhum texto antes ou depois, e sem usar markdown (como \`\`\`json). O formato deve ser EXATAMENTE este:
+      **Formato OBRIGATÓRIO da Resposta:**
+      Sua resposta deve ser **EXCLUSIVAMENTE um objeto JSON válido**, sem nenhum texto antes ou depois, e sem usar markdown (como \`\`\`json). A estrutura base é MANDATÓRIA, mas campos adicionais podem ser incluídos se relevantes.
 
-        {
-          "total_gasto_oncologico": 0.00,
-          "medicamentos": 0.00,
-          "equipamentos": 0.00,
-          "estadia_paciente": 0.00,
-          "obras_infraestrutura": 0.00,
-          "servicos_saude": 0.00,
-          "outros_relacionados": 0.00
-        }
+      {
+        "mention_id": ${mentionId},
+        "municipality_name": "${municipalityName}",
+        "total_gasto_oncologico": 0.00,  // MANDATÓRIO (Soma calculada por você)
+        "medicamentos": 0.00,         // MANDATÓRIO
+        "equipamentos": 0.00,         // MANDATÓRIO
+        "estadia_paciente": 0.00,       // MANDATÓRIO
+        "obras_infraestrutura": 0.00,  // MANDATÓRIO
+        "servicos_saude": 0.00,         // MANDATÓRIO
+        "outros_relacionados": 0.00,    // MANDATÓRIO
+        "detalhes_extraidos": [
+           {
+              "valor_individual": 1234.56,
+              "categoria_estimada": "Medicamentos",
+              "empresa_contratada": "Nome da Empresa LTDA",
+              "objeto_contrato": "Descrição breve do serviço/produto oncológico",
+              "numero_processo": "123/2025"
+           }
+        ]
+      }
 
-        **Regras Detalhadas:**
-        1.  **Foco Estrito em Oncologia:** Considere APENAS valores explicitamente ligados a oncologia, câncer, quimioterapia, radioterapia, medicamentos oncológicos, equipamentos para diagnóstico/tratamento de câncer, etc. Ignore outros gastos de saúde mencionados que não sejam oncológicos. SEJA PRECISO.
-        2.  **Extração e Conversão Numérica:** Encontre TODOS os valores relevantes no texto. Converta-os para números (float), usando ponto (.) como separador decimal. Remova "R$" e separadores de milhar. Some todos os valores encontrados para cada categoria.
-        3.  **Categorização (Revise com Atenção):**
-            * "medicamentos": Compra/fornecimento de quimioterápicos, imunoterápicos, fármacos de suporte oncológico.
-            * "equipamentos": Aquisição, aluguel, manutenção de equipamentos oncológicos (acelerador linear, mamógrafo, PET-CT, etc.).
-            * "estadia_paciente": Custo de internação, diária de leito, acomodação de pacientes oncológicos.
-            * "obras_infraestrutura": Construção, reforma, ampliação de instalações oncológicas.
-            * "servicos_saude": Contratação de serviços médicos/exames oncológicos, radioterapia, quimioterapia, transporte (TFD).
-            * "outros_relacionados": Gastos oncológicos que não se encaixam acima (campanhas, software, etc.).
-            * "total_gasto_oncologico": SOMA EXATA de todas as outras categorias calculada por você. VERIFIQUE A SOMA.
-        4.  **Nenhum Valor Encontrado:** Se, após análise cuidadosa, o texto não contiver NENHUM valor monetário ligado à oncologia, retorne o JSON com todos os campos zerados (0.00).
-        5.  **JSON Puro:** A resposta DEVE ser apenas o JSON, começando com { e terminando com }.
+      **Regras Detalhadas:**
+      1.  **Foco Estrito em Oncologia:** Considere APENAS valores ligados a oncologia, câncer, quimioterapia, radioterapia, etc.
+      2.  **Extração e Conversão Numérica:** Encontre TODOS os valores. Converta para float (ponto decimal).
+      3.  **Categorização:** Siga as definições...
+      4.  **Soma Total:** Deve ser a soma exata das outras categorias. VERIFIQUE A SOMA.
+      5.  **Detalhes Extraídos:** Adicione um objeto ao array para CADA valor encontrado. Se nenhum valor for encontrado, retorne um array vazio [].
+      6.  **Nenhum Valor Encontrado:** JSON com valores numéricos zerados e array "detalhes_extraidos" vazio [].
+      7.  **JSON Puro:** Apenas o JSON.
 
-        **Texto para Análise:**
-        """
-        ${textContent}
-        """
-    `;
+      **Texto para Análise:**
+      """
+      ${textContent}
+      """
+  `;
 }
 
-// Função extractJsonFromString permanece a mesma
 function extractJsonFromString(text) {
-    // ... (código da função de limpeza) ...
     if (!text) return null;
-    const startIndex = text.indexOf('{');
-    const endIndex = text.lastIndexOf('}');
-    if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
-        const cleanedText = text.replace(/^```json\s*/, '').replace(/```$/, '');
-        if (cleanedText.startsWith('{') && cleanedText.endsWith('}')) {
-             return cleanedText.trim();
-        }
-        return null;
+    const match = text.match(/\{[\s\S]*\}/);
+    let potentialJson = null;
+    if (match) {
+        potentialJson = match[0].trim();
+    } else {
+        potentialJson = text.replace(/^```json\s*/, '').replace(/```$/, '').trim();
     }
-    return text.substring(startIndex, endIndex + 1).trim();
+    if (potentialJson && potentialJson.startsWith('{') && potentialJson.endsWith('}')) {
+       try { JSON.parse(potentialJson); return potentialJson; } catch (e) {}
+    }
+    return null;
 }
 
+// REMOVIDA A FUNÇÃO splitTextIntoChunksByToken
 
 /**
- * **NOVO:** Divide o texto em chunks baseados em contagem de tokens.
+ * Processa o texto (UM ÚNICO CHUNK) com a API do Gemini.
  */
-function splitTextIntoChunksByToken(text, maxTokens, tokenizerInstance) {
-    const chunks = [];
-    // Codifica o texto inteiro em tokens (array de números)
-    const tokens = tokenizerInstance.encode(text);
-
-    if (tokens.length <= maxTokens) {
-        // Se couber em um chunk, não precisa dividir
-        return [text];
-    }
-
-    let startIndex = 0;
-    while (startIndex < tokens.length) {
-        const endIndex = Math.min(startIndex + maxTokens, tokens.length);
-        // Pega o pedaço de tokens
-        const chunkTokens = tokens.slice(startIndex, endIndex);
-        // Decodifica os tokens de volta para texto
-        const chunkText = tokenizerInstance.decode(chunkTokens);
-        chunks.push(chunkText);
-        startIndex = endIndex;
-    }
-    return chunks;
-}
-
-
-// Função processSingleChunk permanece a mesma (já estava modularizada)
-async function processSingleChunk(chunkText, mentionId, chunkIndex, totalChunks) {
-    // ... (código igual ao da versão anterior, com retry para 429) ...
+async function processSingleText(textContent, mentionId, municipalityName) {
      let attempt = 0;
+     let keysRotatedThisChunk = 0;
+
     while (attempt < MAX_RETRIES) {
         try {
-            console.log(`    -> [Chunk ${chunkIndex + 1}/${totalChunks}] Enviando chunk para Gemini (Tentativa ${attempt + 1})...`);
-            const prompt = getGeminiPrompt(chunkText);
-            const result = await model.generateContent(prompt);
+            console.log(`    -> [Chunk 1/1] Enviando texto (Chave #${currentKeyIndex + 1}, Tentativa ${attempt + 1})...`);
+            const prompt = getGeminiPrompt(textContent, mentionId, municipalityName);
+            const generationConfig = { responseMimeType: "application/json" };
+            
+            const result = await modelInstance.generateContent({
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig
+            });
+
             const rawResponseText = result.response.text();
-            console.log(`    -> [Chunk ${chunkIndex + 1}/${totalChunks}] Resposta bruta recebida.`);
+            console.log(`    -> [Chunk 1/1] Resposta recebida (Chave #${currentKeyIndex + 1}).`);
 
             const jsonString = extractJsonFromString(rawResponseText);
             if (jsonString) {
                 try {
                     const chunkAnalysis = JSON.parse(jsonString);
-                    // Retorna apenas os dados válidos, ignoramos o total do chunk
-                    return {
-                        medicamentos: parseFloat(chunkAnalysis.medicamentos) || 0,
-                        equipamentos: parseFloat(chunkAnalysis.equipamentos) || 0,
-                        estadia_paciente: parseFloat(chunkAnalysis.estadia_paciente) || 0,
-                        obras_infraestrutura: parseFloat(chunkAnalysis.obras_infraestrutura) || 0,
-                        servicos_saude: parseFloat(chunkAnalysis.servicos_saude) || 0,
-                        outros_relacionados: parseFloat(chunkAnalysis.outros_relacionados) || 0,
-                    };
-                } catch (parseError) {
-                    console.error(`    -> ❌ Erro ao analisar JSON do chunk ${chunkIndex + 1}/${totalChunks}.`, parseError.message);
+                    if (typeof chunkAnalysis.total_gasto_oncologico !== 'number' || !Array.isArray(chunkAnalysis.detalhes_extraidos)) {
+                         console.warn(`    -> Aviso: JSON extraído não possui a estrutura esperada.`);
+                         return null;
+                    }
+                    return chunkAnalysis;
+                } catch (parseError) { 
+                    console.error(`    -> ❌ Erro ao analisar JSON do chunk:`, parseError.message);
+                    return null; 
+                }
+            } else { 
+                console.error(`    -> ❌ Não foi possível extrair JSON do chunk.`);
+                return null; 
+            }
+        
+        } catch (error) {
+            let isRateLimitError = (error.status === 429 || (error.message && (error.message.toLowerCase().includes('resource_exhausted') || error.message.toLowerCase().includes('rate limit'))));
+
+            if (isRateLimitError) {
+                console.warn(`    -> 🚦 Rate limit atingido na Chave #${currentKeyIndex + 1} (Chunk 1/1).`);
+                
+                if (keysRotatedThisChunk >= apiKeys.length - 1) {
+                    console.error(`    -> ❌ FALHA TOTAL: Todas as ${apiKeys.length} chaves de API estão em rate limit. Abortando o script.`);
+                    throw new Error("ALL_KEYS_RATE_LIMITED"); 
+                } else {
+                    switchToNextKey();
+                    keysRotatedThisChunk++;
+                }
+            } else {
+                console.error(`    -> ❌ ERRO FATAL no chunk 1/1 (ID ${mentionId}):`, error.message);
+                if (error.response && error.response.data) { console.error('       Detalhes API:', JSON.stringify(error.response.data, null, 2)); }
+                attempt++;
+                if (attempt < MAX_RETRIES) {
+                    await delay(Math.pow(2, attempt) * 1000);
+                } else {
+                    console.error(`       -> Desistindo deste chunk após ${MAX_RETRIES} tentativas.`);
                     return null;
                 }
-            } else {
-                 console.error(`    -> ❌ Não foi possível extrair JSON do chunk ${chunkIndex + 1}/${totalChunks}.`);
-                 return null;
-            }
-        // Tratamento de erro 429 para o chunk
-        } catch (error) {
-            if (error.message && error.message.includes('429')) {
-                attempt++;
-                console.warn(`    -> 🚦 Rate limit no chunk ${chunkIndex + 1}/${totalChunks} (Tentativa ${attempt}/${MAX_RETRIES}). Esperando...`);
-                const retryMatch = error.message.match(/Please retry in (\d+\.?\d*)s/);
-                const waitTimeSeconds = retryMatch ? parseFloat(retryMatch[1]) + 1 : Math.pow(2, attempt) * 5;
-                console.log(`       -> Aguardando ${waitTimeSeconds.toFixed(1)} segundos.`);
-                await delay(waitTimeSeconds * 1000);
-            } else {
-                console.error(`    -> ❌ ERRO FATAL no chunk ${chunkIndex + 1}/${totalChunks} (Menção ID ${mentionId}):`, error.message);
-                return null; // Falha irrecuperável para este chunk
             }
         }
-    }
-    console.error(`    -> ❌ Excedido retries para chunk ${chunkIndex + 1}/${totalChunks} (Menção ID ${mentionId}).`);
-    return null; // Falha após retries
+    } // Fim do while
+    console.error(`    -> ❌ Excedido retries para chunk 1/1 (ID ${mentionId}).`);
+    return null;
 }
 
-
 /**
- * Função principal do script de enriquecimento (v5 - com chunking por token).
+ * Função principal do script - MODIFICADA PARA PULAR TEXTOS LONGOS
  */
-async function enrichData() {
-    console.log('✅ Iniciando script de enriquecimento (v5 - com chunking por token)...');
+async function enrichData(startId, endId) {
+    console.log('✅ Iniciando script de enriquecimento (v9.1 - PDF-Direto + Pular Longos + BugFix)...');
+    console.log(`🎯 Processando menções no intervalo de ID: ${startId} a ${endId}`);
 
-    // Libera a memória do tokenizer ao final (ou em caso de erro não tratado)
-    process.on('exit', () => tokenizer.free());
-    process.on('uncaughtException', () => tokenizer.free());
+    // CORREÇÃO: Movidos os contadores de TOTAL para fora do try/catch
+    let totalProcessadasComSucesso = 0;
+    let totalProcessadasComFalha = 0;
+    let totalPuladosPorTamanho = 0; // Novo contador
 
-    const mentionsToProcess = await db.query(
-        'SELECT id, excerpt, txt_url FROM mentions WHERE gemini_analysis IS NULL'
-    );
-
-    if (mentionsToProcess.rows.length === 0) { /* ... */ tokenizer.free(); return; }
-    console.log(`ℹ️  Encontradas ${mentionsToProcess.rows.length} menções para processar.`);
-
-    let successCount = 0;
-    let failureCount = 0;
-    let chunkedCount = 0;
-
-    for (const [index, mention] of mentionsToProcess.rows.entries()) {
-        console.log(`\n[${index + 1}/${mentionsToProcess.rows.length}] Iniciando processamento da menção ID: ${mention.id}...`);
-
-        let textToAnalyze = null;
-        let sourceUsed = 'excerpt';
-        let finalAnalysisData = {};
-        let finalCalculatedTotal = 0.00;
-        let success = false;
-
-        try {
-            // --- LÓGICA DE SELEÇÃO DA FONTE (txt ou excerpt) ---
-            if (mention.txt_url) { /* ... código para baixar .txt ... */ 
-                 try {
-                    const response = await axios.get(mention.txt_url);
-                    textToAnalyze = response.data;
-                    sourceUsed = 'txt';
-                } catch (txtDownloadError) {
-                     console.warn(`  -> Aviso: Falha ao baixar .txt (${txtDownloadError.message}). Usando excerpt como fallback.`);
-                     textToAnalyze = mention.excerpt;
-                }
-            } else { textToAnalyze = mention.excerpt; }
-
-            if (!textToAnalyze || textToAnalyze.trim() === '') {
-                 // ... (código para pular menção vazia, marcando erro) ...
-                 console.warn('  -> Aviso: Fonte de texto vazia. Pulando análise.');
-                 await db.query(/*...*/); // Marca com erro
-                 failureCount++;
-                 continue;
-            }
-
-            // --- **NOVO: LÓGICA DE CHUNKING POR TOKEN** ---
-            let tokenCount = 0;
+    try {
+        while (true) {
+            let mentionsToProcess = null;
             try {
-                // Conta os tokens ANTES de decidir se precisa de chunking
-                tokenCount = tokenizer.encode(textToAnalyze).length;
-            } catch (encodeError) {
-                 console.error(`  -> ❌ Erro ao tokenizar texto para contagem (ID: ${mention.id}). Pulando.`, encodeError.message);
-                  await db.query( /*...*/); // Marca com erro de tokenização
-                  failureCount++;
-                  continue;
+                mentionsToProcess = await db.query(
+                    `SELECT id, source_url, municipality_name 
+                     FROM mentions 
+                     WHERE id >= $1 AND id <= $2
+                     AND gemini_analysis IS NULL 
+                     AND source_url IS NOT NULL
+                     ORDER BY id ASC 
+                     LIMIT 100`, 
+                    [startId, endId]
+                );
+            } catch(dbError) {
+                console.error("❌ Erro fatal ao buscar menções no banco. Abortando.", dbError.message);
+                throw dbError; // Lança para o catch principal
             }
 
+            if (mentionsToProcess.rows.length === 0) {
+                console.log('🎉 Nenhuma menção nova para processar *neste intervalo*. Trabalho concluído.');
+                break; 
+            }
+            
+            console.log(`\nℹ️  Encontrado lote de ${mentionsToProcess.rows.length} menções para processar (Começando pelo ID ${mentionsToProcess.rows[0].id})...`);
 
-            if (tokenCount > MAX_TOKENS_PER_CHUNK) {
-                chunkedCount++;
-                console.log(`  -> Texto muito longo (${tokenCount} tokens > ${MAX_TOKENS_PER_CHUNK}). Dividindo em chunks...`);
-                // Chama a nova função de split por token
-                const chunks = splitTextIntoChunksByToken(textToAnalyze, MAX_TOKENS_PER_CHUNK, tokenizer);
-                console.log(`     -> Dividido em ${chunks.length} chunks.`);
+            // CORREÇÃO: Contadores de LOTE definidos aqui
+            let successCount = 0;
+            let failureCount = 0;
+            let puladosNesteLote = 0; // Contador específico para este lote
+            
+            for (const [index, mention] of mentionsToProcess.rows.entries()) {
+                console.log(`\n[Lote: ${index + 1}/${mentionsToProcess.rows.length}] Iniciando processamento da menção ID: ${mention.id} (${mention.municipality_name})...`);
 
-                const aggregatedResults = { /* ... inicializa zerado ... */ 
-                    medicamentos: 0, equipamentos: 0, estadia_paciente: 0,
-                    obras_infraestrutura: 0, servicos_saude: 0, outros_relacionados: 0,
-                    chunks_processed: 0, chunks_failed: 0
-                };
+                let textToAnalyze = null;
+                let sourceUsed = 'pdf';
+                let finalAnalysisData = {};
+                let finalCalculatedTotal = 0.00;
+                let success = false;
 
-                for (let i = 0; i < chunks.length; i++) {
-                    const chunkResult = await processSingleChunk(chunks[i], mention.id, i, chunks.length);
-                    if (chunkResult) { /* ... soma nos aggregatedResults ... */ 
-                        aggregatedResults.medicamentos += chunkResult.medicamentos;
-                        aggregatedResults.equipamentos += chunkResult.equipamentos;
-                        aggregatedResults.estadia_paciente += chunkResult.estadia_paciente;
-                        aggregatedResults.obras_infraestrutura += chunkResult.obras_infraestrutura;
-                        aggregatedResults.servicos_saude += chunkResult.servicos_saude;
-                        aggregatedResults.outros_relacionados += chunkResult.outros_relacionados;
-                        aggregatedResults.chunks_processed++;
-                    } else { aggregatedResults.chunks_failed++; }
-                    if (i < chunks.length - 1) await delay(DELAY_BETWEEN_CHUNKS);
+                try {
+                    // 1. Baixar o PDF
+                    console.log(`  -> Baixando PDF de: ${mention.source_url}`);
+                    const response = await axios.get(mention.source_url, { 
+                        responseType: 'arraybuffer',
+                        timeout: 15000 
+                    });
+                    const pdfBuffer = response.data;
+                    
+                    // 2. Parsear o PDF
+                    console.log(`  -> PDF baixado. Extraindo texto...`);
+                    const data = await pdfParse(pdfBuffer);
+                    textToAnalyze = data.text;
+                    console.log(`  -> Texto extraído (${textToAnalyze.length} caracteres).`);
+                    
+                    if (!textToAnalyze || textToAnalyze.trim() === '') {
+                         console.warn('  -> Aviso: Texto extraído do PDF está vazio. Marcando como falha.');
+                         finalAnalysisData = { error: 'Texto extraído do PDF estava vazio.', source: sourceUsed, chunked: false };
+                         success = false;
+                    } else {
+                        // 3. Contagem de Tokens
+                        let tokenCount = 0;
+                        try {
+                            tokenCount = tokenizer.encode(textToAnalyze).length;
+                        } catch (encodeError) {
+                             console.error(`  -> ❌ Erro ao tokenizar texto (ID: ${mention.id}). Pulando.`, encodeError.message);
+                             finalAnalysisData = { error: `Erro ao tokenizar: ${encodeError.message}`, source: sourceUsed, chunked: false };
+                             success = false;
+                        }
+
+                        if (!finalAnalysisData.error) {
+                            // --- LÓGICA DE PULAR SE MUITO LONGO ---
+                            if (tokenCount > MAX_TOKENS_PARA_PROCESSAR) {
+                                console.warn(`  -> ⚠️ TEXTO MUITO LONGO (${tokenCount} tokens > ${MAX_TOKENS_PARA_PROCESSAR}). Pulando análise.`);
+                                finalAnalysisData = { 
+                                    error: `Texto muito longo (${tokenCount} tokens) para processar.`, 
+                                    source: sourceUsed, 
+                                    chunked: false, 
+                                    approx_tokens: tokenCount 
+                                };
+                                success = false;
+                                puladosNesteLote++; // CORREÇÃO: Incrementa o contador do LOTE
+                            
+                            } else {
+                                // --- Processamento Normal (Texto Curto) ---
+                                console.log(`  -> Texto curto (${tokenCount} tokens <= ${MAX_TOKENS_PARA_PROCESSAR}). Processando diretamente...`);
+                                const result = await processSingleText(textToAnalyze, mention.id, mention.municipality_name);
+                                
+                                if (result) {
+                                    finalCalculatedTotal = result.total_gasto_oncologico; 
+                                    finalAnalysisData = {
+                                         ...result,
+                                         source: sourceUsed,
+                                         chunked: false,
+                                         approx_tokens: tokenCount
+                                    };
+                                    success = true;
+                                } else {
+                                     finalAnalysisData = { error: 'Falha no processamento do texto curto', source: sourceUsed, approx_tokens: tokenCount };
+                                     finalCalculatedTotal = 0.00;
+                                     success = false;
+                                }
+                            }
+                        } 
+                    }
+
+                    // ---- Salvar no Banco (VERSÃO CORRIGIDA) ----
+                    await db.query(
+                        `UPDATE mentions SET gemini_analysis = $1, extracted_value = $2 WHERE id = $3`,
+                        [JSON.stringify(finalAnalysisData), finalCalculatedTotal, mention.id]
+                    );
+
+                    if(success){
+                         console.log(`  -> Sucesso final (fonte: ${sourceUsed})! Total calculado: R$ ${finalCalculatedTotal.toFixed(2)}`);
+                         successCount++;
+                    } else {
+                          console.error(`  -> Falha final no processamento da menção ID ${mention.id} (Razão: ${finalAnalysisData.error || 'Erro desconhecido'}).`);
+                          failureCount++;
+                    }
+
+                } catch (error) {
+                    if (error.message === "ALL_KEYS_RATE_LIMITED") {
+                        console.error("Erro pego no loop principal: ALL_KEYS_RATE_LIMITED. Relançando para parar o script.");
+                        throw error;
+                    }
+                    
+                    console.error(`❌ ERRO INESPERADO no loop principal da menção ID ${mention.id}:`, error.message);
+                     try {
+                         await db.query(
+                             `UPDATE mentions SET gemini_analysis = $1, extracted_value = 0.00 WHERE id = $2`,
+                             [JSON.stringify({ error: `Erro inesperado: ${error.message}`, source: sourceUsed, chunked: false }), mention.id]
+                         );
+                     } catch (dbError) {
+                         console.error(`❌ ERRO AO SALVAR ERRO NO BANCO para ID ${mention.id}:`, dbError.message);
+                     }
+                     failureCount++;
                 }
 
-                // Calcula total e monta o objeto final
-                finalCalculatedTotal = /* ... soma das categorias ... */
-                     aggregatedResults.medicamentos + aggregatedResults.equipamentos +
-                     aggregatedResults.estadia_paciente + aggregatedResults.obras_infraestrutura +
-                     aggregatedResults.servicos_saude + aggregatedResults.outros_relacionados;
-                finalAnalysisData = { /* ... monta objeto final com aggregatedResults ... */ 
-                    ...aggregatedResults,
-                    total_gasto_oncologico_calculado: parseFloat(finalCalculatedTotal.toFixed(2)),
-                    source: sourceUsed,
-                    chunked: true,
-                    total_chunks: chunks.length,
-                    approx_tokens: tokenCount // Salva a contagem de tokens aproximada
-                };
-                success = aggregatedResults.chunks_failed === 0;
+                await delay(DELAY_BETWEEN_MENTIONS);
+            } // Fim do loop FOR
 
-            } else {
-                // --- Processamento Normal (Texto Curto) ---
-                console.log(`  -> Texto curto (${tokenCount} tokens <= ${MAX_TOKENS_PER_CHUNK}). Processando diretamente...`);
-                const result = await processSingleChunk(textToAnalyze, mention.id, 0, 1);
-                if (result) { /* ... calcula total e monta objeto final ... */ 
-                    finalCalculatedTotal = result.medicamentos + result.equipamentos + result.estadia_paciente +
-                                          result.obras_infraestrutura + result.servicos_saude + result.outros_relacionados;
-                    finalAnalysisData = { /* ... monta objeto final com result ... */ 
-                         ...result,
-                         total_gasto_oncologico_calculado: parseFloat(finalCalculatedTotal.toFixed(2)),
-                         source: sourceUsed,
-                         chunked: false,
-                         approx_tokens: tokenCount // Salva a contagem de tokens aproximada
-                    };
-                    success = true;
-                } else { /* ... monta objeto de erro ... */ 
-                     finalAnalysisData = { error: 'Falha no processamento do texto curto', source: sourceUsed, approx_tokens: tokenCount };
-                     finalCalculatedTotal = 0.00;
-                     success = false;
-                }
-            }
-             // --- FIM DA LÓGICA DE CHUNKING ---
+            console.log(`\n📊 Lote de ${mentionsToProcess.rows.length} finalizado!`);
+            console.log(`   - Sucessos neste lote: ${successCount}`);
+            console.log(`   - Falhas neste lote: ${failureCount}`);
+            // CORREÇÃO: Loga o contador do LOTE
+            console.log(`   - Pulados por tamanho: ${puladosNesteLote}`); 
+            
+            // CORREÇÃO: Agrega os contadores do LOTE aos totais GERAIS
+            totalProcessadasComSucesso += successCount;
+            totalProcessadasComFalha += failureCount;
+            totalPuladosPorTamanho += puladosNesteLote; 
+            
+            await delay(5000); 
 
-
-            // ---- Salvar no Banco ----
-            await db.query(
-                `UPDATE mentions SET gemini_analysis = $1, extracted_value = $2 WHERE id = $3`,
-                [JSON.stringify(finalAnalysisData), finalCalculatedTotal, mention.id]
-            );
-
-            if(success){ /* ... log de sucesso ... */ 
-                 console.log(`  -> Sucesso final (fonte: ${sourceUsed}${finalAnalysisData.chunked ? ', chunked' : ''})! Total calculado: R$ ${finalCalculatedTotal.toFixed(2)}`);
-                 successCount++;
-            } else { /* ... log de falha ... */ 
-                  console.error(`  -> Falha final no processamento da menção ID ${mention.id} (ver logs de chunk/erro acima).`);
-                  failureCount++;
-            }
-
-        } catch (error) { /* ... tratamento de erro inesperado ... */ 
-            console.error(`❌ ERRO INESPERADO no loop principal da menção ID ${mention.id}:`, error.message);
-             await db.query(/*...*/); // Salva erro genérico
-             failureCount++;
+        } // Fim do loop WHILE(true)
+    } catch (error) {
+        if (error.message === "ALL_KEYS_RATE_LIMITED") {
+            console.error("\n🚫 PROCESSO INTERROMPIDO: Todas as chaves de API atingiram o limite de taxa. Tente novamente mais tarde.");
+        } else {
+            console.error("\n💥 Falha fatal e inesperada no processo do coletor:", error);
         }
+        tokenizer.free();
+        process.exit(1);
+    } // Fim do try/catch principal
 
-        await delay(DELAY_BETWEEN_MENTIONS);
-    } // Fim do loop FOR principal
+    console.log(`\n🎉 Processo de enriquecimento finalizado para o intervalo de IDs!`);
+    console.log(`   - TOTAL de Sucessos: ${totalProcessadasComSucesso}`);
+    console.log(`   - TOTAL de Falhas: ${totalProcessadasComFalha}`);
+    // CORREÇÃO: Loga o contador TOTAL
+    console.log(`   - TOTAL de Pulados por Tamanho: ${totalPuladosPorTamanho}`);
 
-    console.log(`\n🎉 Processo de enriquecimento finalizado!`);
-    console.log(`   - Menções Processadas com Sucesso: ${successCount}`);
-    console.log(`   - Menções com Falha: ${failureCount}`);
-    console.log(`   - Menções que Precisaram de Chunking: ${chunkedCount}`);
-
-    // Libera a memória do tokenizer explicitamente
     tokenizer.free();
 }
 
-enrichData().catch(console.error);
+// --- 5. INÍCIO DA EXECUÇÃO (COM ARGUMENTOS) ---
+const args = process.argv.slice(2);
+const startId = parseInt(args[0], 10);
+const endId = parseInt(args[1], 10);
+
+if (isNaN(startId) || isNaN(endId)) {
+    console.error("❌ Erro: Por favor, forneça um ID inicial e um ID final.");
+    console.log("   Exemplo: node src/scripts/enrichment.js 1 500");
+    process.exit(1);
+}
+if (startId > endId) {
+    console.error("❌ Erro: O ID inicial deve ser menor ou igual ao ID final.");
+    process.exit(1);
+}
+
+// Executa a função principal com os IDs
+enrichData(startId, endId).catch(error => {
+    // Este catch agora é redundante por causa do try/catch principal, mas o mantemos por segurança.
+    if (error.message !== "ALL_KEYS_RATE_LIMITED") { // Evita log duplicado
+        console.error("\n💥 Falha fatal (catch final):", error);
+    }
+    tokenizer.free();
+    process.exit(1);
+});
