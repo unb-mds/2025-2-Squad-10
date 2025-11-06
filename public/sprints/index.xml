@@ -6,8 +6,15 @@
     <description>Recent content in Sprints on OncoMap</description>
     <generator>Hugo</generator>
     <language>pt-br</language>
-    <lastBuildDate>Sun, 26 Oct 2025 07:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 02 Nov 2025 07:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/2025-2-OncoMap/sprints/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Sprint 10</title>
+      <link>http://localhost:1313/2025-2-OncoMap/sprints/sprint-11/</link>
+      <pubDate>Sun, 02 Nov 2025 07:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/2025-2-OncoMap/sprints/sprint-11/</guid>
+      <description>&lt;h2 id=&#34;issues&#34;&gt;Issues&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/2025-2-OncoMap/issues/issue-75/&#34;&gt;75 - [BUG] - NOMECLATURA DOS ESTADOS&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/2025-2-OncoMap/issues/issue-74/&#34;&gt;74 - Correções no layout do frontend&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/2025-2-OncoMap/issues/issue-73/&#34;&gt;73 - [FEATURE]Melhoria na página do Git Pages&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/2025-2-OncoMap/issues/issue-72/&#34;&gt;72 - [Fix] Concertando alguns problemas no layout do Frontend&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+    </item>
     <item>
       <title>Sprint 9</title>
       <link>http://localhost:1313/2025-2-OncoMap/sprints/sprint-10/</link>

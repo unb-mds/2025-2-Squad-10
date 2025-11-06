@@ -31,11 +31,17 @@
         {{ $cssBundle = $cssBundle | append $issueCSS }}
     {{ end }}
     
-    {{/* 4. Combina tudo em um arquivo com nome único (baseado na Seção e no Tipo) */}}
+    {{/* 4. Adiciona CSS se o layout for "embed" */}}
+    {{ if eq .Params.layout "embed" }}
+        {{ $embedCSS := resources.Get "css/embed.css" }}
+        {{ $cssBundle = $cssBundle | append $embedCSS }}
+    {{ end }}
+    
+    {{/* 5. Combina tudo em um arquivo com nome único (baseado na Seção e no Tipo) */}}
     {{ $nomeBundle := printf "css/%s-%s-bundle.css" .Section .Kind }}
     {{ $bundle := $cssBundle | resources.Concat $nomeBundle | resources.Minify }}
     
-    {{/* 5. Gera a tag <link> */}}
+    {{/* 6. Gera a tag <link> */}}
     <link rel="stylesheet" href="{{ $bundle.RelPermalink }}">
 
 {{/* --- Fim do Bloco CSS --- */}}
