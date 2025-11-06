@@ -1,6 +1,6 @@
 ---
 title: "Ata da Sprint_0"
-date: 2025-10-31
+date: 2025-11-06
 sprint: "ata_sprint_0"
 type: "ata"
 ---

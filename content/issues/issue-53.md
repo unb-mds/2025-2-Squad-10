@@ -1,6 +1,6 @@
 ---
 title: "[TASK] Correção de Bugs na Home Page"
-date: 2025-10-31
+date: 2025-11-06
 milestone: "Sprint 7"
 type: "issue"
 draft: false

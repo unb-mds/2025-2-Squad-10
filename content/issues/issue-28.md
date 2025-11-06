@@ -1,6 +1,6 @@
 ---
 title: "Projeto de baixa fidelidade"
-date: 2025-10-31
+date: 2025-11-06
 milestone: "Sprint  3"
 type: "issue"
 draft: false

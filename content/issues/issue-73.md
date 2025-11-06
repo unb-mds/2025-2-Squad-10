@@ -1,6 +1,6 @@
 ---
 title: "[FEATURE]Melhoria na página do Git Pages"
-date: 2025-10-31
+date: 2025-11-06
 milestone: "Sprint 10"
 type: "issue"
 draft: false
@@ -24,6 +24,6 @@ Implementar funcionalidades necessárias
 ---
 
 ## 📊 Critérios de Aceitação
-- [ ] Funcionalidades Implementadas
+- [x] Funcionalidades Implementadas
 
 ---

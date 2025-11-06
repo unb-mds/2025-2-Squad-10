@@ -1,6 +1,6 @@
 ---
 title: "Template do diagrama de Fishbone"
-date: 2025-10-31
+date: 2025-11-06
 milestone: "Sprint 2"
 type: "issue"
 draft: false

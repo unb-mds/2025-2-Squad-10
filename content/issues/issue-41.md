@@ -1,6 +1,6 @@
 ---
 title: "GitHub Pages"
-date: 2025-10-31
+date: 2025-11-06
 milestone: "Sprint 5"
 type: "issue"
 draft: false

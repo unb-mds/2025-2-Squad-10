@@ -7,6 +7,7 @@ draft: false
 ---
 
 ## Issues
+- [76 - atulização do projeto (nome dos estados )](/issues/issue-76/)
 - [75 - [BUG] - NOMECLATURA DOS ESTADOS](/issues/issue-75/)
 - [74 - Correções no layout do frontend](/issues/issue-74/)
 - [73 - [FEATURE]Melhoria na página do Git Pages](/issues/issue-73/)

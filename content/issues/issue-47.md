@@ -1,6 +1,6 @@
 ---
 title: "Criando as Release Notes"
-date: 2025-10-31
+date: 2025-11-06
 milestone: "Sprint 6"
 type: "issue"
 draft: false

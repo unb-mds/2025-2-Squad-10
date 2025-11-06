@@ -1,6 +1,6 @@
 ---
 title: "Sugestão Arquitetura Backend"
-date: 2025-10-31
+date: 2025-11-06
 milestone: "Sprint 0"
 type: "issue"
 draft: false
