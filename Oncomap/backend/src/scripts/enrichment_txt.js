@@ -4,7 +4,6 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const db = require('../config/database');
 const axios = require('axios');
 require('dotenv').config();
-const { get_encoding } = require("tiktoken");
 // NÃO precisamos de 'pdf-parse' aqui
 
 // --- 1. CONFIGURAÇÃO DO ROTEADOR DE CHAVES ---
@@ -41,13 +40,10 @@ updateModelInstance();
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // --- CONSTANTES DE CONTROLE ---
-// Usando 800k (o 'gemini-1.5-flash' tem 1M)
-const MAX_TOKENS_PARA_PROCESSAR_POR_CHUNK = 800000; 
+const MAX_CHARS_PER_CHUNK = 1000000;
 const MAX_RETRIES = 3;
 const DELAY_BETWEEN_MENTIONS = 1000;
 const DELAY_BETWEEN_CHUNKS = 2000; // Pausa entre chunks do *mesmo* diário
-
-const tokenizer = get_encoding("cl100k_base");
 
 // --- FUNÇÕES (getGeminiPrompt, extractJsonFromString) ---
 
@@ -117,25 +113,20 @@ function extractJsonFromString(text) {
 }
 
 /**
- * **NOVO:** Divide o texto em chunks baseados em contagem de tokens.
+ * Divide o texto em chunks baseados em número de CARACTERES.
+ * Muito mais seguro quando a contagem de tokens não é confiável.
  */
-function splitTextIntoChunksByToken(text, maxTokens, tokenizerInstance) {
+function splitTextIntoChunksByChars(text, maxChars) {
     const chunks = [];
-    const tokens = tokenizerInstance.encode(text);
-
-    if (tokens.length <= maxTokens) {
+    if (text.length <= maxChars) {
         return [text];
     }
-    console.log(`    -> Texto longo (${tokens.length} tokens). Dividindo em chunks de ${maxTokens} tokens...`);
+    console.log(`    -> Texto muito longo (${text.length} caracteres). Dividindo em chunks de ${maxChars} chars...`);
 
-    let startIndex = 0;
-    while (startIndex < tokens.length) {
-        const endIndex = Math.min(startIndex + maxTokens, tokens.length);
-        const chunkTokens = tokens.slice(startIndex, endIndex);
-        const chunkText = tokenizerInstance.decode(chunkTokens);
-        chunks.push(chunkText);
-        startIndex = endIndex;
+    for (let i = 0; i < text.length; i += maxChars) {
+        chunks.push(text.substring(i, i + maxChars));
     }
+    
     console.log(`    -> Dividido em ${chunks.length} chunks.`);
     return chunks;
 }
@@ -296,73 +287,57 @@ async function enrichData(startId, endId) {
                          finalAnalysisData = { error: 'Fonte de texto (txt/excerpt) estava vazia.', source: sourceUsed, chunked: false };
                          success = false;
                     } else {
-                        // 2. Contagem de Tokens
-                        let tokenCount = 0;
-                        try {
-                            tokenCount = tokenizer.encode(textToAnalyze).length;
-                        } catch (encodeError) {
-                             finalAnalysisData = { error: `Erro ao tokenizar: ${encodeError.message}`, source: sourceUsed, chunked: false };
-                             success = false;
+                    // 2. Lógica de Chunking por Caracteres (Mais segura)
+                    // A função já lida com texto curto retornando apenas 1 chunk.
+                    const chunks = splitTextIntoChunksByChars(textToAnalyze, MAX_CHARS_PER_CHUNK);
+                    const isChunked = chunks.length > 1;
+                    if (isChunked) chunkedNesteLote++;
+
+                    const aggregatedResults = {
+                        total_gasto_oncologico: 0, medicamentos: 0, equipamentos: 0, estadia_paciente: 0,
+                        obras_infraestrutura: 0, servicos_saude: 0, outros_relacionados: 0,
+                        detalhes_extraidos: [],
+                        _meta: {
+                            chunks_processed: 0, chunks_failed: 0, 
+                            approx_tokens: Math.ceil(textToAnalyze.length / 4), // Estimativa simples
+                            source: sourceUsed, chunked: isChunked, total_chunks: chunks.length
                         }
+                    };
 
-                        if (!finalAnalysisData.error) {
-                            // --- LÓGICA DE CHUNKING ---
-                            const chunks = splitTextIntoChunksByToken(textToAnalyze, MAX_TOKENS_PARA_PROCESSAR_POR_CHUNK, tokenizer);
-                            const isChunked = chunks.length > 1;
-                            if (isChunked) chunkedNesteLote++;
-
-                            // Agregador para os resultados dos chunks
-                            const aggregatedResults = {
-                                total_gasto_oncologico: 0, medicamentos: 0, equipamentos: 0, estadia_paciente: 0,
-                                obras_infraestrutura: 0, servicos_saude: 0, outros_relacionados: 0,
-                                detalhes_extraidos: [],
-                                _meta: {
-                                    chunks_processed: 0, chunks_failed: 0, approx_tokens: tokenCount,
-                                    source: sourceUsed, chunked: isChunked, total_chunks: chunks.length
-                                }
-                            };
-
-                            for (let i = 0; i < chunks.length; i++) {
-                                const chunkResult = await processSingleChunk(chunks[i], mention.id, mention.municipality_name, i, chunks.length);
-                                
-                                if (chunkResult) {
-                                    // Agrega (soma) os valores
-                                    aggregatedResults.total_gasto_oncologico += chunkResult.total_gasto_oncologico;
-                                    aggregatedResults.medicamentos += chunkResult.medicamentos;
-                                    aggregatedResults.equipamentos += chunkResult.equipamentos;
-                                    aggregatedResults.estadia_paciente += chunkResult.estadia_paciente;
-                                    aggregatedResults.obras_infraestrutura += chunkResult.obras_infraestrutura;
-                                    aggregatedResults.servicos_saude += chunkResult.servicos_saude;
-                                    aggregatedResults.outros_relacionados += chunkResult.outros_relacionados;
-                                    // Concatena os detalhes
-                                    aggregatedResults.detalhes_extraidos.push(...chunkResult.detalhes_extraidos);
-                                    aggregatedResults._meta.chunks_processed++;
-                                } else {
-                                    aggregatedResults._meta.chunks_failed++;
-                                }
-                                
-                                // Pausa entre chunks, se houver mais de um
-                                if (isChunked && i < chunks.length - 1) {
-                                    await delay(DELAY_BETWEEN_CHUNKS);
-                                }
-                            }
-
-                            // Verifica o sucesso final (só é sucesso se NENHUM chunk falhar)
-                            if (aggregatedResults._meta.chunks_failed > 0) {
-                                console.error(`  -> ❌ Falha no processamento: ${aggregatedResults._meta.chunks_failed} de ${chunks.length} chunks falharam.`);
-                                finalAnalysisData = { error: `Falha em ${aggregatedResults._meta.chunks_failed} chunks.`, ...aggregatedResults };
-                                success = false;
-                            } else {
-                                // Recalcula o total_gasto_oncologico como a soma das categorias (mais confiável)
-                                finalCalculatedTotal = aggregatedResults.medicamentos + aggregatedResults.equipamentos +
-                                                       aggregatedResults.estadia_paciente + aggregatedResults.obras_infraestrutura +
-                                                       aggregatedResults.servicos_saude + aggregatedResults.outros_relacionados;
-                                
-                                finalAnalysisData = { ...aggregatedResults, total_gasto_oncologico: finalCalculatedTotal };
-                                success = true;
-                            }
+                    for (let i = 0; i < chunks.length; i++) {
+                        // Nota: Passamos 'chunks.length' para o log saber o total correto
+                        const chunkResult = await processSingleChunk(chunks[i], mention.id, mention.municipality_name, i, chunks.length);
+                        
+                        if (chunkResult) {
+                            aggregatedResults.total_gasto_oncologico += chunkResult.total_gasto_oncologico;
+                            aggregatedResults.medicamentos += chunkResult.medicamentos;
+                            aggregatedResults.equipamentos += chunkResult.equipamentos;
+                            aggregatedResults.estadia_paciente += chunkResult.estadia_paciente;
+                            aggregatedResults.obras_infraestrutura += chunkResult.obras_infraestrutura;
+                            aggregatedResults.servicos_saude += chunkResult.servicos_saude;
+                            aggregatedResults.outros_relacionados += chunkResult.outros_relacionados;
+                            aggregatedResults.detalhes_extraidos.push(...chunkResult.detalhes_extraidos);
+                            aggregatedResults._meta.chunks_processed++;
+                        } else {
+                            aggregatedResults._meta.chunks_failed++;
+                        }
+                        
+                        if (isChunked && i < chunks.length - 1) {
+                            await delay(DELAY_BETWEEN_CHUNKS);
                         }
                     }
+
+                    if (aggregatedResults._meta.chunks_failed > 0) {
+                        finalAnalysisData = { error: `Falha em ${aggregatedResults._meta.chunks_failed} chunks.`, ...aggregatedResults };
+                        success = false;
+                    } else {
+                        finalCalculatedTotal = aggregatedResults.medicamentos + aggregatedResults.equipamentos +
+                                               aggregatedResults.estadia_paciente + aggregatedResults.obras_infraestrutura +
+                                               aggregatedResults.servicos_saude + aggregatedResults.outros_relacionados;
+                        finalAnalysisData = { ...aggregatedResults, total_gasto_oncologico: finalCalculatedTotal };
+                        success = true;
+                    }
+                }
 
                     // ---- Salvar no Banco (NAS COLUNAS _TXT) ----
                     await db.query(
@@ -416,7 +391,6 @@ async function enrichData(startId, endId) {
         } else {
             console.error("\n💥 Falha fatal e inesperada no processo do coletor:", error);
         }
-        tokenizer.free();
         process.exit(1);
     } // Fim do try/catch principal
 
@@ -425,7 +399,6 @@ async function enrichData(startId, endId) {
     console.log(`   - TOTAL de Falhas: ${totalProcessadasComFalha}`);
     console.log(`   - TOTAL de Menções com Chunking: ${totalProcessadasComChunking}`);
 
-    tokenizer.free();
 }
 
 // --- 5. INÍCIO DA EXECUÇÃO (COM ARGUMENTOS) ---
@@ -448,6 +421,5 @@ enrichData(startId, endId).catch(error => {
     if (error.message !== "ALL_KEYS_RATE_LIMITED") {
         console.error("\n💥 Falha fatal (catch final):", error);
     }
-    tokenizer.free();
     process.exit(1);
 });
