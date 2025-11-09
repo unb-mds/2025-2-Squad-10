@@ -1,7 +1,6 @@
-
 .site-footer {
-  background-color: #1A3A3F;
-  color: #a2b1b3;
+  background-color: #134611; /* Alterado de #1A3A3F (Fundo escuro principal) */
+  color: #E8FCCF; /* Alterado de #a2b1b3 (Texto padrão do rodapé) */
   padding: 30px 0 20px 0; 
   font-size: 14px;
   line-height: 1.6;
@@ -23,7 +22,7 @@
 }
 
 .footer-column h4 {
-  color: #ffffff;
+  color: #ffffff; /* Títulos mantidos em branco para máximo contraste */
   margin-top: 0;
   margin-bottom: 15px;
   font-size: 16px;
@@ -41,17 +40,17 @@
 }
 
 .footer-column a, .footer-column p {
-  color: #a2b1b3;
+  color: #E8FCCF; /* Alterado de #a2b1b3 (Links e parágrafos do rodapé) */
   text-decoration: none;
   margin: 0;
 }
 
 .footer-column a:hover {
-  color: #ffffff;
+  color: #ffffff; /* Hover mantido branco */
 }
 
 .footer-bottom {
-  border-top: 1px solid #2a5f68;
+  border-top: 1px solid #3E8914; /* Alterado de #2a5f68 (Borda com verde médio) */
   padding-top: 15px; 
   margin-top: 15px;  
   display: flex;

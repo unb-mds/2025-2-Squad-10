@@ -1,14 +1,11 @@
-
-
-
 .homepage {
-  background-color: #1A3A3F;
+  background-color: #134611; /* Alterado de #1A3A3F (Fundo escuro principal) */
 }
 
 
 .main-content-card {
-  background-color: #f8f9fa; 
-  color: #333; 
+  background-color: #E8FCCF; /* Alterado de #f8f9fa (Fundo claro principal) */
+  color: #134611; /* Alterado de #333 (Texto principal sobre fundo claro) */
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
   padding: 80px 5%;

@@ -1,5 +1,5 @@
 .navbar-header {
-  background-color: #1A3A3F; 
+  background-color: #134611; /* Alterado de #1A3A3F (Fundo escuro principal) */
   padding: 1rem 1rem;
   position: fixed; 
   width: 100%;
@@ -17,7 +17,7 @@
 }
 
 .navbar-logo a {
-  color: white;
+  color: white; /* Mantido branco para máximo contraste com o verde escuro */
   text-decoration: none;
   font-size: 1.8rem;
   font-weight: 700;
@@ -33,20 +33,20 @@
 }
 
 .navbar-nav a {
-  color: #E0E0E0; 
+  color: #E8FCCF; /* Alterado de #E0E0E0 para o verde pálido (texto sobre fundo escuro) */
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.2s ease-in-out;
 }
 
 .navbar-nav a:hover {
-  color: white;
+  color: white; /* Mantido branco para o hover */
   font-size: 1.05rem;
 }
 
 .navbar-cta {
-  background-color: #00C896; 
-  color: white;
+  background-color: #3DA35D; /* Alterado de #00C896 (Cor de Destaque/CTA) */
+  color: white; /* Texto do botão mantido branco */
   padding: 12px 28px;
   border-radius: 25px;
   text-decoration: none;
@@ -55,7 +55,8 @@
 }
 
 .navbar-cta:hover {
-  background-color: #1A3A3F;
-  color: #00C896;
-  border: 1px solid #00C896;
+  /* O hover agora usa o fundo escuro e a cor de destaque no texto/borda */
+  background-color: #134611; 
+  color: #3DA35D;
+  border: 1px solid #3DA35D;
 }

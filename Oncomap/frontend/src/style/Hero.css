@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 95vh; 
-  background-color: #1A3A3F; 
+  background-color: #134611; /* Alterado de #1A3A3F (Fundo escuro principal) */
   color: white;
   text-align: center;
   padding: 120px 5% 40px 5%; 
@@ -32,7 +32,7 @@
   font-size: 1.1rem;
   max-width: 600px;
   margin: 1.5rem auto 2.5rem auto; 
-  color: #E0E0E0;
+  color: #E8FCCF; /* Alterado de #E0E0E0 (Texto secundário sobre fundo escuro) */
 }
 
 .hero-start-button {
@@ -48,11 +48,10 @@
 }
 
 .hero-start-button:hover {
-  color: #00C896;
+  color: #3DA35D; /* Alterado de #00C896 (Cor de Destaque) */
 }
 
 .hero-start-icon {
   font-size: 1.8rem;
-  color: #00C896;
+  color: #3DA35D; /* Alterado de #00C896 (Cor de Destaque) */
 }
-

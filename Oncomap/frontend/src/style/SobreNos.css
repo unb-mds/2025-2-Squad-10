@@ -5,7 +5,8 @@
   margin-top: 40px;
 }
 .team-card {
-  background-color: #f7f7f7;
+  /* Mudei de #f7f7f7 para white, para ficar igual ao .team-card do Equipe.css */
+  background-color: #ffffff; 
   border-radius: 15px;
   padding: 20px;
   text-align: center;
@@ -19,13 +20,14 @@
 }
 .team-name {
   margin: 10px 0 5px 0;
+  /* A cor será herdada do index.css (#134611) */
 }
 .team-role {
-  color: #777;
+  color: #3E8914; /* Alterado de #777 (Texto secundário -> Verde Médio) */
   margin: 0 0 15px 0;
 }
 .contact-button {
-  background-color: #00c896;
+  background-color: #3DA35D; /* Alterado de #00c896 (Botão CTA -> Verde Destaque) */
   color: white;
   border: none;
   padding: 10px 25px;
