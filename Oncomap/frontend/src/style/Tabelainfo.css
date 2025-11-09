@@ -1,7 +1,5 @@
-
-
 .info-container {
-  background-color: #1A3A3F; 
+  background-color: #134611; /* Fundo escuro alterado de #1A3A3F */
   color: #ffffff;
   padding: 20px;
   border-radius: 8px;
@@ -42,7 +40,8 @@
 }
 
 .tabela-investimentos th {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  /* Borda branca semi-transparente mantida, funciona bem no fundo escuro */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); 
   font-weight: bold;
 }
 
@@ -59,7 +58,7 @@
   right: 15px;
   background: none;
   border: none;
-  color: white;
+  color: white; /* Mantido branco */
   font-size: 1.5rem;
   cursor: pointer;
   line-height: 1;
@@ -68,7 +67,7 @@
 .separator {
   margin: 20px 0;
   border: none;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #eee; /* Separador claro mantido */
 }
 
 .search-input-group {
@@ -78,16 +77,16 @@
 }
 
 .btn-pesquisar {
-  background-color: #ffb800;
+  background-color: #3DA35D; /* Cor do botão alterada de #ffb800 (Amarelo) */
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  color: #333;
+  color: #ffffff; /* Cor do texto alterada de #333 para branco (melhor contraste) */
   transition: 0.2s;
 }
 
 .btn-pesquisar:hover {
-  background-color: #ffd45e;
+  background-color: #3E8914; /* Hover alterado de #ffd45e para Verde Médio */
 }

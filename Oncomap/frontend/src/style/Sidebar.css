@@ -3,7 +3,7 @@
   top: 15px;
   left: 15px;
   z-index: 1002; 
-  background: #0d4b55;
+  background: #3DA35D; /* Alterado de #0d4b55 (Botão de toggle -> Verde Destaque) */
   color: white;
   border: none;
   font-size: 1.5rem;
@@ -28,7 +28,7 @@
   left: 0;
   height: 100%;
   width: 250px;
-  background-color: #0d4b55;
+  background-color: #134611; /* Fundo do painel alterado de #0d4b55 (Fundo Escuro) */
   transform: translateX(-100%); 
   transition: transform 0.3s ease-in-out;
   z-index: 1000;
@@ -52,19 +52,19 @@
 .sidebar nav li a {
   display: block;
   padding: 1rem 1.5rem;
-  color: white;
+  color: white; /* Texto mantido branco */
   text-decoration: none;
   font-size: 1.2rem;
   transition: background-color 0.2s;
 }
 
 .sidebar nav li a:hover {
-  background-color: #00a37a;
+  background-color: #3E8914; /* Hover alterado de #00a37a (Hover -> Verde Médio) */
 }
 
 
 .sidebar nav li a.active {
-  background-color: #646cff;
+  background-color: #3DA35D; /* Item ativo alterado de #646cff (Azul) */
   font-weight: bold;
 }
 
@@ -74,7 +74,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* Overlay mantido (preto transparente) */
   z-index: 1000; 
   opacity: 0;
   visibility: hidden;

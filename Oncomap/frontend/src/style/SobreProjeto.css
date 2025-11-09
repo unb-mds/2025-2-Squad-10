@@ -1,11 +1,10 @@
-
 .about-layout {
   display: flex;
   justify-content: space-between;
   gap: 4rem; 
   align-items: flex-start; 
-  background-color: #fff;
-  color: #1A3A3F;
+  background-color: #fff; /* Fundo branco para contrastar com o #E8FCCF da página */
+  color: #134611; /* Cor de texto principal, alterada de #1A3A3F */
   padding: 50px 50px 50px 50px;
   border-radius: 10px;
 }
@@ -36,14 +35,15 @@
   text-align: center;
   padding: 30px;
   gap: 1rem;
-  border: 1px solid #1A3A3F;
+  border: 1px solid #134611; /* Borda alterada de #1A3A3F */
   border-radius: 10px;
   transition: all 0.3s ease-in-out;
 }
 
 .feature-item:hover {
   transform: translateY(-8px); 
-  box-shadow: 0 12px 24px rgba(26, 58, 63, 0.8); 
+  /* A sombra (rgba) foi atualizada para usar o RGB do Verde Escuro (19, 70, 17) */
+  box-shadow: 0 12px 24px rgba(19, 70, 17, 0.8); 
   background-color: #fafafa; 
   cursor: default;
 }
@@ -52,7 +52,7 @@
 
 .feature-icon {
   font-size: 2rem;
-  color: #1A3A3F;
+  color: #3E8914; /* Ícone alterado de #1A3A3F para Verde Médio (consistência) */
 }
 
 .feature-title {
@@ -63,7 +63,7 @@
 
 .feature-description {
   font-size: 0.9rem;
-  color: #666;
+  color: #3E8914; /* Texto secundário alterado de #666 para Verde Médio */
   line-height: 1.4;
   margin: 0;
 }
@@ -75,7 +75,7 @@
 }
 
 .about-project-column p {
-  color: #555;
+  color: #134611; /* Texto principal alterado de #555 para Verde Escuro */
   line-height: 1.8;
   margin-bottom: 1.5rem;
   text-align: justify;

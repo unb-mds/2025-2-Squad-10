@@ -1,4 +1,3 @@
-
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -13,17 +12,18 @@
 
 .feature-icon {
   font-size: 3rem; 
-  color: #0d4b55; 
+  color: #3E8914; /* Alterado de #0d4b55 (Verde médio para ícones) */
   margin-bottom: 1rem;
 }
 
 .feature-title {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
+  /* A cor do título virá do .main-content-card (#134611) */
 }
 
 .feature-description {
-  color: #666;
+  color: #3E8914; /* Alterado de #666 (Verde médio para texto secundário) */
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -39,10 +39,11 @@
 
 .about-project-section h2 {
   margin-bottom: 20px;
+  /* A cor do título virá do .main-content-card (#134611) */
 }
 
 .about-project-section p {
-  color: #555;
+  color: #134611; /* Alterado de #555 (Texto principal) */
   line-height: 1.7;
   margin-bottom: 1rem;
   text-align: justify; 
