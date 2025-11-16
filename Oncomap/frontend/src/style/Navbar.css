@@ -1,23 +1,36 @@
+/* ================================================= */
+/* ESTILOS GERAIS (DESKTOP)                          */
+/* ================================================= */
+
 .navbar-header {
-  background-color: #134611; /* Alterado de #1A3A3F (Fundo escuro principal) */
+  background-color: #134611;
   padding: 1rem 1rem;
-  position: fixed; 
+  position: fixed;
   width: 100%;
   top: 0;
   left: 0;
-  z-index: 100;
   box-sizing: border-box;
+  /* CORREÇÃO: Z-index do header aumentado */
+  z-index: 1000;
 }
 
 .navbar-container {
+  max-width: 1200px; /* Adicionado para limitar a largura em telas grandes */
   margin: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+/* CORREÇÃO: Nova regra para o logo (pai do link 'a') */
+.navbar-logo {
+  position: relative;
+  /* Z-index para ficar acima do header, mas abaixo do menu overlay */
+  z-index: 1050;
+}
+
 .navbar-logo a {
-  color: white; /* Mantido branco para máximo contraste com o verde escuro */
+  color: white;
   text-decoration: none;
   font-size: 1.8rem;
   font-weight: 700;
@@ -26,37 +39,137 @@
 .navbar-nav ul {
   list-style: none;
   display: flex;
-  gap: 2.5rem; 
+  gap: 2.5rem;
   margin: 0;
   padding: 0;
   align-items: center;
 }
 
 .navbar-nav a {
-  color: #E8FCCF; /* Alterado de #E0E0E0 para o verde pálido (texto sobre fundo escuro) */
+  color: #E8FCCF;
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.2s ease-in-out;
 }
 
 .navbar-nav a:hover {
-  color: white; /* Mantido branco para o hover */
+  color: white;
   font-size: 1.05rem;
 }
 
 .navbar-cta {
-  background-color: #3DA35D; /* Alterado de #00C896 (Cor de Destaque/CTA) */
-  color: white; /* Texto do botão mantido branco */
+  background-color: #3DA35D;
+  color: white;
   padding: 12px 28px;
   border-radius: 25px;
   text-decoration: none;
   font-weight: 600;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
 }
 
 .navbar-cta:hover {
-  /* O hover agora usa o fundo escuro e a cor de destaque no texto/borda */
-  background-color: #134611; 
+  background-color: #134611;
   color: #3DA35D;
   border: 1px solid #3DA35D;
+}
+
+/* Regra de desktop para .navbar-nav (contém o <ul> e o .navbar-cta) */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+/* ================================================= */
+/* BOTÃO HAMBURGER E ANIMAÇÃO                        */
+/* ================================================= */
+
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  /* CORREÇÃO: Posição e Z-index do botão */
+  position: relative; /* Necessário para z-index funcionar */
+  z-index: 1100;    /* Z-index MAIS ALTO (acima do menu overlay) */
+}
+
+.navbar-toggle .bar {
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar-toggle.active .bar:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 6px);
+}
+.navbar-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+}
+.navbar-toggle.active .bar:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -6px);
+}
+
+
+/* ================================================= */
+/* MEDIA QUERY (MOBILE)                              */
+/* ================================================= */
+
+@media (max-width: 850px) {
+
+  /* 1. Mostra o botão hamburger */
+  .navbar-toggle {
+    display: flex;
+  }
+
+  /* 2. Configura o menu overlay (que estava escondido) */
+  .navbar-nav {
+    display: none; /* Continua escondido por padrão */
+    
+    /* CORREÇÃO: Configuração do Overlay */
+    position: fixed;   /* 'fixed' para cobrir a tela inteira */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #134611; /* Fundo sólido */
+
+    /* CORREÇÃO: Centralização */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centraliza verticalmente */
+    gap: 2.5rem;
+    
+    /* CORREÇÃO: Hierarquia Z-index */
+    z-index: 1099; /* Abaixo do botão (1100), acima do logo (1050) */
+    
+    padding-top: 0; /* Remove o padding-top antigo */
+    box-sizing: border-box;
+  }
+
+  /* 3. Regra que ATIVA o menu */
+  .navbar-nav.active {
+    display: flex; /* Mostra o menu */
+  }
+
+  /* 4. Estilos dos links dentro do menu mobile */
+  .navbar-nav ul {
+    flex-direction: column;
+    gap: 2.5rem;
+    padding: 0;
+  }
+
+  .navbar-nav a {
+    font-size: 1.5rem;
+  }
+  .navbar-nav a:hover {
+    font-size: 1.55rem;
+  }
 }
