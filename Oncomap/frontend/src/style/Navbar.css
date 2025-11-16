@@ -10,30 +10,29 @@
   top: 0;
   left: 0;
   box-sizing: border-box;
-  /* CORREÇÃO: Z-index do header aumentado */
-  z-index: 1000;
+  z-index: 9900;
 }
 
 .navbar-container {
-  max-width: 1200px; /* Adicionado para limitar a largura em telas grandes */
+  max-width: 1200px;
   margin: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
-/* CORREÇÃO: Nova regra para o logo (pai do link 'a') */
 .navbar-logo {
   position: relative;
-  /* Z-index para ficar acima do header, mas abaixo do menu overlay */
-  z-index: 1050;
-}
-
-.navbar-logo a {
+  z-index: 9950;
   color: white;
-  text-decoration: none;
   font-size: 1.8rem;
   font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .navbar-nav ul {
@@ -49,12 +48,13 @@
   color: #E8FCCF;
   text-decoration: none;
   font-size: 1rem;
-  transition: color 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
 }
 
 .navbar-nav a:hover {
   color: white;
-  font-size: 1.05rem;
+  transform: scale(1.05);
 }
 
 .navbar-cta {
@@ -64,7 +64,8 @@
   border-radius: 25px;
   text-decoration: none;
   font-weight: 600;
-  transition: background-color 0.2s ease-in-out, border 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid transparent;
 }
 
 .navbar-cta:hover {
@@ -73,7 +74,6 @@
   border: 1px solid #3DA35D;
 }
 
-/* Regra de desktop para .navbar-nav (contém o <ul> e o .navbar-cta) */
 .navbar-nav {
   display: flex;
   align-items: center;
@@ -94,9 +94,9 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  /* CORREÇÃO: Posição e Z-index do botão */
-  position: relative; /* Necessário para z-index funcionar */
-  z-index: 1100;    /* Z-index MAIS ALTO (acima do menu overlay) */
+  position: relative;
+  z-index: 9999;
+  flex-shrink: 0;
 }
 
 .navbar-toggle .bar {
@@ -105,71 +105,136 @@
   background-color: white;
   border-radius: 2px;
   transition: all 0.3s ease-in-out;
+  transform-origin: center;
 }
 
 .navbar-toggle.active .bar:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 6px);
+  transform: rotate(45deg) translate(6px, 6px);
 }
+
 .navbar-toggle.active .bar:nth-child(2) {
   opacity: 0;
+  transform: translateX(-10px);
 }
+
 .navbar-toggle.active .bar:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -6px);
+  transform: rotate(-45deg) translate(6px, -6px);
 }
 
-
 /* ================================================= */
-/* MEDIA QUERY (MOBILE)                              */
+/* MEDIA QUERY (TABLET & MOBILE) - CORREÇÃO CRÍTICA  */
 /* ================================================= */
 
-@media (max-width: 850px) {
-
-  /* 1. Mostra o botão hamburger */
-  .navbar-toggle {
-    display: flex;
+@media (max-width: 768px) {
+  /* CORREÇÃO: Remove completamente o menu normal do fluxo do layout */
+  .navbar-nav:not(.active) {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    position: absolute !important;
   }
 
-  /* 2. Configura o menu overlay (que estava escondido) */
-  .navbar-nav {
-    display: none; /* Continua escondido por padrão */
-    
-    /* CORREÇÃO: Configuração do Overlay */
-    position: fixed;   /* 'fixed' para cobrir a tela inteira */
+  /* CORREÇÃO: Botão hamburger SEMPRE visível e acessível */
+  .navbar-toggle {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+
+  /* CORREÇÃO: Garante que o container tenha espaço para o hamburger */
+  .navbar-container {
+    justify-content: space-between;
+  }
+
+  /* CORREÇÃO: Logo ocupa apenas o espaço necessário */
+  .navbar-logo {
+    flex-shrink: 0;
+    max-width: none;
+    margin-right: auto;
+  }
+
+  /* CORREÇÃO: Menu overlay quando ativo */
+  .navbar-nav.active {
+    display: flex !important;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background-color: #134611; /* Fundo sólido */
-
-    /* CORREÇÃO: Centralização */
+    background-color: #134611;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Centraliza verticalmente */
+    justify-content: center;
     gap: 2.5rem;
-    
-    /* CORREÇÃO: Hierarquia Z-index */
-    z-index: 1099; /* Abaixo do botão (1100), acima do logo (1050) */
-    
-    padding-top: 0; /* Remove o padding-top antigo */
-    box-sizing: border-box;
+    z-index: 9998;
+    opacity: 1;
+    visibility: visible;
   }
 
-  /* 3. Regra que ATIVA o menu */
-  .navbar-nav.active {
-    display: flex; /* Mostra o menu */
+  /* Previne scroll quando menu está aberto */
+  body.menu-open {
+    overflow: hidden;
   }
 
-  /* 4. Estilos dos links dentro do menu mobile */
-  .navbar-nav ul {
+  /* Estilos dos links no menu mobile */
+  .navbar-nav.active ul {
     flex-direction: column;
     gap: 2.5rem;
     padding: 0;
+    text-align: center;
+    margin: 0;
   }
 
-  .navbar-nav a {
+  .navbar-nav.active a {
     font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    display: block;
   }
-  .navbar-nav a:hover {
-    font-size: 1.55rem;
+  
+  .navbar-nav.active a:hover {
+    transform: scale(1.05);
   }
+
+  .navbar-nav.active .navbar-cta {
+    padding: 15px 32px;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+}
+
+/* ================================================= */
+/* MEDIA QUERY (MOBILE PEQUENO)                      */
+/* ================================================= */
+
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 0 15px;
+  }
+
+  .navbar-logo {
+    font-size: 1.4rem;
+  }
+
+  .navbar-nav.active a {
+    font-size: 1.3rem;
+  }
+  
+  .navbar-nav.active .navbar-cta {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+}
+
+/* ================================================= */
+/* ACESSIBILIDADE                                    */
+/* ================================================= */
+
+.navbar-toggle:focus,
+.navbar-nav a:focus {
+  outline: 2px solid #3DA35D;
+  outline-offset: 2px;
 }
