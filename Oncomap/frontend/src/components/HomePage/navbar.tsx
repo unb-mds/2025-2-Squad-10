@@ -1,22 +1,88 @@
+import { useState, useEffect } from 'react'; 
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import '../../style/Navbar.css';
 
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Controla o scroll do body quando menu está aberto
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.classList.add('menu-open');
+    } else {
+      document.body.classList.remove('menu-open');
+    }
+
+    // Cleanup
+    return () => {
+      document.body.classList.remove('menu-open');
+    };
+  }, [menuOpen]);
+
+  // Fecha o menu quando a tela fica grande
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 992) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const handleLinkClick = () => {
+    setMenuOpen(false);
+  };
+
+  const handleToggleClick = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
     <header className="navbar-header">
       <div className="navbar-container">
-        <h2 className="navbar-logo">
-          <Link to="/">OncoMap</Link>
-        </h2>
-        <nav className="navbar-nav">
+        
+        <h2 className="navbar-logo">OncoMap</h2>
+
+        <nav className={menuOpen ? "navbar-nav active" : "navbar-nav"}>
           <ul>
-            <li><HashLink to="/#inicio" smooth>Início</HashLink></li>
-            <li><HashLink to="/#sobre" smooth>Sobre</HashLink></li>
-            <li><HashLink to="/#quem-somos" smooth>Quem somos</HashLink></li>
+            <li>
+              <HashLink to="/#inicio" smooth onClick={handleLinkClick}>
+                Início
+              </HashLink>
+            </li>
+            <li>
+              <HashLink to="/#sobre" smooth onClick={handleLinkClick}>
+                Sobre
+              </HashLink>
+            </li>
+            <li>
+              <HashLink to="/#quem-somos" smooth onClick={handleLinkClick}>
+                Quem somos
+              </HashLink>
+            </li>
           </ul>
+          
+          <Link to="/mapa" className="navbar-cta" onClick={handleLinkClick}>
+            Explorar
+          </Link>
         </nav>
-        <Link to="/mapa" className="navbar-cta">Explorar</Link>
+
+        <button
+          className={menuOpen ? "navbar-toggle active" : "navbar-toggle"}
+          onClick={handleToggleClick}
+          aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={menuOpen}
+        >
+          <span className="bar"></span>
+          <span className="bar"></span>
+          <span className="bar"></span>
+        </button>
       </div>
     </header>
   );
