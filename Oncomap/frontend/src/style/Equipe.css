@@ -2,18 +2,18 @@
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 3rem;
-  color: #3E8914; /* Alterado de #00C896 (Usei o verde médio para o título) */
+  color: #3E8914; 
 }
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(3, 280px);
+  grid-template-columns: repeat(3, 280px); /* Layout Original Desktop */
   justify-content: center;
   gap: 2.5rem;
 }
 
 .team-card {
-  background-color: white; /* Mantido branco para os cards se destacarem do fundo verde pálido */
+  background-color: white; 
   border-radius: 20px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
   overflow: hidden;
@@ -47,17 +47,17 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 0.25rem 0;
-  color: #134611; /* Alterado de #222 (Texto principal) */
+  color: #134611; 
 }
 
 .team-role {
-  color: #3E8914; /* Alterado de #888 (Texto secundário com verde médio) */
+  color: #3E8914; 
   margin: 0 0 1rem 0;
   font-size: 0.9rem;
 }
 
 .github-button {
-  background-color: #3DA35D; /* Alterado de #00C896 (Cor de Destaque/CTA) */
+  background-color: #3DA35D; 
   color: white; 
   padding: 10px 25px;
   border: none;
@@ -71,6 +71,27 @@
 }
 
 .github-button:hover {
-  background-color: #3E8914; /* Alterado de #00a37a (Hover com verde médio) */
+  background-color: #3E8914; 
   color: white;
+}
+
+/* --- Responsividade --- */
+
+@media (max-width: 992px) {
+  .team-grid {
+    /* Muda para 2 colunas em telas médias */
+    grid-template-columns: repeat(2, 280px); 
+  }
+}
+
+@media (max-width: 650px) {
+  .team-grid {
+    /* Muda para 1 coluna em telas pequenas */
+    grid-template-columns: repeat(1, 280px);
+  }
+  
+  .team-section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
 }

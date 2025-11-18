@@ -4,13 +4,16 @@
   gap: 2rem;
   margin-top: 40px;
 }
+
 .team-card {
-  /* Mudei de #f7f7f7 para white, para ficar igual ao .team-card do Equipe.css */
   background-color: #ffffff; 
   border-radius: 15px;
   padding: 20px;
   text-align: center;
+  /* Adicionei uma transição suave caso queira efeitos de hover no futuro */
+  transition: transform 0.3s ease; 
 }
+
 .team-photo {
   width: 100px;
   height: 100px;
@@ -18,19 +21,43 @@
   object-fit: cover;
   margin-bottom: 15px;
 }
+
 .team-name {
   margin: 10px 0 5px 0;
-  /* A cor será herdada do index.css (#134611) */
 }
+
 .team-role {
-  color: #3E8914; /* Alterado de #777 (Texto secundário -> Verde Médio) */
+  color: #3E8914; 
   margin: 0 0 15px 0;
 }
+
 .contact-button {
-  background-color: #3DA35D; /* Alterado de #00c896 (Botão CTA -> Verde Destaque) */
+  background-color: #3DA35D; 
   color: white;
   border: none;
   padding: 10px 25px;
   border-radius: 20px;
   cursor: pointer;
+  font-weight: 600; /* Adicionei um pouco de peso para legibilidade */
+}
+
+/* --- Responsividade --- */
+
+@media (max-width: 768px) {
+  .team-grid {
+    gap: 1.5rem;
+    justify-content: center; /* Garante que se sobrar espaço, os cards fiquem no meio */
+  }
+}
+
+@media (max-width: 550px) {
+  .team-grid {
+    /* Em telas muito estreitas, força uma coluna para o card ocupar a largura disponível */
+    grid-template-columns: 1fr; 
+    padding: 0 10px;
+  }
+
+  .team-card {
+    padding: 25px 15px;
+  }
 }

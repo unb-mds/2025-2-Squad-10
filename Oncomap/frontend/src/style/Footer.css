@@ -1,6 +1,7 @@
 .site-footer {
-  background-color: #134611; /* Alterado de #1A3A3F (Fundo escuro principal) */
-  color: #E8FCCF; /* Alterado de #a2b1b3 (Texto padrão do rodapé) */
+  background-color: #134611; 
+  color: #E8FCCF;
+  margin-top: 60px;
   padding: 30px 0 20px 0; 
   font-size: 14px;
   line-height: 1.6;
@@ -16,13 +17,13 @@
 }
 
 .footer-column {
-  width: 22%;
+  width: 22%; /* Desktop */
   min-width: 200px;
   margin-bottom: 20px;
 }
 
 .footer-column h4 {
-  color: #ffffff; /* Títulos mantidos em branco para máximo contraste */
+  color: #ffffff; 
   margin-top: 0;
   margin-bottom: 15px;
   font-size: 16px;
@@ -40,17 +41,17 @@
 }
 
 .footer-column a, .footer-column p {
-  color: #E8FCCF; /* Alterado de #a2b1b3 (Links e parágrafos do rodapé) */
+  color: #E8FCCF; 
   text-decoration: none;
   margin: 0;
 }
 
 .footer-column a:hover {
-  color: #ffffff; /* Hover mantido branco */
+  color: #ffffff; 
 }
 
 .footer-bottom {
-  border-top: 1px solid #3E8914; /* Alterado de #2a5f68 (Borda com verde médio) */
+  border-top: 1px solid #3E8914; 
   padding-top: 15px; 
   margin-top: 15px;  
   display: flex;
@@ -61,4 +62,33 @@
   padding-left: 20px;
   padding-right: 20px;
   font-size: 12px;
+}
+
+/* --- Responsividade --- */
+
+@media (max-width: 900px) {
+  .footer-column {
+    width: 45%; /* Duas colunas por linha em tablets */
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center; /* Centraliza tudo */
+  }
+
+  .footer-column {
+    width: 100%; /* Uma coluna por linha no celular */
+    text-align: center;
+    min-width: unset;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
 }

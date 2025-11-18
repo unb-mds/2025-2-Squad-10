@@ -12,22 +12,20 @@
 
 .feature-icon {
   font-size: 3rem; 
-  color: #3E8914; /* Alterado de #0d4b55 (Verde médio para ícones) */
+  color: #3E8914; 
   margin-bottom: 1rem;
 }
 
 .feature-title {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  /* A cor do título virá do .main-content-card (#134611) */
 }
 
 .feature-description {
-  color: #3E8914; /* Alterado de #666 (Verde médio para texto secundário) */
+  color: #3E8914; 
   font-size: 0.9rem;
   line-height: 1.5;
 }
-
 
 .about-project-section {
   margin-top: 80px; 
@@ -39,12 +37,35 @@
 
 .about-project-section h2 {
   margin-bottom: 20px;
-  /* A cor do título virá do .main-content-card (#134611) */
 }
 
 .about-project-section p {
-  color: #134611; /* Alterado de #555 (Texto principal) */
+  color: #134611; 
   line-height: 1.7;
   margin-bottom: 1rem;
   text-align: justify; 
+}
+
+/* --- Responsividade --- */
+
+@media (max-width: 768px) {
+  .about-project-section {
+    margin-top: 50px; /* Reduz o espaço entre seções */
+  }
+
+  .about-project-section p {
+    text-align: left; /* Justificado fica ruim de ler no celular, melhor alinhar à esquerda */
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .features-grid {
+    grid-template-columns: 1fr; /* Força 1 coluna no celular */
+    gap: 1.5rem;
+  }
+  
+  .feature-item {
+    padding: 10px;
+  }
 }

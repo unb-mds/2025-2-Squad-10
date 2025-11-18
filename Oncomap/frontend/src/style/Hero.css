@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 95vh; 
-  background-color: #134611; /* Alterado de #1A3A3F (Fundo escuro principal) */
+  background-color: #134611; 
   color: white;
   text-align: center;
   padding: 120px 5% 40px 5%; 
@@ -13,6 +13,7 @@
 
 .hero-content {
   max-width: 1000px; 
+  width: 100%; /* Garante que não exceda a largura em telas pequenas */
 }
 
 .hero-subtitle {
@@ -32,7 +33,7 @@
   font-size: 1.1rem;
   max-width: 600px;
   margin: 1.5rem auto 2.5rem auto; 
-  color: #E8FCCF; /* Alterado de #E0E0E0 (Texto secundário sobre fundo escuro) */
+  color: #E8FCCF; 
 }
 
 .hero-start-button {
@@ -48,10 +49,38 @@
 }
 
 .hero-start-button:hover {
-  color: #3DA35D; /* Alterado de #00C896 (Cor de Destaque) */
+  color: #3DA35D; 
 }
 
 .hero-start-icon {
   font-size: 1.8rem;
-  color: #3DA35D; /* Alterado de #00C896 (Cor de Destaque) */
+  color: #3DA35D; 
+}
+
+/* --- Responsividade --- */
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding-top: 100px; /* Reduz o espaço superior em tablets/móveis */
+    min-height: 85vh;
+  }
+
+  .hero-title {
+    font-size: 2.5rem; /* Reduz título de 4rem para 2.5rem */
+  }
+
+  .hero-description {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem; /* Ainda menor para celulares estreitos */
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
 }
