@@ -3,18 +3,16 @@
   justify-content: space-between;
   gap: 4rem; 
   align-items: flex-start; 
-  background-color: #fff; /* Fundo branco para contrastar com o #E8FCCF da página */
-  color: #134611; /* Cor de texto principal, alterada de #1A3A3F */
+  background-color: #fff; 
+  color: #134611; 
   padding: 50px 50px 50px 50px;
   border-radius: 10px;
 }
-
 
 .how-it-works-column,
 .about-project-column {
   flex: 1; 
 }
-
 
 .how-it-works-column h2 {
   text-align: center;
@@ -23,7 +21,6 @@
 
 .features-grid {
   display: grid;
- 
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
 }
@@ -35,24 +32,21 @@
   text-align: center;
   padding: 30px;
   gap: 1rem;
-  border: 1px solid #134611; /* Borda alterada de #1A3A3F */
+  border: 1px solid #134611; 
   border-radius: 10px;
   transition: all 0.3s ease-in-out;
 }
 
 .feature-item:hover {
   transform: translateY(-8px); 
-  /* A sombra (rgba) foi atualizada para usar o RGB do Verde Escuro (19, 70, 17) */
   box-shadow: 0 12px 24px rgba(19, 70, 17, 0.8); 
   background-color: #fafafa; 
   cursor: default;
 }
 
-
-
 .feature-icon {
   font-size: 2rem;
-  color: #3E8914; /* Ícone alterado de #1A3A3F para Verde Médio (consistência) */
+  color: #3E8914; 
 }
 
 .feature-title {
@@ -63,29 +57,49 @@
 
 .feature-description {
   font-size: 0.9rem;
-  color: #3E8914; /* Texto secundário alterado de #666 para Verde Médio */
+  color: #3E8914; 
   line-height: 1.4;
   margin: 0;
 }
-
-
 
 .about-project-column h2 {
   margin-bottom: 1.5rem;
 }
 
 .about-project-column p {
-  color: #134611; /* Texto principal alterado de #555 para Verde Escuro */
+  color: #134611; 
   line-height: 1.8;
   margin-bottom: 1.5rem;
   text-align: justify;
 }
 
-
+/* --- Responsividade --- */
 
 @media (max-width: 992px) {
   .about-layout {
     flex-direction: column;
     gap: 3rem;
+    padding: 40px 30px; /* Reduz padding lateral */
+  }
+  
+  .about-project-column p {
+    text-align: left; /* Justify pode criar buracos feios no texto em mobile */
+  }
+}
+
+@media (max-width: 600px) {
+  .features-grid {
+    grid-template-columns: 1fr; /* Ícones um abaixo do outro no celular */
+    gap: 1.5rem;
+  }
+
+  .about-layout {
+    padding: 30px 20px; /* Ainda menos padding em telas muito pequenas */
+  }
+  
+  .feature-item {
+    padding: 20px;
+    flex-direction: column; /* Empilha ícone e texto dentro do card */
+    align-items: center;
   }
 }
