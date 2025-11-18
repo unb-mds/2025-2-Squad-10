@@ -31,7 +31,6 @@ interface MapProps {
   selectedState: string | null;
   setSelectedState: (state: string | null) => void;
   setDadosInvestimentos: (dados: DadosInvestimentos | null) => void;
-  // Esta é a 'prop' que vem do pai (MapaPage)
   setMunicipiosData: (data: FeatureCollection | null) => void; 
   searchedMunicipioName: string | null;
 }
@@ -50,14 +49,12 @@ const MapaInterativo: React.FC<MapProps> = ({
   selectedState,
   setSelectedState,
   setDadosInvestimentos,
-  setMunicipiosData, // <-- Aqui está a 'prop'
+  setMunicipiosData, 
   searchedMunicipioName,
 }) => {
   const [map, setMap] = useState<L.Map | null>(null);
   const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
   
-  // --- CORREÇÃO DE NOME (LINHA 58) ---
-  // Renomeamos o state local para evitar conflito com a 'prop'
   const [municipiosGeoJSON, setMunicipiosGeoJSON] = useState<FeatureCollection | null>(null);
 
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
@@ -72,7 +69,6 @@ const MapaInterativo: React.FC<MapProps> = ({
     []
   );
 
-  // Carregar investimentos... (sem alterações aqui)
   useEffect(() => {
     async function fetchInvestimentos() {
       try {
@@ -92,7 +88,6 @@ const MapaInterativo: React.FC<MapProps> = ({
     fetchInvestimentos();
   }, [setDadosInvestimentos]);
 
-  // 'todosOsEstadosComNomes'... (sem alterações aqui)
   const todosOsEstadosComNomes = useMemo(() => {
     if (!dadosInvestimentosLocal) return new Map<string, string>();
     
@@ -105,13 +100,10 @@ const MapaInterativo: React.FC<MapProps> = ({
     return mapa;
   }, [dadosInvestimentosLocal]);
 
-
-  // Corrigir tamanho do mapa... (sem alterações)
   useEffect(() => {
     if (map) setTimeout(() => map.invalidateSize(), 500);
   }, [map, selectedRegion, selectedState]);
 
-  // Foco na região ou estado selecionado... (sem alterações)
   useEffect(() => {
     if (!map) return;
     if (selectedRegion && !selectedState && geoJsonLayerRef.current) {
@@ -122,36 +114,31 @@ const MapaInterativo: React.FC<MapProps> = ({
     }
   }, [selectedRegion, selectedState, map]);
 
-  // Carregar municípios do estado selecionado
   useEffect(() => {
     if (selectedState) {
       const codigoUF = selectedState;
       if (codigoUF === '53') {
-        // --- CORREÇÃO DE NOME ---
-        setMunicipiosGeoJSON(null); // Atualiza o state local (mapa)
-        setMunicipiosData(null);     // Atualiza o state pai (TabelaInfo)
+        setMunicipiosGeoJSON(null); 
+        setMunicipiosData(null);     
         return;
       }
       const nomeDoArquivo = `geojs-${codigoUF}-mun`;
       import(`../../data/municipios/${nomeDoArquivo}.json`)
         .then((module) => {
           const data = module.default || module;
-          // --- CORREÇÃO DE NOME ---
-          setMunicipiosGeoJSON(data); // Atualiza o state local (mapa)
-          setMunicipiosData(data);      // Atualiza o state pai (TabelaInfo)
+          setMunicipiosGeoJSON(data); 
+          setMunicipiosData(data);      
         })
         .catch((_err) => {
           console.error(`Falha ao carregar o arquivo de municípios: geojs-${codigoUF}-mun.json`);
-          // --- CORREÇÃO DE NOME ---
-          setMunicipiosGeoJSON(null); // Atualiza o state local (mapa)
-          setMunicipiosData(null);     // Atualiza o state pai (TabelaInfo)
+          setMunicipiosGeoJSON(null); 
+          setMunicipiosData(null);     
         });
     } else {
-      // --- CORREÇÃO DE NOME ---
-      setMunicipiosGeoJSON(null); // Atualiza o state local (mapa)
-      setMunicipiosData(null);     // Atualiza o state pai (TabelaInfo)
+      setMunicipiosGeoJSON(null); 
+      setMunicipiosData(null);     
     }
-  }, [selectedState, setMunicipiosData]); // Adicionado setMunicipiosData às dependências
+  }, [selectedState, setMunicipiosData]); 
   
   const handleResetView = () => {
     if (map) {
@@ -160,11 +147,15 @@ const MapaInterativo: React.FC<MapProps> = ({
     }
   };
 
-  // statesStyle... (sem alterações)
+  // --- ESTILOS DOS ESTADOS (Regiões) ---
   const statesStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
-    let fillColor = '#0D4B55';
-    const highlightColor = '#FF8C00';
+    
+    // Cor Base do Mapa: Verde Escuro (Footer BG)
+    let fillColor = '#134611'; 
+    
+    // Cor de Destaque: Verde Vibrante (Botões)
+    const highlightColor = '#3DA35D'; 
 
     if (selectedState) {
       return { fillColor: highlightColor, weight: 1, color: 'white', fillOpacity: 1 };
@@ -182,7 +173,6 @@ const MapaInterativo: React.FC<MapProps> = ({
     return { fillColor, weight: 1, color: 'white', fillOpacity: 1 };
   };
 
-  // onEachStateFeature... (sem alterações, esta lógica está correta)
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
     const codareaDoEstado = feature.properties.codarea;
     const regiaoDoEstado = feature.properties.regiao || 'Região';
@@ -211,7 +201,7 @@ const MapaInterativo: React.FC<MapProps> = ({
     });
   };
 
-  // municipiosStyle... (sem alterações)
+  // --- ESTILOS DOS MUNICÍPIOS ---
   const municipiosStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
     const nome = feature.properties?.name?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -219,22 +209,34 @@ const MapaInterativo: React.FC<MapProps> = ({
       ? searchedMunicipioName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       : null;
     const isHovered = hoveredMunicipio?.properties.id === feature.properties.id;
+
+    // Se for o município buscado
     if (nomeBusca && nome === nomeBusca) {
       return {
-        weight: 2.5, color: '#FFD700', fillColor: '#FFB800', fillOpacity: 1,
+        weight: 2.5, 
+        color: '#E8FCCF', // Borda: Verde Claro (Texto do Footer)
+        fillColor: '#3DA35D', // Fundo: Verde Destaque (Botões)
+        fillOpacity: 1,
       };
     }
+    // Se estiver com o mouse em cima
     if (isHovered) {
       return {
-        weight: 2, color: '#FFD700', fillColor: '#09353bff', fillOpacity: 1,
+        weight: 2, 
+        color: '#E8FCCF', // Borda: Verde Claro
+        fillColor: '#3DA35D', // Fundo: Verde Destaque
+        fillOpacity: 1,
       };
     }
+    // Estilo padrão do município
     return {
-      weight: 1, color: 'white', fillColor: '#0D4B55', fillOpacity: 1,
+      weight: 1, 
+      color: 'white', // Borda branca fina para separar
+      fillColor: '#134611', // Fundo: Verde Escuro (Footer BG)
+      fillOpacity: 1,
     };
   };
 
-  // onEachMunicipioFeature... (sem alterações)
   const onEachMunicipioFeature = (feature: GeoFeature, layer: Layer) => {
     const municipioName = feature.properties.name || feature.properties.nome || 'Nome não disponível';
     layer.bindTooltip(municipioName, { sticky: true });
@@ -243,7 +245,7 @@ const MapaInterativo: React.FC<MapProps> = ({
       mouseover: (event: any) => {
         setHoveredMunicipio(feature);
         event.target.setStyle({
-          weight: 2, color: '#FFD700', fillColor: '#FFB800', fillOpacity: 1,
+          weight: 2, color: '#E8FCCF', fillColor: '#3DA35D', fillOpacity: 1,
         });
       },
       mouseout: (event: any) => {
@@ -260,7 +262,6 @@ const MapaInterativo: React.FC<MapProps> = ({
     });
   };
 
-  // dataForStatesLayer... (sem alterações)
   const dataForStatesLayer = useMemo(() => {
     if (selectedState) {
       const stateFeature = allStatesFeatures.find((f) => f.properties.codarea === selectedState);
@@ -301,13 +302,11 @@ const MapaInterativo: React.FC<MapProps> = ({
           onEachFeature={onEachStateFeature} 
         />
 
-        {/* --- CORREÇÃO DE NOME (LINHA 300) --- */}
-        {/* Agora ele lê o state local 'municipiosGeoJSON' para desenhar o mapa */}
         {municipiosGeoJSON && (
           <GeoJSON
             ref={municipiosLayerRef}
             key={selectedState}
-            data={municipiosGeoJSON as any} // <-- MUDANÇA AQUI
+            data={municipiosGeoJSON as any}
             style={municipiosStyle}
             onEachFeature={onEachMunicipioFeature}
           />
