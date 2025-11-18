@@ -28,7 +28,7 @@ const teamMembers = [
     githubUrl: 'https://github.com/Alexandroni07' 
   },
   { 
-    name: 'Luis Henrique', 
+    name: 'Luiz Henrique', 
     role: 'Desenvolvedor', 
     img: 'https://avatars.githubusercontent.com/u/212640680?v=4',
     githubUrl: 'https://github.com/Luizz97' 
