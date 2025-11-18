@@ -1,6 +1,6 @@
 .mapa-page-container {
   width: 100%;
-  background-color: #E8FCCF; /* Alterado de #f0f2f5 (Fundo claro principal) */
+  background-color: #E8FCCF; 
 }
 
 .content-wrapper {
@@ -14,13 +14,12 @@
   transition: all 0.4s ease-in-out;
 }
 
-
 .map-area {
   position: relative;
   width: 100%;
   height: 100%;
   max-width: 1200px;
-  background-color: white; /* Mapa mantido branco para clareza */
+  background-color: white; 
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
   border-radius: 15px;
   transition: flex 0.4s ease-in-out;
@@ -28,7 +27,6 @@
   overflow: hidden;
   z-index: 1;
 }
-
 
 .panel-area {
   display: flex;
@@ -61,7 +59,7 @@
 }
 
 .zoom-out-button {
-  background-color: #3DA35D; /* Alterado de #0D4B55 (Botão de destaque) */
+  background-color: #3DA35D; 
   border: none;
   border-radius: 4px;
   padding: 8px 12px;
@@ -74,7 +72,16 @@
 }
 
 .zoom-out-button:hover {
-  background-color: #E8FCCF; /* Fundo claro no hover */
-  border: 1px solid #3E8914; /* Borda verde média */
-  color: #3E8914; /* Texto verde médio */
+  background-color: #E8FCCF; 
+  border: 1px solid #3E8914; 
+  color: #3E8914; 
+}
+
+path.leaflet-interactive:focus {
+  outline: none;
+}
+
+.leaflet-container path:focus {
+  outline: none !important;
+  box-shadow: none;
 }
