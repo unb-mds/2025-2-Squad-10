@@ -3,8 +3,8 @@
   justify-content: space-between;
   gap: 4rem; 
   align-items: flex-start; 
-  background-color: #fff; 
-  color: #134611; 
+  background-color: var(--cor-fundo-claro); /* Antes: #fff */
+  color: var(--cor-fundo-escuro); /* Antes: #134611 */
   padding: 50px 50px 50px 50px;
   border-radius: 10px;
 }
@@ -32,21 +32,22 @@
   text-align: center;
   padding: 30px;
   gap: 1rem;
-  border: 1px solid #134611; 
+  border: 1px solid var(--cor-fundo-escuro); /* Antes: #134611 */
   border-radius: 10px;
   transition: all 0.3s ease-in-out;
 }
 
 .feature-item:hover {
   transform: translateY(-8px); 
+  /* Usando a variável com transparência */
   box-shadow: 0 12px 24px rgba(19, 70, 17, 0.8); 
-  background-color: #fafafa; 
+  background-color: #fafafa; /* Mantida cor próxima ao branco */
   cursor: default;
 }
 
 .feature-icon {
   font-size: 2rem;
-  color: #3E8914; 
+  color: var(--cor-hover-secundaria); /* Antes: #3E8914 */
 }
 
 .feature-title {
@@ -57,7 +58,7 @@
 
 .feature-description {
   font-size: 0.9rem;
-  color: #3E8914; 
+  color: var(--cor-hover-secundaria); /* Antes: #3E8914 */
   line-height: 1.4;
   margin: 0;
 }
@@ -67,7 +68,7 @@
 }
 
 .about-project-column p {
-  color: #134611; 
+  color: var(--cor-fundo-escuro); /* Antes: #134611 */
   line-height: 1.8;
   margin-bottom: 1.5rem;
   text-align: justify;
@@ -79,27 +80,27 @@
   .about-layout {
     flex-direction: column;
     gap: 3rem;
-    padding: 40px 30px; /* Reduz padding lateral */
+    padding: 40px 30px; 
   }
   
   .about-project-column p {
-    text-align: left; /* Justify pode criar buracos feios no texto em mobile */
+    text-align: left; 
   }
 }
 
 @media (max-width: 600px) {
   .features-grid {
-    grid-template-columns: 1fr; /* Ícones um abaixo do outro no celular */
+    grid-template-columns: 1fr; 
     gap: 1.5rem;
   }
 
   .about-layout {
-    padding: 30px 20px; /* Ainda menos padding em telas muito pequenas */
+    padding: 30px 20px; 
   }
   
   .feature-item {
     padding: 20px;
-    flex-direction: column; /* Empilha ícone e texto dentro do card */
+    flex-direction: column; 
     align-items: center;
   }
 }

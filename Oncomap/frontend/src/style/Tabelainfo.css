@@ -1,56 +1,203 @@
+/* Arquivo: Tabelainfo.css (VERSÃO FINAL CORRIGIDA E ESTILIZADA) */
+
+/* ------------------------------------------------- */
+/* CONTAINER GERAL DO PAINEL                         */
+/* ------------------------------------------------- */
+
 .info-container {
-  background-color: #134611; /* Fundo escuro alterado de #1A3A3F */
-  color: #ffffff;
+  background-color: var(--cor-fundo-escuro); /* Antes: #134611 */
+  color: var(--cor-fundo-claro); /* Mantido branco */
   padding: 20px;
   border-radius: 8px;
-  margin-top: 60px;
+  /* CORREÇÃO DE SIMETRIA: REMOVIDO o margin-top: 60px para alinhar o painel */
   width: 350px;
   font-family: Arial, sans-serif;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.search-bar {
-  margin-bottom: 15px;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box; 
 }
 
 .titulo-estado {
   text-align: center;
   margin-bottom: 20px;
   font-size: 1.8em;
+  color: var(--cor-texto-claro); /* Antes: #E8FCCF */
 }
+
+/* ------------------------------------------------- */
+/* BARRA DE PESQUISA (ESTILIZAÇÃO SOLICITADA)        */
+/* ------------------------------------------------- */
+
+.search-input-group {
+  display: flex;
+  gap: 8px; /* Espaçamento entre o input e o botão */
+  margin-bottom: 15px;
+  align-items: center; 
+}
+
+.search-input-group input {
+  flex-grow: 1; /* Input ocupa o máximo de espaço disponível */
+  padding: 12px; /* Aumentei o padding para harmonizar */
+  border-radius: 6px; 
+  border: 1px solid var(--cor-hover-secundaria); /* Borda no Verde Médio */
+  box-sizing: border-box; 
+  background-color: #2c5929; /* Fundo do input levemente mais claro */
+  color: var(--cor-texto-claro); /* Texto no Verde Claro */
+  transition: border-color 0.3s, background-color 0.3s;
+  font-size: 1em;
+}
+
+.search-input-group input:focus {
+  border-color: var(--cor-destaque); /* Borda com o Verde Destaque no foco */
+  background-color: var(--cor-fundo-escuro); /* Fundo volta para a cor principal */
+  box-shadow: 0 0 0 3px rgba(61, 163, 93, 0.5); /* Efeito de brilho */
+  outline: none; 
+}
+
+.btn-pesquisar {
+  background-color: var(--cor-destaque); /* Verde Destaque */
+  border: none;
+  padding: 12px 18px; /* Ajustei o padding para harmonizar com o input */
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--cor-fundo-claro); /* Mantido branco */
+  transition: 0.2s;
+  flex-shrink: 0; 
+  font-size: 1em;
+}
+
+.btn-pesquisar:hover {
+  background-color: var(--cor-hover-secundaria); /* Verde Médio no hover */
+}
+
+/* ------------------------------------------------- */
+/* TABELA DE INVESTIMENTOS                           */
+/* ------------------------------------------------- */
 
 .tabela-investimentos {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: collapse; 
   margin-bottom: 20px;
+  font-size: 0.95em;
 }
 
 .tabela-investimentos th,
 .tabela-investimentos td {
-  padding: 8px 12px;
+  padding: 12px 0; /* Mais respiro */
   text-align: left;
+  vertical-align: top;
 }
 
 .tabela-investimentos th {
-  /* Borda branca semi-transparente mantida, funciona bem no fundo escuro */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3); 
-  font-weight: bold;
+  border-bottom: 2px solid var(--cor-destaque); /* Borda com o Verde Destaque */
+  font-weight: 700;
+  color: var(--cor-texto-claro); 
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.tabela-investimentos td {
+  border-bottom: 1px solid rgba(232, 252, 207, 0.2); 
+  color: var(--cor-fundo-claro); 
+}
+
+/* Efeito ZEBRA */
+.tabela-investimentos tbody tr:nth-child(even) {
+  background-color: #1a5618; /* Cor intermediária sem variável */
+}
+
+/* HOVER das linhas */
+.tabela-investimentos tbody tr:hover {
+  background-color: var(--cor-hover-secundaria); 
+  cursor: default; 
 }
 
 .tabela-investimentos .categoria-titulo {
   font-weight: bold;
-  padding-top: 15px;
+  padding-top: 20px; 
+  padding-bottom: 5px; 
   font-size: 1.1em;
+  color: var(--cor-destaque); 
+  border-bottom: none; 
 }
 
+.tabela-investimentos tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ------------------------------------------------- */
+/* BOTÃO DE AÇÃO (BAIXAR PDF)                        */
+/* ------------------------------------------------- */
+
+.btn-acao-primario {
+  display: block; 
+  width: 100%;
+  padding: 15px 10px;
+  margin-top: 20px;
+  background-color: var(--cor-destaque); 
+  color: var(--cor-fundo-claro); 
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.1em;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+}
+
+.btn-acao-primario:hover {
+  background-color: var(--cor-hover-secundaria); 
+  border-color: var(--cor-destaque); 
+  transform: translateY(-2px); 
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ------------------------------------------------- */
+/* ESTILOS DA LISTA DE ESTADOS (TAGS INFORMATIVAS)   */
+/* ------------------------------------------------- */
+
+.estados-lista-container {
+  margin-top: 20px;
+}
+
+.estados-lista-titulo {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: var(--cor-texto-claro); 
+}
+
+.estados-lista {
+  list-style: none; 
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 8px; 
+}
+
+.estado-tag {
+  display: inline-block; 
+  padding: 8px 12px;
+  background-color: var(--cor-hover-secundaria); 
+  color: var(--cor-texto-claro); 
+  border-radius: 4px; 
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: default !important; /* Não clicável */
+  text-decoration: none;
+  pointer-events: none; /* Bloqueia clique */
+  border: 1px solid transparent; 
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.estado-tag:hover {
+  background-color: var(--cor-destaque); 
+  border-color: var(--cor-texto-claro); 
+}
+
+/* ------------------------------------------------- */
+/* OUTROS ELEMENTOS                                  */
+/* ------------------------------------------------- */
 
 .close-button {
   position: absolute;
@@ -58,7 +205,7 @@
   right: 15px;
   background: none;
   border: none;
-  color: white; /* Mantido branco */
+  color: var(--cor-fundo-claro); 
   font-size: 1.5rem;
   cursor: pointer;
   line-height: 1;
@@ -67,26 +214,5 @@
 .separator {
   margin: 20px 0;
   border: none;
-  border-top: 1px solid #eee; /* Separador claro mantido */
-}
-
-.search-input-group {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.btn-pesquisar {
-  background-color: #3DA35D; /* Cor do botão alterada de #ffb800 (Amarelo) */
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  color: #ffffff; /* Cor do texto alterada de #333 para branco (melhor contraste) */
-  transition: 0.2s;
-}
-
-.btn-pesquisar:hover {
-  background-color: #3E8914; /* Hover alterado de #ffd45e para Verde Médio */
+  border-top: 1px solid rgba(255, 255, 255, 0.3); 
 }

@@ -1,9 +1,18 @@
+/* Definição Global das Variáveis CSS (Adicionei aqui, mas pode estar em um arquivo separado) */
+:root {
+  --cor-fundo-escuro: #134611;
+  --cor-destaque: #3DA35D;
+  --cor-hover-secundaria: #3E8914;
+  --cor-texto-claro: #E8FCCF;
+  --cor-fundo-claro: #ffffff;
+}
+
 /* ================================================= */
 /* ESTILOS GERAIS (DESKTOP)                          */
 /* ================================================= */
 
 .navbar-header {
-  background-color: #134611;
+  background-color: var(--cor-fundo-escuro); /* Antes: #134611 */
   padding: 1rem 1rem;
   position: fixed;
   width: 100%;
@@ -27,7 +36,7 @@
 .navbar-logo {
   position: relative;
   z-index: 9950;
-  color: white;
+  color: var(--cor-fundo-claro); /* Mantido branco, mas usando a variável */
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0;
@@ -45,7 +54,7 @@
 }
 
 .navbar-nav a {
-  color: #E8FCCF;
+  color: var(--cor-texto-claro); /* Antes: #E8FCCF */
   text-decoration: none;
   font-size: 1rem;
   transition: all 0.2s ease-in-out;
@@ -53,13 +62,13 @@
 }
 
 .navbar-nav a:hover {
-  color: white;
+  color: var(--cor-fundo-claro); /* Mantido branco */
   transform: scale(1.05);
 }
 
 .navbar-cta {
-  background-color: #3DA35D;
-  color: white;
+  background-color: var(--cor-destaque); /* Antes: #3DA35D */
+  color: var(--cor-fundo-claro); /* Mantido branco */
   padding: 12px 28px;
   border-radius: 25px;
   text-decoration: none;
@@ -69,9 +78,9 @@
 }
 
 .navbar-cta:hover {
-  background-color: #134611;
-  color: #3DA35D;
-  border: 1px solid #3DA35D;
+  background-color: var(--cor-fundo-escuro); /* Antes: #134611 */
+  color: var(--cor-destaque); /* Antes: #3DA35D */
+  border: 1px solid var(--cor-destaque); /* Antes: #3DA35D */
 }
 
 .navbar-nav {
@@ -102,7 +111,7 @@
 .navbar-toggle .bar {
   width: 100%;
   height: 3px;
-  background-color: white;
+  background-color: var(--cor-fundo-claro); /* Mantido branco */
   border-radius: 2px;
   transition: all 0.3s ease-in-out;
   transform-origin: center;
@@ -165,7 +174,7 @@
     left: 0;
     width: 100%;
     height: 100vh;
-    background-color: #134611;
+    background-color: var(--cor-fundo-escuro); /* Antes: #134611 */
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -235,6 +244,6 @@
 
 .navbar-toggle:focus,
 .navbar-nav a:focus {
-  outline: 2px solid #3DA35D;
+  outline: 2px solid var(--cor-destaque); /* Antes: #3DA35D */
   outline-offset: 2px;
 }
