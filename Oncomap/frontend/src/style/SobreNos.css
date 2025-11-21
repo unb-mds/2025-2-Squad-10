@@ -6,11 +6,10 @@
 }
 
 .team-card {
-  background-color: #ffffff; 
+  background-color: var(--cor-fundo-claro); /* Antes: #ffffff */
   border-radius: 15px;
   padding: 20px;
   text-align: center;
-  /* Adicionei uma transição suave caso queira efeitos de hover no futuro */
   transition: transform 0.3s ease; 
 }
 
@@ -27,18 +26,18 @@
 }
 
 .team-role {
-  color: #3E8914; 
+  color: var(--cor-hover-secundaria); /* Antes: #3E8914 */
   margin: 0 0 15px 0;
 }
 
 .contact-button {
-  background-color: #3DA35D; 
-  color: white;
+  background-color: var(--cor-destaque); /* Antes: #3DA35D */
+  color: var(--cor-fundo-claro); /* Mantido branco */
   border: none;
   padding: 10px 25px;
   border-radius: 20px;
   cursor: pointer;
-  font-weight: 600; /* Adicionei um pouco de peso para legibilidade */
+  font-weight: 600; 
 }
 
 /* --- Responsividade --- */
@@ -46,13 +45,12 @@
 @media (max-width: 768px) {
   .team-grid {
     gap: 1.5rem;
-    justify-content: center; /* Garante que se sobrar espaço, os cards fiquem no meio */
+    justify-content: center; 
   }
 }
 
 @media (max-width: 550px) {
   .team-grid {
-    /* Em telas muito estreitas, força uma coluna para o card ocupar a largura disponível */
     grid-template-columns: 1fr; 
     padding: 0 10px;
   }
