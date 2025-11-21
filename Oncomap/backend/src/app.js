@@ -24,5 +24,10 @@ app.use('/api/v1/map', mapRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/report', reportRoutes);
 
+// Rota de teste
+app.get('/', (req, res) => {
+    res.send('API OncoMap Online 🚀');
+});
+
 // Exportamos o 'app' para que o server.js possa usá-lo
 module.exports = app;
