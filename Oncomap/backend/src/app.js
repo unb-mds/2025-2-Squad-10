@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 
 const statsRoutes = require('./routes/statsRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 
@@ -21,6 +22,12 @@ app.get('/api/health', (req, res) => {
 // Usar as Rotas com um prefixo de versão (boa prática)
 app.use('/api/v1/map', mapRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/report', reportRoutes);
+
+// Rota de teste
+app.get('/', (req, res) => {
+    res.send('API OncoMap Online 🚀');
+});
 
 // Exportamos o 'app' para que o server.js possa usá-lo
 module.exports = app;

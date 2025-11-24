@@ -23,18 +23,18 @@
   - **Definição:** [realizar a responsividade do site, input da barra da pesquisa de municipios ,quadrado invisivel, cor do mapa , centralizar a tabela para a msm distacia da direita para esquerda , carregando dados, modoficar  a seta do mapa do nome dos estados.   ]
 
 - **Pauta 2:** [ teste do back e front ]  
-  - **Definição:** [Back: gerar os pdf, fazer soma, muni ,estados e regiões OBS atulizar de mes em mes , fazer deploy.
-  Front : Responsividade, correção dos bugs, docker , integralização do back , teste do front Obs saber oque é .   ]  
+  - **Definição:** [Back: gerar os pdf, fazer soma, muni ,estados e regiões OBS atualizar de mes em mes , fazer deploy.
+  Front : Responsividade, correção dos bugs, docker , integralização do back , fazer o deploy.   ]  
 
 
 ## ✅ Ações / Próximos Passos  
 
-- **[giovani]:** [Realizar a responsividade do site ]   
-- **[gabriel]:**[puxar o scrpit de atualização do bds ]  
+- **[giovani]:** [Realizar a responsividade do site, integralização ]   
+- **[gabriel]:**[gerar os pdf, fazer soma, integralização]  
 - **[Luiz]:** [Realizar a implementação  das correções da pagina . ]   
 - **[felype]:** [Realizar a responsividade do site ]  
-- **[joão]:**[puxar o scrpit de atualização do bds ]  
-- **[artur]:**[puxar o scrpit de atualização do bds ]  
+- **[joão]:**[gerar os pdf, fazer soma]  
+- **[artur]:**[gerar os pdf, fazer soma ]  
 - **[Todos]:** [Realizar implementação do codigo ]  
 
 ---
