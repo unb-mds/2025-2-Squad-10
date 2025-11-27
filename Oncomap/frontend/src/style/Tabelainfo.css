@@ -1,72 +1,100 @@
-/* Arquivo: Tabelainfo.css (VERSÃO FINAL CORRIGIDA E ESTILIZADA) */
+/* src/style/Tabelainfo.css */
+
+/* --- VARIÁVEIS (Sugestão de paleta baseada no seu código) --- */
+:root {
+  --cor-fundo-escuro: #134611;
+  --cor-fundo-claro: #FFFFFF;
+  --cor-destaque: #3DA35D;
+  --cor-hover-secundaria: #2E7D32;
+  --cor-texto-claro: #E8FCCF;
+  --cor-input-bg: rgba(255, 255, 255, 0.1); /* Translúcido */
+  --cor-borda-suave: rgba(232, 252, 207, 0.3);
+}
 
 /* ------------------------------------------------- */
-/* CONTAINER GERAL DO PAINEL                         */
+/* CONTAINER GERAL                                   */
 /* ------------------------------------------------- */
 
 .info-container {
-  background-color: var(--cor-fundo-escuro); /* Antes: #134611 */
-  color: var(--cor-fundo-claro); /* Mantido branco */
-  padding: 20px;
-  border-radius: 8px;
-  /* CORREÇÃO DE SIMETRIA: REMOVIDO o margin-top: 60px para alinhar o painel */
-  width: 350px;
-  font-family: Arial, sans-serif;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: var(--cor-fundo-escuro);
+  color: var(--cor-fundo-claro);
+  padding: 25px;
+  /* Mudança Importante: width 100% para ocupar os 450px definidos no layout pai */
+  width: 100%; 
+  min-height: 100%; /* Garante que preencha a altura */
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .titulo-estado {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   font-size: 1.8em;
-  color: var(--cor-texto-claro); /* Antes: #E8FCCF */
+  font-weight: 700;
+  color: var(--cor-texto-claro);
+  border-bottom: 2px solid var(--cor-destaque);
+  padding-bottom: 10px;
+  letter-spacing: 0.5px;
 }
 
 /* ------------------------------------------------- */
-/* BARRA DE PESQUISA (ESTILIZAÇÃO SOLICITADA)        */
+/* BARRA DE PESQUISA & INPUTS                        */
 /* ------------------------------------------------- */
 
-.search-input-group {
+.search-input-group,
+.search-bar {
   display: flex;
-  gap: 8px; /* Espaçamento entre o input e o botão */
-  margin-bottom: 15px;
-  align-items: center; 
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+  width: 100%;
 }
 
-.search-input-group input {
-  flex-grow: 1; /* Input ocupa o máximo de espaço disponível */
-  padding: 12px; /* Aumentei o padding para harmonizar */
-  border-radius: 6px; 
-  border: 1px solid var(--cor-hover-secundaria); /* Borda no Verde Médio */
-  box-sizing: border-box; 
-  background-color: #2c5929; /* Fundo do input levemente mais claro */
-  color: var(--cor-texto-claro); /* Texto no Verde Claro */
-  transition: border-color 0.3s, background-color 0.3s;
-  font-size: 1em;
+/* Estilo unificado para todos os inputs de texto */
+input[type="text"] {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--cor-borda-suave);
+  background-color: var(--cor-input-bg); /* Fundo "Glass" */
+  color: var(--cor-texto-claro);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
 }
 
-.search-input-group input:focus {
-  border-color: var(--cor-destaque); /* Borda com o Verde Destaque no foco */
-  background-color: var(--cor-fundo-escuro); /* Fundo volta para a cor principal */
-  box-shadow: 0 0 0 3px rgba(61, 163, 93, 0.5); /* Efeito de brilho */
-  outline: none; 
+input[type="text"]::placeholder {
+  color: rgba(232, 252, 207, 0.6);
+}
+
+input[type="text"]:focus {
+  border-color: var(--cor-destaque);
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 3px rgba(61, 163, 93, 0.3);
 }
 
 .btn-pesquisar {
-  background-color: var(--cor-destaque); /* Verde Destaque */
+  background-color: var(--cor-destaque);
   border: none;
-  padding: 12px 18px; /* Ajustei o padding para harmonizar com o input */
-  border-radius: 6px;
+  padding: 0 20px;
+  height: 45px; /* Altura fixa para alinhar com input */
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
-  color: var(--cor-fundo-claro); /* Mantido branco */
-  transition: 0.2s;
-  flex-shrink: 0; 
-  font-size: 1em;
+  font-weight: 600;
+  color: white;
+  transition: background-color 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-pesquisar:hover {
-  background-color: var(--cor-hover-secundaria); /* Verde Médio no hover */
+  background-color: var(--cor-hover-secundaria);
+}
+
+.btn-pesquisar:active {
+  transform: scale(0.98);
 }
 
 /* ------------------------------------------------- */
@@ -75,144 +103,195 @@
 
 .tabela-investimentos {
   width: 100%;
-  border-collapse: collapse; 
-  margin-bottom: 20px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 25px;
   font-size: 0.95em;
+  border-radius: 8px;
+  overflow: hidden; /* Para arredondar as bordas da tabela */
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .tabela-investimentos th,
 .tabela-investimentos td {
-  padding: 12px 0; /* Mais respiro */
+  padding: 14px 15px;
   text-align: left;
-  vertical-align: top;
 }
 
 .tabela-investimentos th {
-  border-bottom: 2px solid var(--cor-destaque); /* Borda com o Verde Destaque */
+  background-color: rgba(61, 163, 93, 0.2); /* Fundo sutil no cabeçalho */
+  border-bottom: 2px solid var(--cor-destaque);
   font-weight: 700;
-  color: var(--cor-texto-claro); 
+  color: var(--cor-texto-claro);
   text-transform: uppercase;
-  font-size: 0.9em;
+  font-size: 0.85em;
+  letter-spacing: 1px;
 }
 
 .tabela-investimentos td {
-  border-bottom: 1px solid rgba(232, 252, 207, 0.2); 
-  color: var(--cor-fundo-claro); 
-}
-
-/* Efeito ZEBRA */
-.tabela-investimentos tbody tr:nth-child(even) {
-  background-color: #1a5618; /* Cor intermediária sem variável */
-}
-
-/* HOVER das linhas */
-.tabela-investimentos tbody tr:hover {
-  background-color: var(--cor-hover-secundaria); 
-  cursor: default; 
-}
-
-.tabela-investimentos .categoria-titulo {
-  font-weight: bold;
-  padding-top: 20px; 
-  padding-bottom: 5px; 
-  font-size: 1.1em;
-  color: var(--cor-destaque); 
-  border-bottom: none; 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #eee;
 }
 
 .tabela-investimentos tbody tr:last-child td {
   border-bottom: none;
 }
 
+.tabela-investimentos tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 /* ------------------------------------------------- */
-/* BOTÃO DE AÇÃO (BAIXAR PDF)                        */
+/* LISTA DE MUNICÍPIOS (RESULTADOS DA BUSCA)         */
 /* ------------------------------------------------- */
 
-.btn-acao-primario {
-  display: block; 
+.municipio-search-results {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 20px 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid var(--cor-borda-suave);
+}
+
+.municipio-search-results li {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s;
+  color: #ddd;
+}
+
+.municipio-search-results li:last-child {
+  border-bottom: none;
+}
+
+.municipio-search-results li:hover {
+  background-color: var(--cor-destaque);
+  color: white;
+  padding-left: 20px; /* Efeito de deslocamento suave */
+}
+
+/* ------------------------------------------------- */
+/* LISTA DE ESTADOS (ACORDEÃO <details>)            */
+/* ------------------------------------------------- */
+
+.municipios-lista h3 {
+  margin-top: 30px;
+  color: var(--cor-texto-claro);
+  border-bottom: 1px solid var(--cor-borda-suave);
+  padding-bottom: 10px;
+}
+
+.municipio-item {
+  margin-bottom: 10px;
+  border: 1px solid var(--cor-borda-suave);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
+}
+
+.municipio-item[open] {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--cor-destaque);
+}
+
+.municipio-item summary {
+  padding: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none; /* Remove seta padrão feia */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--cor-texto-claro);
+  outline: none;
+}
+
+/* Criando uma setinha customizada */
+.municipio-item summary::after {
+  content: '❯'; 
+  font-size: 0.8em;
+  transition: transform 0.3s;
+  color: var(--cor-destaque);
+}
+
+.municipio-item[open] summary::after {
+  transform: rotate(90deg);
+}
+
+.municipio-item summary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+/* Conteúdo dentro do details */
+.municipio-item > *:not(summary) {
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ------------------------------------------------- */
+/* BOTÕES DE AÇÃO (PDF)                              */
+/* ------------------------------------------------- */
+
+.btn-pdf {
+  display: block;
   width: 100%;
-  padding: 15px 10px;
-  margin-top: 20px;
-  background-color: var(--cor-destaque); 
-  color: var(--cor-fundo-claro); 
-  text-align: center;
-  text-decoration: none;
+  padding: 16px;
+  margin-top: 25px;
+  background-color: transparent;
+  color: var(--cor-destaque);
+  border: 2px solid var(--cor-destaque);
   border-radius: 8px;
   font-weight: 700;
-  font-size: 1.1em;
-  border: 1px solid transparent;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
-}
-
-.btn-acao-primario:hover {
-  background-color: var(--cor-hover-secundaria); 
-  border-color: var(--cor-destaque); 
-  transform: translateY(-2px); 
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* ------------------------------------------------- */
-/* ESTILOS DA LISTA DE ESTADOS (TAGS INFORMATIVAS)   */
-/* ------------------------------------------------- */
-
-.estados-lista-container {
-  margin-top: 20px;
-}
-
-.estados-lista-titulo {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: var(--cor-texto-claro); 
-}
-
-.estados-lista {
-  list-style: none; 
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap; 
-  gap: 8px; 
-}
-
-.estado-tag {
-  display: inline-block; 
-  padding: 8px 12px;
-  background-color: var(--cor-hover-secundaria); 
-  color: var(--cor-texto-claro); 
-  border-radius: 4px; 
-  font-size: 0.9em;
-  font-weight: 600;
-  cursor: default !important; /* Não clicável */
-  text-decoration: none;
-  pointer-events: none; /* Bloqueia clique */
-  border: 1px solid transparent; 
-  transition: background-color 0.2s, border-color 0.2s;
-}
-
-.estado-tag:hover {
-  background-color: var(--cor-destaque); 
-  border-color: var(--cor-texto-claro); 
-}
-
-/* ------------------------------------------------- */
-/* OUTROS ELEMENTOS                                  */
-/* ------------------------------------------------- */
-
-.close-button {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
-  border: none;
-  color: var(--cor-fundo-claro); 
-  font-size: 1.5rem;
+  font-size: 1rem;
   cursor: pointer;
-  line-height: 1;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
+
+.btn-pdf:hover {
+  background-color: var(--cor-destaque);
+  color: white;
+  box-shadow: 0 5px 15px rgba(61, 163, 93, 0.4);
+  transform: translateY(-2px);
+}
+
+/* ------------------------------------------------- */
+/* OUTROS (HR, SCROLLBAR)                            */
+/* ------------------------------------------------- */
 
 .separator {
-  margin: 20px 0;
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.3); 
+  margin: 30px 0;
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+}
+
+/* Scrollbar Customizada (Webkit) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cor-destaque);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cor-hover-secundaria);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }

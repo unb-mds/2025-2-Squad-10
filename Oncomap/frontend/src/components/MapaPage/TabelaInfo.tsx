@@ -34,7 +34,6 @@ interface TabelaInfoProps {
   setSearchedMunicipioName: (name: string | null) => void;
 }
 
-// --- ALTERAÇÃO 2: Removida a interface 'jsPDFWithAutoTable' que não estava sendo usada ---
 interface jsPDFWithAutoTable extends jsPDF {
   autoTable: (options: any) => jsPDF;
 }
@@ -137,7 +136,7 @@ const TabelaInfo = ({
             <div className="search-input-group">
               <input
                 type="text"
-                placeholder="Digite o nome de um município..."
+                placeholder="Pesquisar Município"
                 className="search-bar"
                 value={termoBuscaMunicipio}
                 onChange={e => setTermoBuscaMunicipio(e.target.value)}
