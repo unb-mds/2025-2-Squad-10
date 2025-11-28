@@ -1,25 +1,28 @@
-/* Definição Global das Variáveis CSS (Adicionei aqui, mas pode estar em um arquivo separado) */
 :root {
   --cor-fundo-escuro: #134611;
+  --cor-fundo-escuro-alpha: rgba(19, 70, 17, 0.95); 
   --cor-destaque: #3DA35D;
   --cor-hover-secundaria: #3E8914;
   --cor-texto-claro: #E8FCCF;
   --cor-fundo-claro: #ffffff;
+  --sombra-suave: 0 4px 20px rgba(0, 0, 0, 0.2);
+  --transicao-padrao: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ================================================= */
-/* ESTILOS GERAIS (DESKTOP)                          */
-/* ================================================= */
-
 .navbar-header {
-  background-color: var(--cor-fundo-escuro); /* Antes: #134611 */
-  padding: 1rem 1rem;
+  background-color: var(--cor-fundo-escuro-alpha);
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(10px); 
+  padding: 0.8rem 1rem;
   position: fixed;
   width: 100%;
   top: 0;
   left: 0;
   box-sizing: border-box;
   z-index: 9900;
+  box-shadow: var(--sombra-suave);
+  border-bottom: 1px solid rgba(232, 252, 207, 0.1); 
+  transition: padding 0.3s ease;
 }
 
 .navbar-container {
@@ -30,57 +33,20 @@
   align-items: center;
   width: 100%;
   padding: 0 20px;
-  box-sizing: border-box;
 }
+
 
 .navbar-logo {
   position: relative;
   z-index: 9950;
-  color: var(--cor-fundo-claro); /* Mantido branco, mas usando a variável */
+  color: var(--cor-fundo-claro);
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 800; /* Mais bold */
   margin: 0;
   white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.navbar-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 2.5rem;
-  margin: 0;
-  padding: 0;
-  align-items: center;
-}
-
-.navbar-nav a {
-  color: var(--cor-texto-claro); /* Antes: #E8FCCF */
-  text-decoration: none;
-  font-size: 1rem;
-  transition: all 0.2s ease-in-out;
-  display: inline-block;
-}
-
-.navbar-nav a:hover {
-  color: var(--cor-fundo-claro); /* Mantido branco */
-  transform: scale(1.05);
-}
-
-.navbar-cta {
-  background-color: var(--cor-destaque); /* Antes: #3DA35D */
-  color: var(--cor-fundo-claro); /* Mantido branco */
-  padding: 12px 28px;
-  border-radius: 25px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.2s ease-in-out;
-  border: 1px solid transparent;
-}
-
-.navbar-cta:hover {
-  background-color: var(--cor-fundo-escuro); /* Antes: #134611 */
-  color: var(--cor-destaque); /* Antes: #3DA35D */
-  border: 1px solid var(--cor-destaque); /* Antes: #3DA35D */
+  letter-spacing: -0.5px;
+  cursor: default;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .navbar-nav {
@@ -89,161 +55,201 @@
   gap: 2.5rem;
 }
 
-/* ================================================= */
-/* BOTÃO HAMBURGER E ANIMAÇÃO                        */
-/* ================================================= */
+.navbar-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.navbar-nav a {
+  color: var(--cor-texto-claro);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  position: relative;
+  padding: 5px 0;
+  transition: color 0.3s ease;
+}
+
+
+.navbar-nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--cor-destaque);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.navbar-nav a:hover {
+  color: var(--cor-fundo-claro);
+}
+
+.navbar-nav a:hover::after {
+  width: 100%; 
+}
+
+
+.navbar-explorar {
+  background: var(--cor-destaque); 
+  color: var(--cor-fundo-claro) !important;
+  padding: 12px 35px; 
+  border-radius: 50px;
+  text-decoration: none;
+  text-align: center;
+  width: 80px;
+  font-weight: 700; 
+  font-size: 0.95rem;
+  transition: all 0.3s ease; 
+  border: 2px solid transparent; 
+  box-shadow: 0 4px 15px rgba(61, 163, 93, 0.3); 
+  white-space: nowrap; 
+  display: inline-block;
+}
+
+.navbar-explorar::after {
+  display: none;
+}
+
+
+.navbar-explorar:hover {
+  transform: translateY(-3px); 
+  background-color: var(--cor-fundo-claro); 
+  color: var(--cor-destaque) !important; 
+  box-shadow: 0 8px 25px rgba(61, 163, 93, 0.3); 
+}
+
+.navbar-explorar:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
 .navbar-toggle {
   display: none;
   flex-direction: column;
-  justify-content: space-around;
-  width: 30px;
-  height: 25px;
-  background: transparent;
+  justify-content: center;
+  gap: 6px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1); 
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 8px;
   position: relative;
   z-index: 9999;
-  flex-shrink: 0;
+  transition: background 0.3s ease;
+}
+
+.navbar-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .navbar-toggle .bar {
   width: 100%;
-  height: 3px;
-  background-color: var(--cor-fundo-claro); /* Mantido branco */
+  height: 2px;
+  background-color: var(--cor-texto-claro);
   border-radius: 2px;
-  transition: all 0.3s ease-in-out;
-  transform-origin: center;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
 }
 
 .navbar-toggle.active .bar:nth-child(1) {
-  transform: rotate(45deg) translate(6px, 6px);
+  transform: translateY(8px) rotate(45deg);
+  background-color: var(--cor-fundo-claro);
 }
 
 .navbar-toggle.active .bar:nth-child(2) {
   opacity: 0;
-  transform: translateX(-10px);
+  transform: translateX(-20px);
 }
 
 .navbar-toggle.active .bar:nth-child(3) {
-  transform: rotate(-45deg) translate(6px, -6px);
+  transform: translateY(-8px) rotate(-45deg);
+  background-color: var(--cor-fundo-claro);
 }
 
-/* ================================================= */
-/* MEDIA QUERY (TABLET & MOBILE) - CORREÇÃO CRÍTICA  */
-/* ================================================= */
 
-@media (max-width: 768px) {
-  /* CORREÇÃO: Remove completamente o menu normal do fluxo do layout */
-  .navbar-nav:not(.active) {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    position: absolute !important;
-  }
 
-  /* CORREÇÃO: Botão hamburger SEMPRE visível e acessível */
-  .navbar-toggle {
-    display: flex !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    position: relative !important;
-    z-index: 9999 !important;
-  }
-
-  /* CORREÇÃO: Garante que o container tenha espaço para o hamburger */
-  .navbar-container {
-    justify-content: space-between;
-  }
-
-  /* CORREÇÃO: Logo ocupa apenas o espaço necessário */
-  .navbar-logo {
-    flex-shrink: 0;
-    max-width: none;
-    margin-right: auto;
-  }
-
-  /* CORREÇÃO: Menu overlay quando ativo */
-  .navbar-nav.active {
-    display: flex !important;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: var(--cor-fundo-escuro); /* Antes: #134611 */
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2.5rem;
-    z-index: 9998;
-    opacity: 1;
-    visibility: visible;
-  }
-
-  /* Previne scroll quando menu está aberto */
-  body.menu-open {
-    overflow: hidden;
-  }
-
-  /* Estilos dos links no menu mobile */
-  .navbar-nav.active ul {
-    flex-direction: column;
-    gap: 2.5rem;
-    padding: 0;
-    text-align: center;
-    margin: 0;
-  }
-
-  .navbar-nav.active a {
-    font-size: 1.5rem;
-    padding: 0.5rem 1rem;
-    display: block;
-  }
+@media (max-width: 992px) {
   
-  .navbar-nav.active a:hover {
-    transform: scale(1.05);
-  }
-
-  .navbar-nav.active .navbar-cta {
-    padding: 15px 32px;
-    font-size: 1.1rem;
-    margin-top: 1rem;
-  }
-}
-
-/* ================================================= */
-/* MEDIA QUERY (MOBILE PEQUENO)                      */
-/* ================================================= */
-
-@media (max-width: 480px) {
   .navbar-container {
     padding: 0 15px;
   }
 
-  .navbar-logo {
-    font-size: 1.4rem;
+  .navbar-toggle {
+    display: flex;
+  }
+
+  
+  .navbar-nav:not(.active) {
+    display: none;
+  }
+
+  
+  .navbar-nav.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+   
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    width: 100%;
+    height: auto; 
+    
+   
+    background-color: rgba(19, 70, 17, 0.95);
+    backdrop-filter: blur(15px); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    
+    padding: 20px 0 30px 0;
+    gap: 1.5rem;
+    z-index: 9900;
+    
+    
+    animation: slideDown 0.3s ease-out forwards;
+  }
+
+
+  .navbar-nav.active ul {
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    text-align: center;
   }
 
   .navbar-nav.active a {
-    font-size: 1.3rem;
+    font-size: 1.1rem; 
+    display: block;
+    padding: 8px 0;
+    width: 100%;
   }
+
   
   .navbar-nav.active .navbar-cta {
-    padding: 12px 24px;
-    font-size: 1rem;
+    width: auto;
+    min-width: 200px; 
+    margin-top: 10px;
+    text-align: center;
+    padding: 14px 40px; 
   }
 }
 
-/* ================================================= */
-/* ACESSIBILIDADE                                    */
-/* ================================================= */
-
-.navbar-toggle:focus,
-.navbar-nav a:focus {
-  outline: 2px solid var(--cor-destaque); /* Antes: #3DA35D */
-  outline-offset: 2px;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

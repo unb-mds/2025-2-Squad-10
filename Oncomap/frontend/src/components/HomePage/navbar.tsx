@@ -68,7 +68,7 @@ const Navbar = () => {
             </li>
           </ul>
           
-          <Link to="/mapa" className="navbar-cta" onClick={handleLinkClick}>
+          <Link to="/mapa" className="navbar-explorar" onClick={handleLinkClick}>
             Explorar
           </Link>
         </nav>
