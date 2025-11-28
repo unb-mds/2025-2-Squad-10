@@ -1,30 +1,25 @@
-/* src/style/Tabelainfo.css */
 
-/* --- VARIÁVEIS (Sugestão de paleta baseada no seu código) --- */
 :root {
   --cor-fundo-escuro: #134611;
   --cor-fundo-claro: #FFFFFF;
   --cor-destaque: #3DA35D;
   --cor-hover-secundaria: #2E7D32;
   --cor-texto-claro: #E8FCCF;
-  --cor-input-bg: rgba(255, 255, 255, 0.1); /* Translúcido */
+  --cor-input-bg: rgba(255, 255, 255, 0.1); 
   --cor-borda-suave: rgba(232, 252, 207, 0.3);
 }
-
-/* ------------------------------------------------- */
-/* CONTAINER GERAL                                   */
-/* ------------------------------------------------- */
 
 .info-container {
   background-color: var(--cor-fundo-escuro);
   color: var(--cor-fundo-claro);
   padding: 25px;
-  /* Mudança Importante: width 100% para ocupar os 450px definidos no layout pai */
   width: 100%; 
-  min-height: 100%; /* Garante que preencha a altura */
+  min-height: 100%;
   box-sizing: border-box;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .titulo-estado {
@@ -38,9 +33,24 @@
   letter-spacing: 0.5px;
 }
 
-/* ------------------------------------------------- */
-/* BARRA DE PESQUISA & INPUTS                        */
-/* ------------------------------------------------- */
+.close-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  text-align: left;
+  padding: 0;
+  transition: color 0.3s ease;
+  width: fit-content;
+}
+
+.close-button:hover {
+  color: var(--cor-destaque);
+  text-decoration: underline;
+}
+
 
 .search-input-group,
 .search-bar {
@@ -51,13 +61,12 @@
   width: 100%;
 }
 
-/* Estilo unificado para todos os inputs de texto */
 input[type="text"] {
   width: 100%;
   padding: 12px 15px;
   border-radius: 8px;
   border: 1px solid var(--cor-borda-suave);
-  background-color: var(--cor-input-bg); /* Fundo "Glass" */
+  background-color: var(--cor-input-bg);
   color: var(--cor-texto-claro);
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -78,7 +87,7 @@ input[type="text"]:focus {
   background-color: var(--cor-destaque);
   border: none;
   padding: 0 20px;
-  height: 45px; /* Altura fixa para alinhar com input */
+  height: 45px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
@@ -97,9 +106,6 @@ input[type="text"]:focus {
   transform: scale(0.98);
 }
 
-/* ------------------------------------------------- */
-/* TABELA DE INVESTIMENTOS                           */
-/* ------------------------------------------------- */
 
 .tabela-investimentos {
   width: 100%;
@@ -108,7 +114,7 @@ input[type="text"]:focus {
   margin-bottom: 25px;
   font-size: 0.95em;
   border-radius: 8px;
-  overflow: hidden; /* Para arredondar as bordas da tabela */
+  overflow: hidden;
   background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -119,7 +125,7 @@ input[type="text"]:focus {
 }
 
 .tabela-investimentos th {
-  background-color: rgba(61, 163, 93, 0.2); /* Fundo sutil no cabeçalho */
+  background-color: rgba(61, 163, 93, 0.2);
   border-bottom: 2px solid var(--cor-destaque);
   font-weight: 700;
   color: var(--cor-texto-claro);
@@ -140,10 +146,6 @@ input[type="text"]:focus {
 .tabela-investimentos tbody tr:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
-
-/* ------------------------------------------------- */
-/* LISTA DE MUNICÍPIOS (RESULTADOS DA BUSCA)         */
-/* ------------------------------------------------- */
 
 .municipio-search-results {
   list-style: none;
@@ -171,72 +173,58 @@ input[type="text"]:focus {
 .municipio-search-results li:hover {
   background-color: var(--cor-destaque);
   color: white;
-  padding-left: 20px; /* Efeito de deslocamento suave */
+  padding-left: 20px;
 }
 
-/* ------------------------------------------------- */
-/* LISTA DE ESTADOS (ACORDEÃO <details>)            */
-/* ------------------------------------------------- */
-
 .municipios-lista h3 {
-  margin-top: 30px;
+  margin-top: 20px;
+  margin-bottom: 15px;
   color: var(--cor-texto-claro);
   border-bottom: 1px solid var(--cor-borda-suave);
   padding-bottom: 10px;
 }
 
-.municipio-item {
-  margin-bottom: 10px;
+.grid-estados {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-estado {
+  background-color: rgba(255, 255, 255, 0.05); 
   border: 1px solid var(--cor-borda-suave);
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.03);
-  transition: all 0.3s ease;
-}
-
-.municipio-item[open] {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: var(--cor-destaque);
-}
-
-.municipio-item summary {
-  padding: 15px;
+  padding: 15px 20px;
   cursor: pointer;
-  font-weight: 600;
-  list-style: none; /* Remove seta padrão feia */
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: all 0.2s ease-in-out;
   color: var(--cor-texto-claro);
-  outline: none;
 }
 
-/* Criando uma setinha customizada */
-.municipio-item summary::after {
-  content: '❯'; 
-  font-size: 0.8em;
-  transition: transform 0.3s;
+.card-estado:hover {
+  background-color: var(--cor-destaque); 
+  border-color: var(--cor-destaque);
+  color: white;
+  transform: translateX(5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card-estado .nome-estado {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.card-estado .seta-visual {
+  font-size: 1.2rem;
   color: var(--cor-destaque);
+  transition: color 0.2s;
 }
 
-.municipio-item[open] summary::after {
-  transform: rotate(90deg);
+.card-estado:hover .seta-visual {
+  color: white;
 }
-
-.municipio-item summary:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-}
-
-/* Conteúdo dentro do details */
-.municipio-item > *:not(summary) {
-  padding: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-/* ------------------------------------------------- */
-/* BOTÕES DE AÇÃO (PDF)                              */
-/* ------------------------------------------------- */
 
 .btn-pdf {
   display: block;
@@ -262,9 +250,6 @@ input[type="text"]:focus {
   transform: translateY(-2px);
 }
 
-/* ------------------------------------------------- */
-/* OUTROS (HR, SCROLLBAR)                            */
-/* ------------------------------------------------- */
 
 .separator {
   margin: 30px 0;
@@ -273,7 +258,6 @@ input[type="text"]:focus {
   background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
 }
 
-/* Scrollbar Customizada (Webkit) */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -289,9 +273,4 @@ input[type="text"]:focus {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--cor-hover-secundaria);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
 }

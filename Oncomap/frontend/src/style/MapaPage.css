@@ -14,14 +14,7 @@
   max-width: 1440px; 
   margin: 0 auto;     
   height: 100vh;
-  
-  /* --- ALTERAÇÃO DE PADDING ASSIMÉTRICO --- */
-  /* Ordem: Cima(2rem) | Direita(2rem) | Baixo(2rem) | Esquerda(7rem) */
-  /* 7rem (aprox 112px) na esquerda: espaço para o menu hambúrguer */
-  /* 2rem (aprox 32px) na direita: mantém a tabela alinhada bonitinha */
-  padding: 2rem 2rem 2rem 7rem; 
-  /* ---------------------------------------- */
-  
+  padding: 2rem 2rem 2rem 7rem;
   box-sizing: border-box;
   transition: all 0.4s ease-in-out;
 }
@@ -65,32 +58,6 @@
   opacity: 1;
   padding-left: 2rem;
   min-width: 320px; 
-}
-
-.zoom-out-button-container {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-}
-
-.zoom-out-button {
-  background-color: #3DA35D; 
-  border: none;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease-in-out;
-}
-
-.zoom-out-button:hover {
-  background-color: #E8FCCF; 
-  border: 1px solid #3E8914; 
-  color: #3E8914; 
 }
 
 path.leaflet-interactive:focus {

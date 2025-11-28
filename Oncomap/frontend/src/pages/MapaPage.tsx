@@ -1,6 +1,5 @@
 // src/pages/MapaPage.tsx
 
-
 import React, { useState } from 'react';
 import MapaInterativo from "../components/MapaPage/mapa";
 import Footer from "../components/Geral/footer";
@@ -52,8 +51,7 @@ const MapaPege: React.FC = () => {
                         setSelectedState={handleSetEstadoCodarea}
                         setDadosInvestimentos={(dados: DadosInvestimentos | null) => {
                           setDadosInvestimentos(dados);
-                          setLoadingDados(false); // Esta linha já estava correta
-                          // Adicionamos a lógica de erro aqui também
+                          setLoadingDados(false); 
                           if (!dados) {
                             setFetchError("Falha ao carregar os dados de investimentos.");
                           }
@@ -83,6 +81,7 @@ const MapaPege: React.FC = () => {
                       <TabelaInfo
                         dadosDaRegiao={dadosDaRegiao}
                         estadoCodarea={estadoCodarea}
+                        onSelectState={handleSetEstadoCodarea}               
                         onClose={() => {
                           setEstadoCodarea(null);
                           setSelectedRegion(null);
