@@ -1,22 +1,56 @@
 // src/pages/MapaPage.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MapaInterativo from "../components/MapaPage/mapa";
 import Footer from "../components/Geral/footer";
 import Layout from '../components/Geral/layout_sidebar';
-import TabelaInfo, { type DadosRegiao, type DadosInvestimentos } from '../components/MapaPage/TabelaInfo';
+import TabelaInfo from '../components/MapaPage/TabelaInfo';
 import '../style/MapaPage.css';
 import type { FeatureCollection } from 'geojson';
+
+// Integração com Backend
+import { mapService } from '../services/mapService';
+import type { DadosRegiao } from '../types/apiTypes';
 
 const MapaPege: React.FC = () => {
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
     const [estadoCodarea, setEstadoCodarea] = useState<string | null>(null);
-    const [dadosInvestimentos, setDadosInvestimentos] = useState<DadosInvestimentos | null>(null);
-    const [loadingDados, setLoadingDados] = useState<boolean>(true);
+    
+    // Novo Estado: armazena apenas a região carregada do backend
+    const [dadosDaRegiao, setDadosDaRegiao] = useState<DadosRegiao | null>(null);
+    
+    const [loadingDados, setLoadingDados] = useState<boolean>(false);
     const [fetchError, setFetchError] = useState<string | null>(null);
     
     const [municipiosData, setMunicipiosData] = useState<FeatureCollection | null>(null);
     const [searchedMunicipioName, setSearchedMunicipioName] = useState<string | null>(null);
+
+    // EFEITO: Monitora a mudança de região para buscar dados no backend
+    useEffect(() => {
+        const fetchRegionData = async () => {
+            if (!selectedRegion) {
+                setDadosDaRegiao(null);
+                return;
+            }
+
+            setLoadingDados(true);
+            setFetchError(null);
+
+            try {
+                // Chama o serviço criado anteriormente
+                const data = await mapService.getDadosRegiao(selectedRegion);
+                setDadosDaRegiao(data);
+            } catch (error) {
+                console.error("Erro ao buscar região:", error);
+                setFetchError("Não foi possível carregar os dados desta região.");
+                setDadosDaRegiao(null);
+            } finally {
+                setLoadingDados(false);
+            }
+        };
+
+        fetchRegionData();
+    }, [selectedRegion]);
 
     const handleSetSelectedRegion = (region: string | null) => {
         setSelectedRegion(region);
@@ -29,16 +63,6 @@ const MapaPege: React.FC = () => {
         setSearchedMunicipioName(null);
     }
 
-    const getRegiaoData = (): DadosRegiao | null => {
-        if (!selectedRegion || !dadosInvestimentos) return null;
-        const chaveNormalizada = selectedRegion.trim().toLowerCase();
-        const keys = Object.keys(dadosInvestimentos);
-        const matchKey = keys.find(k => k.toLowerCase() === chaveNormalizada);
-        return matchKey ? dadosInvestimentos[matchKey] : null;
-    };
-
-    const dadosDaRegiao = getRegiaoData();
-
   return (
         <div className="mapa-page-container">
             <Layout/>
@@ -49,13 +73,6 @@ const MapaPege: React.FC = () => {
                         setSelectedRegion={handleSetSelectedRegion}
                         selectedState={estadoCodarea}
                         setSelectedState={handleSetEstadoCodarea}
-                        setDadosInvestimentos={(dados: DadosInvestimentos | null) => {
-                          setDadosInvestimentos(dados);
-                          setLoadingDados(false); 
-                          if (!dados) {
-                            setFetchError("Falha ao carregar os dados de investimentos.");
-                          }
-                        }}
                         setMunicipiosData={setMunicipiosData}
                         searchedMunicipioName={searchedMunicipioName}
                     />
@@ -64,19 +81,26 @@ const MapaPege: React.FC = () => {
                 <div className="panel-area">
                   {loadingDados && (
                     <div className="panel-message">
-                      <strong>Carregando dados...</strong>
+                      <strong>Carregando dados da API...</strong>
                     </div>
                   )}
 
                   {fetchError && !loadingDados && (
                     <div className="panel-message error">
                       <strong>Erro ao carregar dados.</strong>
-                      <span>{fetchError}</span>
+                      <p>{fetchError}</p>
+                      <button onClick={() => setSelectedRegion(null)}>Voltar</button>
+                    </div>
+                  )}
+
+                  {!loadingDados && !fetchError && !selectedRegion && (
+                    <div className="panel-message">
+                         Selecione uma região no mapa para ver os investimentos.
                     </div>
                   )}
 
                   {/* A TabelaInfo só aparece se os dados existirem */}
-                  {!loadingDados && !fetchError && dadosDaRegiao && (
+                  {!loadingDados && !fetchError && dadosDaRegiao && selectedRegion && (
                     <div style={{ width: '100%' }}>
                       <TabelaInfo
                         dadosDaRegiao={dadosDaRegiao}
