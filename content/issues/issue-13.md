@@ -1,6 +1,6 @@
 ---
 title: "Diagrama de Fishbone"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint 2"
 type: "issue"
 draft: false

@@ -1,6 +1,6 @@
 ---
 title: "[FEATURE]Melhoria na página do Git Pages"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint 10"
 type: "issue"
 draft: false

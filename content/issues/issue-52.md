@@ -1,6 +1,6 @@
 ---
 title: "[FEATURE]Configurar e Conectar Banco de Dados com Supabase"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint 8"
 type: "issue"
 draft: false

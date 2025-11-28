@@ -1,6 +1,6 @@
 ---
 title: "Sugestão de arquitetura e tecnologia para o frontend"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint 0"
 type: "issue"
 draft: false

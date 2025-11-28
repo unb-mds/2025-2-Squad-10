@@ -1,6 +1,6 @@
 ---
 title: "Sprint 10"
-date: 2025-11-02T07:00:00Z
+date: 2025-11-02T00:00:00Z
 subtitulo: ""
 ata: "ata_sprint_10"
 draft: false

@@ -5,7 +5,7 @@ name: Build and Deploy Hugo Site to GitHub Pages
 on:
   push:
     branches:
-      - gh-pages # 1. O workflow continua a ser acionado por pushes nesta branch
+      - main # 1. O workflow continua a ser acionado por pushes nesta branch
 
 jobs:
   build-deploy:

@@ -1,6 +1,6 @@
 ---
 title: "Requisitos Funcionais"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint 1"
 type: "issue"
 draft: false

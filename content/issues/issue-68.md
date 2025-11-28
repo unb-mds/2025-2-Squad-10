@@ -1,6 +1,6 @@
 ---
 title: "[TASK] - Definir metodo de tratamento dos dados"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint 9"
 type: "issue"
 draft: false

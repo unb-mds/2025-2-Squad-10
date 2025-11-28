@@ -1,6 +1,6 @@
 ---
 title: "Estruturação do User Story Map no Figma"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint 4"
 type: "issue"
 draft: false

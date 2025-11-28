@@ -1,6 +1,6 @@
 ---
 title: "Implementação script para txt"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint_11"
 type: "issue"
 draft: false

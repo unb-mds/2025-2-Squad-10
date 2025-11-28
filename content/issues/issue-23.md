@@ -1,6 +1,6 @@
 ---
 title: "Template ata de reunião"
-date: 2025-11-06
+date: 2025-11-28
 milestone: "Sprint  3"
 type: "issue"
 draft: false
