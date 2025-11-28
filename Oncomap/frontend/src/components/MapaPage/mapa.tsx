@@ -1,3 +1,5 @@
+// src/components/MapaPage/mapa.tsx
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, GeoJSON } from 'react-leaflet';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
@@ -35,13 +37,7 @@ interface MapProps {
   searchedMunicipioName: string | null;
 }
 
-const ZoomOutButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
-  <div className="zoom-out-button-container">
-    <button onClick={onClick} className="zoom-out-button">
-      Voltar Zoom
-    </button>
-  </div>
-);
+// --- REMOVIDO: const ZoomOutButton ... ---
 
 const MapaInterativo: React.FC<MapProps> = ({
   selectedRegion,
@@ -56,7 +52,6 @@ const MapaInterativo: React.FC<MapProps> = ({
   const [hoveredObject, setHoveredObject] = useState<GeoFeature | null>(null);
   
   const [municipiosGeoJSON, setMunicipiosGeoJSON] = useState<FeatureCollection | null>(null);
-
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
   const [loadingInvestimentos, setLoadingInvestimentos] = useState(true);
   const [dadosInvestimentosLocal, setDadosInvestimentosLocal] = useState<DadosInvestimentos | null>(null);
@@ -90,7 +85,6 @@ const MapaInterativo: React.FC<MapProps> = ({
 
   const todosOsEstadosComNomes = useMemo(() => {
     if (!dadosInvestimentosLocal) return new Map<string, string>();
-    
     const mapa = new Map<string, string>();
     Object.values(dadosInvestimentosLocal).forEach((regiao) => {
       regiao.municipios.forEach((estado) => {
@@ -104,15 +98,34 @@ const MapaInterativo: React.FC<MapProps> = ({
     if (map) setTimeout(() => map.invalidateSize(), 500);
   }, [map, selectedRegion, selectedState]);
 
+  // --- LÓGICA DE ZOOM CENTRALIZADA ---
   useEffect(() => {
     if (!map) return;
-    if (selectedRegion && !selectedState && geoJsonLayerRef.current) {
+
+    // 1. Zoom no Estado
+    if (selectedState) {
+      const targetStateFeature = allStatesFeatures.find(
+        (f) => f.properties.codarea === selectedState
+      );
+      if (targetStateFeature) {
+        const bounds = L.geoJSON(targetStateFeature).getBounds();
+        if (bounds.isValid()) {
+          map.flyToBounds(bounds, { padding: [50, 50], duration: 1.0 });
+        }
+      }
+    } 
+    // 2. Zoom na Região
+    else if (selectedRegion && geoJsonLayerRef.current) {
       const bounds = geoJsonLayerRef.current.getBounds();
-      if (bounds.isValid()) map.flyToBounds(bounds, { padding: [50, 50], duration: 1.0 });
-    } else if (!selectedRegion && !selectedState) {
+      if (bounds.isValid()) {
+        map.flyToBounds(bounds, { padding: [50, 50], duration: 1.0 });
+      }
+    } 
+    // 3. Zoom Inicial (Brasil)
+    else {
       map.flyTo(INITIAL_VIEW.center, INITIAL_VIEW.zoom, { duration: 1.0 });
     }
-  }, [selectedRegion, selectedState, map]);
+  }, [selectedRegion, selectedState, map, allStatesFeatures]);
 
   useEffect(() => {
     if (selectedState) {
@@ -130,7 +143,6 @@ const MapaInterativo: React.FC<MapProps> = ({
           setMunicipiosData(data);      
         })
         .catch((_err) => {
-          console.error(`Falha ao carregar o arquivo de municípios: geojs-${codigoUF}-mun.json`);
           setMunicipiosGeoJSON(null); 
           setMunicipiosData(null);     
         });
@@ -140,25 +152,15 @@ const MapaInterativo: React.FC<MapProps> = ({
     }
   }, [selectedState, setMunicipiosData]); 
   
-  const handleResetView = () => {
-    if (map) {
-      if (selectedState) setSelectedState(null);
-      else if (selectedRegion) setSelectedRegion(null);
-    }
-  };
+  // --- REMOVIDO: handleResetView ---
 
-  // --- ESTILOS DOS ESTADOS (Regiões) ---
   const statesStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
-    
-    // Cor Base do Mapa: Verde Escuro (Footer BG)
     let fillColor = '#134611'; 
-    
-    // Cor de Destaque: Verde Vibrante (Botões)
     const highlightColor = '#3DA35D'; 
 
-    if (selectedState) {
-      return { fillColor: highlightColor, weight: 1, color: 'white', fillOpacity: 1 };
+    if (selectedState && feature.properties.codarea === selectedState) {
+       return { fillColor: highlightColor, weight: 1, color: 'white', fillOpacity: 1 };
     }
 
     if (hoveredObject) {
@@ -176,7 +178,6 @@ const MapaInterativo: React.FC<MapProps> = ({
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
     const codareaDoEstado = feature.properties.codarea;
     const regiaoDoEstado = feature.properties.regiao || 'Região';
-
     const nomeDoEstado = codareaDoEstado
       ? todosOsEstadosComNomes.get(codareaDoEstado) || 'Estado'
       : 'Estado'; 
@@ -190,18 +191,16 @@ const MapaInterativo: React.FC<MapProps> = ({
     layer.on({
       mouseover: () => setHoveredObject(feature),
       mouseout: () => setHoveredObject(null),
-      click: (event: any) => {
+      click: () => { 
         if (!selectedRegion) {
           setSelectedRegion(feature.properties.regiao || null);
-        } else if (map && !selectedState) {
-          map.flyToBounds(event.target.getBounds(), { padding: [50, 50], duration: 0.8 });
+        } else if (!selectedState) {
           setSelectedState(feature.properties.codarea || null);
         }
       },
     });
   };
 
-  // --- ESTILOS DOS MUNICÍPIOS ---
   const municipiosStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
     const nome = feature.properties?.name?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -210,31 +209,13 @@ const MapaInterativo: React.FC<MapProps> = ({
       : null;
     const isHovered = hoveredMunicipio?.properties.id === feature.properties.id;
 
-    // Se for o município buscado
     if (nomeBusca && nome === nomeBusca) {
-      return {
-        weight: 2.5, 
-        color: '#E8FCCF', // Borda: Verde Claro (Texto do Footer)
-        fillColor: '#3DA35D', // Fundo: Verde Destaque (Botões)
-        fillOpacity: 1,
-      };
+      return { weight: 2.5, color: '#E8FCCF', fillColor: '#3DA35D', fillOpacity: 1 };
     }
-    // Se estiver com o mouse em cima
     if (isHovered) {
-      return {
-        weight: 2, 
-        color: '#E8FCCF', // Borda: Verde Claro
-        fillColor: '#3DA35D', // Fundo: Verde Destaque
-        fillOpacity: 1,
-      };
+      return { weight: 2, color: '#E8FCCF', fillColor: '#3DA35D', fillOpacity: 1 };
     }
-    // Estilo padrão do município
-    return {
-      weight: 1, 
-      color: 'white', // Borda branca fina para separar
-      fillColor: '#134611', // Fundo: Verde Escuro (Footer BG)
-      fillOpacity: 1,
-    };
+    return { weight: 1, color: 'white', fillColor: '#134611', fillOpacity: 1 };
   };
 
   const onEachMunicipioFeature = (feature: GeoFeature, layer: Layer) => {
@@ -244,20 +225,11 @@ const MapaInterativo: React.FC<MapProps> = ({
     layer.on({
       mouseover: (event: any) => {
         setHoveredMunicipio(feature);
-        event.target.setStyle({
-          weight: 2, color: '#E8FCCF', fillColor: '#3DA35D', fillOpacity: 1,
-        });
+        event.target.setStyle({ weight: 2, color: '#E8FCCF', fillColor: '#3DA35D', fillOpacity: 1 });
       },
       mouseout: (event: any) => {
         setHoveredMunicipio(null);
-        const nomeFeature = (feature.properties?.name || feature.properties?.nome || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const nomeBusca = searchedMunicipioName ? searchedMunicipioName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : null;
-        
-        if (nomeBusca && nomeFeature === nomeBusca) {
-          event.target.setStyle(municipiosStyle(feature)); 
-        } else {
-          event.target.setStyle(municipiosStyle(feature));
-        }
+        event.target.setStyle(municipiosStyle(feature));
       },
     });
   };
@@ -311,8 +283,8 @@ const MapaInterativo: React.FC<MapProps> = ({
             onEachFeature={onEachMunicipioFeature}
           />
         )}
-
-        {(selectedRegion || selectedState) && <ZoomOutButton onClick={handleResetView} />}
+        
+        {/* REMOVIDO: <ZoomOutButton ... /> */}
       </MapContainer>
     </div>
   );

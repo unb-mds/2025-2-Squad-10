@@ -1,76 +1,71 @@
 // src/components/MapaPage/TabelaInfo.tsx
 
-// --- ALTERAÇÃO 1: Removido 'React' que não estava sendo usado ---
 import { useState, useMemo } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import '../../style/Tabelainfo.css';
 import type { FeatureCollection } from 'geojson';
 
-// --- INTERFACES (sem alterações) ---
 export interface Investimento {
   nome: string;
   valor: string;
 }
+
 export interface MunicipioComInvestimentos {
   codarea: string;
   nome: string;
   investimentos: Investimento[];
 }
+
 export interface DadosRegiao {
   regiao: string;
   investimentosGerais: Investimento[];
   municipios: MunicipioComInvestimentos[];
 }
+
 export interface DadosInvestimentos {
   [key: string]: DadosRegiao;
 }
 
 interface TabelaInfoProps {
   dadosDaRegiao: DadosRegiao;
-  onClose: () => void;
+  onClose: () => void; // Esta função reseta tudo (Zoom total)
   estadoCodarea: string | null;
+  onSelectState: (codarea: string) => void; 
   municipiosDoEstadoGeoJSON: FeatureCollection | null;
   setSearchedMunicipioName: (name: string | null) => void;
 }
 
-// --- ALTERAÇÃO 2: Removida a interface 'jsPDFWithAutoTable' que não estava sendo usada ---
 interface jsPDFWithAutoTable extends jsPDF {
   autoTable: (options: any) => jsPDF;
 }
 
-
 const TabelaInfo = ({
   dadosDaRegiao,
   estadoCodarea,
+  onSelectState,
+  onClose,
   municipiosDoEstadoGeoJSON,
   setSearchedMunicipioName,
 }: TabelaInfoProps) => {
-  const [termoBusca, setTermoBusca] = useState<string>('');
+  
   const [termoBuscaMunicipio, setTermoBuscaMunicipio] = useState<string>('');
 
   const dadosDoEstado = estadoCodarea
-    ? dadosDaRegiao.municipios.find(m => m.codarea === estadoCodarea)
+    ? dadosDaRegiao.municipios.find((m) => m.codarea === estadoCodarea)
     : null;
 
   const municipiosGeoFiltrados = useMemo(() => {
     if (!municipiosDoEstadoGeoJSON || termoBuscaMunicipio.length < 2) {
       return [];
     }
-    return municipiosDoEstadoGeoJSON.features.filter(feature =>
+    return municipiosDoEstadoGeoJSON.features.filter((feature) =>
       feature.properties?.name.toLowerCase().includes(termoBuscaMunicipio.toLowerCase())
     );
   }, [municipiosDoEstadoGeoJSON, termoBuscaMunicipio]);
 
-  // Esta variável agora será usada na renderização
-  const municipiosFiltrados = !dadosDoEstado
-    ? (dadosDaRegiao.municipios || []).filter((municipio) =>
-        municipio.nome.toLowerCase().includes(termoBusca.toLowerCase())
-      )
-    : [];
-
   const handleGerarPDF = () => {
-    const doc = new jsPDF() as jsPDFWithAutoTable; // O type cast é usado aqui
+    const doc = new jsPDF() as jsPDFWithAutoTable;
     doc.setFontSize(20);
 
     if (dadosDoEstado) {
@@ -78,49 +73,47 @@ const TabelaInfo = ({
       doc.autoTable({
         startY: 30,
         head: [['Investimentos (Município)', 'Total Investido']],
-        body: dadosDoEstado.investimentos.map(item => [item.nome, item.valor]),
+        body: dadosDoEstado.investimentos.map((item) => [item.nome, item.valor]),
         headStyles: { fillColor: [0, 128, 128] },
       });
+      doc.save(`relatorio_${dadosDoEstado.nome}.pdf`);
     } else {
       doc.text(`Relatório de Investimentos - ${dadosDaRegiao.regiao}`, 14, 22);
       doc.autoTable({
         startY: 30,
         head: [['Dados Gerais (Regional)', 'Total Investido']],
-        body: dadosDaRegiao.investimentosGerais.map(item => [item.nome, item.valor]),
+        body: dadosDaRegiao.investimentosGerais.map((item) => [item.nome, item.valor]),
         headStyles: { fillColor: [0, 128, 128] },
       });
-      if (municipiosFiltrados.length > 0) {
-        doc.addPage();
-        doc.setFontSize(16);
-        doc.text(`Lista de Municípios - ${dadosDaRegiao.regiao}`, 14, 22);
-        doc.autoTable({
-          startY: 30,
-          head: [['Municípios Selecionados (Filtrados)']],
-          body: municipiosFiltrados.map(m => [m.nome]),
-        });
-      }
+      doc.save(`relatorio_${dadosDaRegiao.regiao}.pdf`);
     }
-    doc.save(`relatorio_${dadosDoEstado ? dadosDoEstado.nome : dadosDaRegiao.regiao}.pdf`);
   };
-
 
   return (
     <div className="info-container">
 
       {dadosDoEstado ? (
+        // ---------------------------------------------------
+        // VISÃO DO ESTADO SELECIONADO
+        // ---------------------------------------------------
         <div className="visao-estado">
+          {/* AQUI: Volta para a Região */}
+          <button className="close-button" onClick={() => onSelectState('')}>
+             &larr; Voltar para a Região
+          </button>
+          
           <h2 className="titulo-estado">{dadosDoEstado.nome}</h2>
 
           <table className="tabela-investimentos">
             <thead>
               <tr>
-                <th>Investimentos Gerais do Estado</th>
+                <th>Investimentos Gerais</th>
                 <th>Valor</th>
               </tr>
             </thead>
             <tbody>
               {dadosDoEstado.investimentos.length > 0 ? (
-                dadosDoEstado.investimentos.map((item, index) => (
+                dadosDoEstado.investimentos.map((item: Investimento, index: number) => (
                   <tr key={index}><td>{item.nome}</td><td>{item.valor}</td></tr>
                 ))
               ) : (
@@ -132,26 +125,23 @@ const TabelaInfo = ({
           <hr className="separator" />
 
           <div className="municipio-search-section">
-            <h4>Pesquisar Município no Mapa</h4>
-
+            <h4>Pesquisar Município</h4>
             <div className="search-input-group">
               <input
                 type="text"
-                placeholder="Digite o nome de um município..."
+                placeholder="Digite o nome..."
                 className="search-bar"
                 value={termoBuscaMunicipio}
-                onChange={e => setTermoBuscaMunicipio(e.target.value)}
+                onChange={(e) => setTermoBuscaMunicipio(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setSearchedMunicipioName(termoBuscaMunicipio);
-                  }
+                  if (e.key === "Enter") setSearchedMunicipioName(termoBuscaMunicipio);
                 }}
               />
               <button
                 className="btn-pesquisar"
                 onClick={() => setSearchedMunicipioName(termoBuscaMunicipio)}
               >
-                Pesquisar
+                Ir
               </button>
             </div>
 
@@ -168,45 +158,51 @@ const TabelaInfo = ({
           </div>
 
           <button className="btn-pdf" onClick={handleGerarPDF}>
-            Baixar PDF de {dadosDoEstado.nome}
+            Baixar PDF ({dadosDoEstado.nome})
           </button>
         </div>
       ) : (
+        // ---------------------------------------------------
+        // VISÃO DA REGIÃO
+        // ---------------------------------------------------
         <div className="visao-regiao">
-          <div className="search-bar">
-            {/* --- ALTERAÇÃO 3: Usando setTermoBusca no onChange --- */}
-            <input
-              type="text"
-              placeholder="Pesquisar Estado..."
-              value={termoBusca}
-              onChange={(e) => setTermoBusca(e.target.value)}
-            />
-          </div>
+          {/* AQUI: Volta para o Mapa Geral (Brasil) */}
+          <button className="close-button" onClick={onClose}>
+             &larr; Voltar para o Mapa
+          </button>
 
           <h2 className="titulo-estado">{dadosDaRegiao.regiao}</h2>
 
           <table className="tabela-investimentos">
-             {/* ... sua tabela de investimentos gerais ... */}
+            <thead>
+              <tr><th>Dados Regionais</th><th>Total</th></tr>
+            </thead>
+             <tbody>
+               {dadosDaRegiao.investimentosGerais.map((item: Investimento, idx: number) => (
+                 <tr key={idx}><td>{item.nome}</td><td>{item.valor}</td></tr>
+               ))}
+             </tbody>
           </table>
+
+          <div className="municipios-lista">
+            <h3>Selecione um Estado</h3>
+            <div className="grid-estados">
+              {dadosDaRegiao.municipios.map((estado: MunicipioComInvestimentos) => (
+                <div 
+                  key={estado.codarea} 
+                  className="card-estado"
+                  onClick={() => onSelectState(estado.codarea)} 
+                >
+                  <span className="nome-estado">{estado.nome}</span>
+                  <span className="seta-visual">➜</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <button className="btn-pdf" onClick={handleGerarPDF}>
             Baixar PDF da Região
           </button>
-
-          {/* --- ALTERAÇÃO 4: Usando a variável 'municipiosFiltrados' --- */}
-          <div className="municipios-lista">
-            <h3>Estados da Região</h3>
-            {municipiosFiltrados.length > 0 ? (
-              municipiosFiltrados.map((estado) => (
-                <details key={estado.nome} className="municipio-item">
-                  <summary>{estado.nome}</summary>
-                  {/* ... detalhes dos investimentos do estado ... */}
-                </details>
-              ))
-            ) : (
-              <p>Nenhum estado encontrado com o termo "{termoBusca}".</p>
-            )}
-          </div>
         </div>
       )}
     </div>

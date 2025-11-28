@@ -17,7 +17,7 @@
 }
 
 .footer-column {
-  width: 22%; /* Desktop */
+  width: 22%; 
   min-width: 200px;
   margin-bottom: 20px;
 }
@@ -64,11 +64,11 @@
   font-size: 12px;
 }
 
-/* --- Responsividade --- */
+
 
 @media (max-width: 900px) {
   .footer-column {
-    width: 45%; /* Duas colunas por linha em tablets */
+    width: 45%; 
     margin-bottom: 30px;
   }
 }
@@ -76,11 +76,11 @@
 @media (max-width: 576px) {
   .footer-content {
     flex-direction: column;
-    align-items: center; /* Centraliza tudo */
+    align-items: center; 
   }
 
   .footer-column {
-    width: 100%; /* Uma coluna por linha no celular */
+    width: 100%; 
     text-align: center;
     min-width: unset;
   }
