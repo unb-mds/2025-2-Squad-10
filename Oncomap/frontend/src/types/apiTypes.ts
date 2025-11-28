@@ -1,17 +1,19 @@
+// src/types/apiTypes.ts
+
 export interface HealthResponse {
   message: string;
 }
 
-// --- NOVOS TIPOS ADICIONADOS PARA A TABELA INFO ---
-
 export interface Investimento {
   nome: string;
   valor: string;
+  codarea_municipio?: string; // CAMPO NOVO IMPORTANTE
 }
 
 export interface MunicipioComInvestimentos {
   codarea: string;
   nome: string;
+  uf?: string;
   investimentos: Investimento[];
 }
 
@@ -21,16 +23,28 @@ export interface DadosRegiao {
   municipios: MunicipioComInvestimentos[];
 }
 
-// Se o seu mapService antigo usava esses, mantenha-os:
-export interface MapData {
-  id: string | number;
-  latitude: number;
-  longitude: number;
-  nome?: string;
-  [key: string]: any;
+export interface MencaoDetalhada {
+  date: string;
+  value: number;
+  url: string;
+  details: any[];
 }
 
-export interface AppStats {
-  totalCases: number;
-  lastUpdate: string;
+export interface CategoriasInvestimento {
+  medicamentos: number;
+  equipamentos: number;
+  obras_infraestrutura: number;
+  servicos_saude: number;
+  outros_relacionados: number;
+  estadia_paciente: number;
+  [key: string]: number;
+}
+
+export interface DetalhesMunicipio {
+  name: string;
+  uf: string;
+  ibge: string;
+  total_invested: number;
+  categories: CategoriasInvestimento;
+  recent_mentions: MencaoDetalhada[];
 }

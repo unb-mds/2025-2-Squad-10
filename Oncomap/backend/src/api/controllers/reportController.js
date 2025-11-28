@@ -56,10 +56,17 @@ const generateRegionReport = async (req, res) => {
     if (states.length === 0) return res.status(400).json({ error: "Região inválida." });
 
     try {
+        // CORREÇÃO: Soma dinâmica de PDF + TXT
         const query = `
-            SELECT state_uf, COUNT(*) as total_mentions, SUM(final_extracted_value) as total_value
-            FROM mentions WHERE state_uf = ANY($1) AND final_extracted_value IS NOT NULL
-            GROUP BY state_uf ORDER BY total_value DESC;
+            SELECT 
+                state_uf, 
+                COUNT(*) as total_mentions, 
+                SUM(COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as total_value
+            FROM mentions 
+            WHERE state_uf = ANY($1) 
+            AND (extracted_value > 0 OR extracted_value_txt > 0)
+            GROUP BY state_uf 
+            ORDER BY total_value DESC;
         `;
         const { rows } = await db.query(query, [states]);
         
@@ -133,10 +140,18 @@ const generateStateReport = async (req, res) => {
     const { uf } = req.params;
 
     try {
+        // CORREÇÃO: Soma dinâmica de PDF + TXT
         const query = `
-            SELECT municipality_name, COUNT(*) as total_mentions, SUM(final_extracted_value) as total_value
-            FROM mentions WHERE state_uf = $1 AND final_extracted_value IS NOT NULL
-            GROUP BY municipality_name ORDER BY total_value DESC LIMIT 15;
+            SELECT 
+                municipality_name, 
+                COUNT(*) as total_mentions, 
+                SUM(COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as total_value
+            FROM mentions 
+            WHERE state_uf = $1 
+            AND (extracted_value > 0 OR extracted_value_txt > 0)
+            GROUP BY municipality_name 
+            ORDER BY total_value DESC 
+            LIMIT 15;
         `;
         const { rows } = await db.query(query, [uf.toUpperCase()]);
 
@@ -212,9 +227,17 @@ const generateMunicipalityReport = async (req, res) => {
     const { ibge } = req.params;
 
     try {
+        // CORREÇÃO: Buscar as colunas de valor e os JSONs de análise do PDF e TXT
         const query = `
-            SELECT municipality_name, state_uf, final_extracted_value, gemini_analysis
-            FROM mentions WHERE municipality_ibge_code = $1 AND final_extracted_value IS NOT NULL;
+            SELECT 
+                municipality_name, 
+                state_uf, 
+                COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor_final, 
+                gemini_analysis,
+                gemini_analysis_txt
+            FROM mentions 
+            WHERE municipality_ibge_code = $1 
+            AND (extracted_value > 0 OR extracted_value_txt > 0);
         `;
         const { rows } = await db.query(query, [ibge]);
 
@@ -224,8 +247,11 @@ const generateMunicipalityReport = async (req, res) => {
         let totalValue = 0;
 
         rows.forEach(row => {
-            totalValue += parseFloat(row.final_extracted_value);
-            const analysis = row.gemini_analysis;
+            totalValue += parseFloat(row.valor_final);
+            
+            // CORREÇÃO: Prioriza análise do TXT, se não existir, usa a do PDF
+            const analysis = row.gemini_analysis_txt || row.gemini_analysis;
+            
             if (analysis) {
                 categories.medicamentos += parseFloat(analysis.medicamentos || 0);
                 categories.equipamentos += parseFloat(analysis.equipamentos || 0);

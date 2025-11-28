@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import '../../style/Tabelainfo.css';
 import type { FeatureCollection } from 'geojson';
-import type { DadosRegiao, Investimento, MunicipioComInvestimentos } from '../../types/apiTypes';
+import { mapService, type DetalhesEstado } from '../../services/mapService';
+import type { DadosRegiao, DetalhesMunicipio } from '../../types/apiTypes';
 
 interface TabelaInfoProps {
   dadosDaRegiao: DadosRegiao;
@@ -14,9 +13,15 @@ interface TabelaInfoProps {
   setSearchedMunicipioName: (name: string | null) => void;
 }
 
-interface jsPDFWithAutoTable extends jsPDF {
-  autoTable: (options: any) => jsPDF;
-}
+// Ordem fixa para exibição das categorias
+const CATEGORIAS_ORDEM = [
+  { key: 'medicamentos', label: 'Medicamentos' },
+  { key: 'equipamentos', label: 'Equipamentos' },
+  { key: 'obras_infraestrutura', label: 'Obras e Infraestrutura' },
+  { key: 'servicos_saude', label: 'Serviços de Saúde' },
+  { key: 'estadia_paciente', label: 'Estadia de Paciente' },
+  { key: 'outros_relacionados', label: 'Outros' }
+];
 
 const TabelaInfo = ({
   dadosDaRegiao,
@@ -28,86 +33,226 @@ const TabelaInfo = ({
 }: TabelaInfoProps) => {
   
   const [termoBuscaMunicipio, setTermoBuscaMunicipio] = useState<string>('');
+  const [detalhesMunicipio, setDetalhesMunicipio] = useState<DetalhesMunicipio | null>(null);
+  const [loadingDetalhes, setLoadingDetalhes] = useState(false);
+  const [detalhesEstado, setDetalhesEstado] = useState<DetalhesEstado | null>(null);
 
-  // 1. Encontra os dados do estado selecionado
+  // Ref para o container principal do componente
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const dadosDoEstado = estadoCodarea
     ? dadosDaRegiao.municipios.find((m) => String(m.codarea) === String(estadoCodarea))
     : null;
 
-  // 2. Filtra as cidades na TABELA baseado na busca (O que estava faltando)
+  // --- CORREÇÃO DEFINITIVA DO SCROLL ---
+  // Sempre que mudar a tela (entrar no município, voltar pro estado, etc),
+  // forçamos o scroll do painel pai a voltar para o topo (0).
+  useEffect(() => {
+    // 1. Tenta rolar o próprio elemento (se ele tiver scroll)
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+
+    // 2. Tenta rolar o painel lateral (geralmente a classe .panel-area no MapaPage)
+    const painelLateral = document.querySelector('.panel-area');
+    if (painelLateral) {
+      painelLateral.scrollTop = 0;
+    }
+
+    // 3. Fallback: Rola o elemento para o topo da visão
+    if (containerRef.current) {
+        containerRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }
+  }, [detalhesMunicipio, estadoCodarea]); // Dispara quando muda o município ou o estado
+
+
+  // Carrega Detalhes do Estado
+  useEffect(() => {
+    const carregarDetalhesEstado = async () => {
+      if (estadoCodarea) {
+        try {
+          const dados = await mapService.getDetalhesEstado(estadoCodarea);
+          setDetalhesEstado(dados);
+        } catch (error) {
+          console.error("Erro ao carregar estado:", error);
+        }
+      } else {
+        setDetalhesEstado(null);
+        setDetalhesMunicipio(null);
+      }
+    };
+    carregarDetalhesEstado();
+  }, [estadoCodarea]);
+
+  const handleVerDetalhes = async (codIbge: string) => {
+    if (!codIbge) return;
+    setLoadingDetalhes(true);
+    try {
+      const detalhes = await mapService.getDetalhesMunicipio(codIbge);
+      setDetalhesMunicipio(detalhes);
+    } catch (error) {
+      console.error("Erro ao carregar detalhes:", error);
+      alert("Não foi possível carregar os detalhes deste município.");
+    } finally {
+      setLoadingDetalhes(false);
+    }
+  };
+
   const investimentosFiltrados = useMemo(() => {
     if (!dadosDoEstado) return [];
-    
-    // Se não tiver busca, retorna tudo
     if (!termoBuscaMunicipio) return dadosDoEstado.investimentos;
-
-    // Se tiver busca, filtra pelo nome da cidade
     return dadosDoEstado.investimentos.filter(item => 
       item.nome.toLowerCase().includes(termoBuscaMunicipio.toLowerCase())
     );
   }, [dadosDoEstado, termoBuscaMunicipio]);
 
-  // 3. Filtra as sugestões do GeoJSON (Autocomplete do input)
   const municipiosGeoFiltrados = useMemo(() => {
-    if (!municipiosDoEstadoGeoJSON || termoBuscaMunicipio.length < 2) {
-      return [];
-    }
+    if (!municipiosDoEstadoGeoJSON || termoBuscaMunicipio.length < 2) return [];
     return municipiosDoEstadoGeoJSON.features.filter((feature) =>
       feature.properties?.name?.toLowerCase().includes(termoBuscaMunicipio.toLowerCase())
     );
   }, [municipiosDoEstadoGeoJSON, termoBuscaMunicipio]);
 
-  // Função auxiliar para quando clicar em uma sugestão
   const handleSelecionarSugestao = (nomeMunicipio: string) => {
-    setTermoBuscaMunicipio(nomeMunicipio); // Atualiza o input e filtra a tabela
-    setSearchedMunicipioName(nomeMunicipio); // Manda o mapa dar zoom
-  };
-
-  const handleGerarPDF = () => {
-    const doc = new jsPDF() as jsPDFWithAutoTable;
-    doc.setFontSize(20);
+    setTermoBuscaMunicipio(nomeMunicipio);
+    setSearchedMunicipioName(nomeMunicipio);
 
     if (dadosDoEstado) {
-      doc.text(`Relatório - ${dadosDoEstado.nome}`, 14, 22);
-      doc.autoTable({
-        startY: 30,
-        head: [['Município', 'Total Investido']],
-        // Gera PDF apenas do que está visível/filtrado ou de tudo? 
-        // Geralmente de tudo, mas aqui mantivemos 'dadosDoEstado.investimentos' original.
-        body: dadosDoEstado.investimentos.map((item) => [item.nome, item.valor]),
-        headStyles: { fillColor: [0, 128, 128] },
-      });
-      doc.save(`relatorio_${dadosDoEstado.nome}.pdf`);
-    } else {
-      doc.text(`Relatório Regional - ${dadosDaRegiao.regiao}`, 14, 22);
-      doc.autoTable({
-        startY: 30,
-        head: [['Dados Gerais', 'Total']],
-        body: dadosDaRegiao.investimentosGerais.map((item) => [item.nome, item.valor]),
-        headStyles: { fillColor: [0, 128, 128] },
-      });
-      doc.save(`relatorio_${dadosDaRegiao.regiao}.pdf`);
+      const municipioEncontrado = dadosDoEstado.investimentos.find(
+        inv => inv.nome.toLowerCase() === nomeMunicipio.toLowerCase()
+      );
+      if (municipioEncontrado && municipioEncontrado.codarea_municipio) {
+        handleVerDetalhes(municipioEncontrado.codarea_municipio);
+      }
     }
   };
 
-  return (
-    <div className="info-container">
-      {dadosDoEstado ? (
-        // --- VISÃO DO ESTADO ---
+  const handleGerarPDF = () => {
+    const baseURL = "http://localhost:3001/api/report";
+    if (detalhesMunicipio) {
+       window.open(`${baseURL}/municipality/${detalhesMunicipio.ibge}/pdf`, '_blank');
+    } else if (dadosDoEstado && detalhesEstado) {
+       window.open(`${baseURL}/state/${detalhesEstado.uf}/pdf`, '_blank');
+    } else {
+       const nomeRegiao = dadosDaRegiao.regiao.toLowerCase();
+       window.open(`${baseURL}/region/${nomeRegiao}/pdf`, '_blank');
+    }
+  };
+
+  // --- 1. TELA DE DETALHES DO MUNICÍPIO (Nível 3) ---
+  if (detalhesMunicipio) {
+    return (
+      <div className="info-container" ref={containerRef}>
+        <div className="visao-detalhes">
+          <button className="close-button" onClick={() => setDetalhesMunicipio(null)}>
+             &larr; Voltar para lista de {detalhesMunicipio.uf}
+          </button>
+
+          <h2 className="titulo-estado">{detalhesMunicipio.name}</h2>
+          
+          <div className="card-destaque">
+            <h3>Investimento Total Identificado</h3>
+            <p className="periodo-acumulado">(Acumulado desde 2022)</p>
+            <p className="valor-gigante">
+              {detalhesMunicipio.total_invested.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </p>
+          </div>
+
+          <h4 className="secao-titulo">Detalhamento por Categoria</h4>
+          <div className="tabela-scroll">
+            <table className="tabela-investimentos">
+              <thead>
+                <tr>
+                  <th>Categoria</th>
+                  <th className="col-valor-direita">Valor Investido</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CATEGORIAS_ORDEM.map((cat) => {
+                  const valor = detalhesMunicipio.categories[cat.key] || 0;
+                  return (
+                    <tr key={cat.key}>
+                      <td>{cat.label}</td>
+                      <td className={`col-valor-direita ${valor > 0 ? 'valor-positivo' : 'valor-zerado'}`}>
+                        {valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <h4 className="secao-titulo">Fontes (Diários Oficiais)</h4>
+          <ul className="lista-links-scroll">
+            {detalhesMunicipio.recent_mentions.length > 0 ? (
+                detalhesMunicipio.recent_mentions.map((mencao, idx) => (
+                  <li key={idx} className="lista-links-item">
+                    <div className="link-header">
+                        <strong>{new Date(mencao.date).toLocaleDateString()}</strong>
+                        <span className="link-valor">{mencao.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    </div>
+                    <a href={mencao.url} target="_blank" rel="noreferrer">
+                      📄 Ver Documento Original
+                    </a>
+                  </li>
+                ))
+            ) : (
+                <li className="sem-dados">Nenhum documento recente listado.</li>
+            )}
+          </ul>
+
+          <button className="btn-pdf" onClick={handleGerarPDF}>
+            Baixar Relatório Completo (PDF)
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- 2. VISÃO DO ESTADO SELECIONADO (Nível 2) ---
+  if (dadosDoEstado) {
+    return (
+      <div className="info-container" ref={containerRef}>
         <div className="visao-estado">
-          <button className="close-button" onClick={() => onSelectState('')}>
+          <button className="close-button" onClick={() => {
+             onSelectState('');
+             setDetalhesEstado(null);
+          }}>
              &larr; Voltar para a Região
           </button>
           
           <h2 className="titulo-estado">{dadosDoEstado.nome}</h2>
 
-          {/* Área de Busca */}
+          {detalhesEstado && (
+            <div className="detalhes-estado-header">
+               <div className="estado-total-label">Total no Estado (IA):</div>
+               <div className="periodo-acumulado">(Acumulado desde 2022)</div>
+               <div className="estado-total-valor">
+                 {detalhesEstado.total_invested.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+               </div>
+               
+               <div className="categorias-container">
+                  {CATEGORIAS_ORDEM.map((cat) => {
+                    const valor = detalhesEstado.categories[cat.key] || 0;
+                    return (
+                      <div key={cat.key} className="categoria-badge" style={{opacity: valor > 0 ? 1 : 0.6}}>
+                        <span className="categoria-label">{cat.label}</span>
+                        <span className="categoria-valor" style={{color: valor > 0 ? '#E8FCCF' : '#aaa'}}>
+                          {valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })}
+                        </span>
+                      </div>
+                    );
+                  })}
+               </div>
+            </div>
+          )}
+
           <div className="municipio-search-section">
-            <h4>Pesquisar Município na Tabela</h4>
             <div className="search-input-group">
               <input
                 type="text"
-                placeholder="Digite o nome..."
+                placeholder="Pesquisar município na lista..."
                 className="search-bar"
                 value={termoBuscaMunicipio}
                 onChange={(e) => setTermoBuscaMunicipio(e.target.value)}
@@ -115,29 +260,12 @@ const TabelaInfo = ({
                   if (e.key === "Enter") handleSelecionarSugestao(termoBuscaMunicipio);
                 }}
               />
-              {/* Botão X para limpar busca se quiser */}
-              {termoBuscaMunicipio && (
-                <button 
-                  className="btn-limpar" 
-                  onClick={() => {
-                    setTermoBuscaMunicipio('');
-                    setSearchedMunicipioName(null);
-                  }}
-                  style={{marginLeft: '5px', cursor: 'pointer'}}
-                >
-                  X
-                </button>
-              )}
             </div>
-
-            {/* Lista de Sugestões (Autocomplete) */}
-            {municipiosGeoFiltrados.length > 0 && (
+            
+            {municipiosGeoFiltrados.length > 0 && termoBuscaMunicipio.length >= 2 && (
               <ul className="municipio-search-results">
-                {municipiosGeoFiltrados.slice(0, 5).map((municipio, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleSelecionarSugestao(municipio.properties?.name || '')}
-                  >
+                {municipiosGeoFiltrados.slice(0, 3).map((municipio, index) => (
+                  <li key={index} onClick={() => handleSelecionarSugestao(municipio.properties?.name || '')}>
                     {municipio.properties?.name}
                   </li>
                 ))}
@@ -147,79 +275,89 @@ const TabelaInfo = ({
 
           <hr className="separator" />
 
-          {/* TABELA DE DADOS (Agora Filtrada) */}
-          <table className="tabela-investimentos">
-            <thead>
-              <tr>
-                <th>Municípios</th>
-                <th>Total Investido</th>
-              </tr>
-            </thead>
-            <tbody>
-              {investimentosFiltrados.length > 0 ? (
-                investimentosFiltrados.map((item: Investimento, index: number) => (
-                  <tr key={index}>
-                    <td>{item.nome}</td>
-                    <td>{item.valor}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={2}>
-                    {termoBuscaMunicipio 
-                      ? `Nenhum município encontrado com "${termoBuscaMunicipio}"` 
-                      : "Nenhum investimento identificado neste estado."}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-
-          <button className="btn-pdf" onClick={handleGerarPDF}>
-            Baixar PDF ({dadosDoEstado.nome})
-          </button>
-        </div>
-      ) : (
-        // --- VISÃO DA REGIÃO ---
-        <div className="visao-regiao">
-          <button className="close-button" onClick={onClose}>
-             &larr; Voltar para o Mapa
-          </button>
-
-          <h2 className="titulo-estado">{dadosDaRegiao.regiao}</h2>
-
-          <table className="tabela-investimentos">
-            <thead>
-              <tr><th>Resumo Regional</th><th>Valor</th></tr>
-            </thead>
-             <tbody>
-               {dadosDaRegiao.investimentosGerais.map((item: Investimento, idx: number) => (
-                 <tr key={idx}><td>{item.nome}</td><td>{item.valor}</td></tr>
-               ))}
-             </tbody>
-          </table>
-
-          <div className="municipios-lista">
-            <h3>Estados da Região</h3>
-            <div className="grid-estados">
-              {dadosDaRegiao.municipios.map((estado: MunicipioComInvestimentos) => (
-                <div 
-                  key={estado.codarea} 
-                  className="card-estado"
-                  onClick={() => onSelectState(String(estado.codarea))} 
-                >
-                  <span className="nome-estado">{estado.nome}</span>
-                  <span className="seta-visual">➜</span>
-                </div>
-              ))}
+          {loadingDetalhes ? (
+             <div className="loading-msg">Carregando detalhes do município...</div>
+          ) : (
+            <div className="tabela-scroll">
+              <table className="tabela-investimentos clickable-rows">
+                <thead>
+                  <tr><th>Município (Clique para detalhes)</th><th className="col-valor-direita">Total</th></tr>
+                </thead>
+                <tbody>
+                  {investimentosFiltrados.length > 0 ? (
+                    investimentosFiltrados.map((item, index) => (
+                      <tr 
+                        key={index} 
+                        onClick={() => {
+                           if (item.codarea_municipio) {
+                             handleVerDetalhes(item.codarea_municipio);
+                           } else {
+                             console.warn("Item sem IBGE:", item);
+                           }
+                        }}
+                        title="Clique para ver detalhes completos"
+                      > 
+                        <td className="cell-municipio">{item.nome}</td>
+                        <td className="col-valor-direita">{item.valor}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan={2} className="linha-vazia">Nenhum dado encontrado.</td></tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-          </div>
+          )}
 
           <button className="btn-pdf" onClick={handleGerarPDF}>
-            Baixar PDF da Região
+            Baixar Relatório Estadual (PDF)
           </button>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  // --- 3. VISÃO DA REGIÃO (Nível 1) ---
+  return (
+    <div className="info-container" ref={containerRef}>
+      <div className="visao-regiao">
+        <button className="close-button" onClick={onClose}>
+            &larr; Voltar para o Mapa
+        </button>
+
+        <h2 className="titulo-estado">{dadosDaRegiao.regiao}</h2>
+
+        <table className="tabela-investimentos">
+          <thead>
+            <tr><th>Resumo Regional</th><th className="col-valor-direita">Valor</th></tr>
+          </thead>
+            <tbody>
+              {dadosDaRegiao.investimentosGerais.map((item, idx) => (
+                <tr key={idx}><td>{item.nome}</td><td className="col-valor-direita">{item.valor}</td></tr>
+              ))}
+            </tbody>
+        </table>
+
+        <div className="municipios-lista">
+          <h3>Estados da Região</h3>
+          <div className="grid-estados">
+            {dadosDaRegiao.municipios.map((estado) => (
+              <div 
+                key={estado.codarea} 
+                className="card-estado"
+                onClick={() => onSelectState(String(estado.codarea))} 
+              >
+                <span className="nome-estado">{estado.nome}</span>
+                <span className="seta-visual">➜</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <button className="btn-pdf" onClick={handleGerarPDF}>
+          Baixar Relatório Regional (PDF)
+        </button>
+      </div>
     </div>
   );
 };

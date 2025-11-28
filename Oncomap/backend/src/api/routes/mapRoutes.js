@@ -4,7 +4,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/database'); 
 
-// Mapeamento de quais estados pertencem a qual região (para o filtro SQL)
+// --- CONFIGURAÇÕES E MAPAS ---
+
 const regionMap = {
     'sudeste': ['SP', 'RJ', 'MG', 'ES'],
     'sul': ['PR', 'SC', 'RS'],
@@ -13,8 +14,6 @@ const regionMap = {
     'centro-oeste': ['MT', 'MS', 'GO', 'DF']
 };
 
-// Mapeamento auxiliar: UF -> Código IBGE (2 dígitos)
-// Necessário para o Frontend encontrar o estado quando clicar no mapa
 const ufToCode = {
     'RO': '11', 'AC': '12', 'AM': '13', 'RR': '14', 'PA': '15', 'AP': '16', 'TO': '17',
     'MA': '21', 'PI': '22', 'CE': '23', 'RN': '24', 'PB': '25', 'PE': '26', 'AL': '27',
@@ -22,7 +21,13 @@ const ufToCode = {
     'SC': '42', 'RS': '43', 'MS': '50', 'MT': '51', 'GO': '52', 'DF': '53'
 };
 
-// Mapeamento auxiliar: Código IBGE -> Nome Completo do Estado
+// --- AQUI ESTÁ A CORREÇÃO: Definindo codeToUf explicitamente ---
+// Inverte o mapa ufToCode para podermos buscar a UF pelo Código (ex: '35' -> 'SP')
+const codeToUf = Object.entries(ufToCode).reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+}, {});
+
 const codeToName = {
     '11': 'Rondônia', '12': 'Acre', '13': 'Amazonas', '14': 'Roraima', '15': 'Pará', '16': 'Amapá', '17': 'Tocantins',
     '21': 'Maranhão', '22': 'Piauí', '23': 'Ceará', '24': 'Rio Grande do Norte', '25': 'Paraíba', '26': 'Pernambuco', '27': 'Alagoas',
@@ -30,19 +35,15 @@ const codeToName = {
     '42': 'Santa Catarina', '43': 'Rio Grande do Sul', '50': 'Mato Grosso do Sul', '51': 'Mato Grosso', '52': 'Goiás', '53': 'Distrito Federal'
 };
 
+// --- ROTA 1: VISÃO GERAL DA REGIÃO ---
 router.get('/regiao/:regiaoSlug', async (req, res) => {
     const { regiaoSlug } = req.params;
     const chaveRegiao = regiaoSlug.toLowerCase().trim();
     const estadosDaRegiao = regionMap[chaveRegiao];
 
-    console.log(`[Backend] Consultando Banco de Dados para região: ${chaveRegiao}`);
-
-    if (!estadosDaRegiao) {
-        return res.status(400).json({ error: "Região inválida ou desconhecida." });
-    }
+    if (!estadosDaRegiao) return res.status(400).json({ error: "Região inválida." });
 
     try {
-        // 1. Busca todos os municípios da região que tenham valores > 0
         const query = `
             SELECT 
                 municipality_name as nome,
@@ -59,42 +60,38 @@ router.get('/regiao/:regiaoSlug', async (req, res) => {
         const result = await db.query(query, [estadosDaRegiao]);
         const linhas = result.rows;
 
-        // 2. AGRUPAMENTO (A Mágica acontece aqui)
-        // Transformamos a lista plana de cidades em uma lista hierárquica de Estados -> Cidades
         const estadosAgrupados = {};
 
-        // Inicializa os estados da região (para aparecerem no menu mesmo se não tiverem dados)
+        // Inicializa estrutura
         estadosDaRegiao.forEach(uf => {
             const codigo = ufToCode[uf];
-            estadosAgrupados[codigo] = {
-                codarea: codigo,
-                nome: codeToName[codigo] || uf,
-                investimentos: [] // Aqui entrarão as cidades
-            };
+            if (codigo) {
+                estadosAgrupados[codigo] = {
+                    codarea: codigo,
+                    uf: uf,
+                    nome: codeToName[codigo] || uf,
+                    investimentos: []
+                };
+            }
         });
 
         let totalGeralRegiao = 0;
 
-        // Preenche com os dados do banco
         linhas.forEach(row => {
             const codEstado = ufToCode[row.uf];
             const valorNumerico = parseFloat(row.total_investido);
             totalGeralRegiao += valorNumerico;
 
-            if (estadosAgrupados[codEstado]) {
-                // Adiciona a cidade dentro da lista de "investimentos" do estado
-                // O Frontend chama a lista de cidades de 'investimentos'
+            if (codEstado && estadosAgrupados[codEstado]) {
                 estadosAgrupados[codEstado].investimentos.push({
+                    codarea_municipio: row.codarea,
                     nome: row.nome,
                     valor: valorNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
                 });
             }
         });
 
-        // Transforma o objeto em array
-        const arrayEstados = Object.values(estadosAgrupados);
-
-        const resposta = {
+        res.json({
             regiao: chaveRegiao.toUpperCase(),
             investimentosGerais: [
                 { 
@@ -102,19 +99,119 @@ router.get('/regiao/:regiaoSlug', async (req, res) => {
                     valor: totalGeralRegiao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) 
                 }
             ],
-            // Agora 'municipios' contém a lista de ESTADOS, cada um com suas cidades dentro
-            municipios: arrayEstados 
-        };
-
-        res.json(resposta);
+            municipios: Object.values(estadosAgrupados)
+        });
 
     } catch (error) {
-        console.error('[Erro SQL]', error);
-        res.json({ 
-            regiao: chaveRegiao.toUpperCase(), 
-            investimentosGerais: [{ nome: "Erro ao buscar dados", valor: "R$ 0,00" }], 
-            municipios: [] 
+        console.error('[MapRoutes] Erro na Região:', error);
+        res.status(500).json({ error: 'Erro ao buscar dados da região.' });
+    }
+});
+
+// --- ROTA 2: DETALHES DO MUNICÍPIO ---
+router.get('/municipio/:ibge', async (req, res) => {
+    const { ibge } = req.params;
+    try {
+        const query = `
+            SELECT municipality_name, state_uf, publication_date, source_url,
+                COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor_final,
+                gemini_analysis, gemini_analysis_txt
+            FROM mentions
+            WHERE municipality_ibge_code = $1 
+            AND (extracted_value > 0 OR extracted_value_txt > 0)
+            ORDER BY publication_date DESC;
+        `;
+        const { rows } = await db.query(query, [ibge]);
+
+        if (rows.length === 0) return res.status(404).json({ message: "Nenhum dado." });
+
+        const categoriesSummary = { medicamentos: 0, equipamentos: 0, obras_infraestrutura: 0, servicos_saude: 0, outros_relacionados: 0, estadia_paciente: 0 };
+        let totalInvested = 0;
+
+        rows.forEach(row => {
+            totalInvested += parseFloat(row.valor_final);
+            const analysis = row.gemini_analysis_txt || row.gemini_analysis;
+            if (analysis) {
+                categoriesSummary.medicamentos += parseFloat(analysis.medicamentos || 0);
+                categoriesSummary.equipamentos += parseFloat(analysis.equipamentos || 0);
+                categoriesSummary.obras_infraestrutura += parseFloat(analysis.obras_infraestrutura || 0);
+                categoriesSummary.servicos_saude += parseFloat(analysis.servicos_saude || 0);
+                categoriesSummary.outros_relacionados += parseFloat(analysis.outros_relacionados || 0);
+                categoriesSummary.estadia_paciente += parseFloat(analysis.estadia_paciente || 0);
+            }
         });
+
+        res.json({
+            name: rows[0].municipality_name,
+            uf: rows[0].state_uf,
+            ibge: ibge,
+            total_invested: totalInvested,
+            categories: categoriesSummary,
+            recent_mentions: rows.slice(0, 20).map(row => ({
+                date: row.publication_date,
+                value: parseFloat(row.valor_final),
+                url: row.source_url,
+                details: (row.gemini_analysis_txt || row.gemini_analysis)?.detalhes_extraidos || []
+            }))
+        });
+    } catch (error) {
+        console.error(`[MapRoutes] Erro Município ${ibge}:`, error);
+        res.status(500).json({ error: "Erro interno." });
+    }
+});
+
+// --- ROTA 3: DETALHES DO ESTADO ---
+router.get('/estado/:codIbge', async (req, res) => {
+    const { codIbge } = req.params;
+    
+    // AQUI ESTAVA O ERRO: codeToUf não existia. Agora existe!
+    const uf = codeToUf[codIbge];
+
+    if (!uf) return res.status(400).json({ error: "Código de estado inválido." });
+
+    try {
+        const query = `
+            SELECT 
+                COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor_final,
+                gemini_analysis, gemini_analysis_txt
+            FROM mentions
+            WHERE state_uf = $1 
+            AND (extracted_value > 0 OR extracted_value_txt > 0);
+        `;
+
+        const { rows } = await db.query(query, [uf]);
+
+        const categoriesSummary = {
+            medicamentos: 0, equipamentos: 0, obras_infraestrutura: 0,
+            servicos_saude: 0, outros_relacionados: 0, estadia_paciente: 0
+        };
+
+        let totalInvested = 0;
+
+        rows.forEach(row => {
+            totalInvested += parseFloat(row.valor_final);
+            const analysis = row.gemini_analysis_txt || row.gemini_analysis;
+            if (analysis) {
+                categoriesSummary.medicamentos += parseFloat(analysis.medicamentos || 0);
+                categoriesSummary.equipamentos += parseFloat(analysis.equipamentos || 0);
+                categoriesSummary.obras_infraestrutura += parseFloat(analysis.obras_infraestrutura || 0);
+                categoriesSummary.servicos_saude += parseFloat(analysis.servicos_saude || 0);
+                categoriesSummary.outros_relacionados += parseFloat(analysis.outros_relacionados || 0);
+                categoriesSummary.estadia_paciente += parseFloat(analysis.estadia_paciente || 0);
+            }
+        });
+
+        res.json({
+            uf: uf,
+            ibge: codIbge,
+            name: codeToName[codIbge] || uf,
+            total_invested: totalInvested,
+            categories: categoriesSummary
+        });
+
+    } catch (error) {
+        console.error(`[MapRoutes] Erro Estado ${codIbge}:`, error);
+        res.status(500).json({ error: "Erro interno." });
     }
 });
 
