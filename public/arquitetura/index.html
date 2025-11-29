@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head><script src="/2025-2-OncoMap/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=2025-2-OncoMap/livereload" data-no-instant defer></script>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -34,7 +34,7 @@
     
     
     
-    <link rel="stylesheet" href="http://localhost:1313/2025-2-OncoMap/css/-page-bundle.min.css">
+    <link rel="stylesheet" href="https://unb-mds.github.io/2025-2-OncoMap/css/-page-bundle.min.css">
 
 
 
@@ -43,16 +43,16 @@
 
     <nav class="navbar">
 
-    <a class="navbar-brand" href="http://localhost:1313/2025-2-OncoMap/">
+    <a class="navbar-brand" href="https://unb-mds.github.io/2025-2-OncoMap/">
         OncoMap
     </a>
 
     <ul class="navbar-links">
-        <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
-        <li><a href="http://localhost:1313/2025-2-OncoMap/sprints/">Sprints</a></li>
-        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
-        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
-        <li><a href="http://localhost:1313/2025-2-OncoMap/diversos/">Diversos</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/">Início</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/sprints/">Sprints</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/diversos/">Diversos</a></li>
     </ul>
 
     <div class="navbar-right">
@@ -87,20 +87,39 @@
             
             
             <div class="text-block">
-                <h2>Arquitetura Atual</h2>
+                <h2>Arquitetura Lógica da Solução</h2>
                 
                 <div class="text-block-content">
-                    <h3 id="frontend">Frontend</h3>
+                    <p>A solução <strong>OncoMap</strong> segue um modelo de <strong>Arquitetura em Camadas</strong> (Tiered Architecture), separando a interface do usuário (Frontend) da lógica de negócios (Backend) e do armazenamento de dados (Banco de Dados).</p>
+<p>Abaixo está o diagrama de alto nível que ilustra a interação entre os principais componentes do sistema.</p>
 <ul>
-<li>Next.js</li>
-<li>React</li>
-<li>Css</li>
+<li><strong>Frontend (Apresentação):</strong> Responsável pela interface e experiência do usuário.</li>
+<li><strong>Backend (Lógica de Negócios):</strong> Servidor API RESTful que orquestra as regras de negócio e a persistência de dados.</li>
+<li><strong>Banco de Dados (Persistência):</strong> Armazena todas as informações clínicas e de usuário.</li>
 </ul>
-<h3 id="backend">Backend</h3>
-<h3 id="integrações-externas">Integrações Externas</h3>
-<ul>
-<li>Querido Diário API</li>
-</ul>
+
+                </div>
+            </div>
+            
+            <div class="text-block">
+                <h2>Stack Tecnológico</h2>
+                
+                <div class="text-block-content">
+                    <p>As seguintes tecnologias foram escolhidas para compor o projeto, visando <strong>desempenho, escalabilidade e facilidade de manutenção</strong>:</p>
+<h3 id="-frontend-interface">🖥️ Frontend (Interface)</h3>
+<p><img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&amp;logo=react&amp;logoColor=%2361DAFB" alt="React">
+<img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&amp;logo=typescript&amp;logoColor=white" alt="TypeScript">
+<img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&amp;logo=vite&amp;logoColor=white" alt="Vite"></p>
+<h3 id="-backend-api-e-lógica">⚙️ Backend (API e Lógica)</h3>
+<p><img src="https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&amp;logo=node.js&amp;logoColor=white" alt="NodeJS">
+<img src="https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&amp;logo=express&amp;logoColor=%2361DAFB" alt="Express.js">
+<img src="https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&amp;logo=sequelize&amp;logoColor=white" alt="Sequelize"></p>
+<h3 id="-banco-de-dados-persistência">🗄️ Banco de Dados (Persistência)</h3>
+<p><img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&amp;logo=postgresql&amp;logoColor=white" alt="Postgres"></p>
+<h3 id="-ferramentas-de-desenvolvimento">🛠️ Ferramentas de Desenvolvimento</h3>
+<p><img src="https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&amp;logo=eslint&amp;logoColor=white" alt="ESLint">
+<img src="https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&amp;logo=prettier&amp;logoColor=white" alt="Prettier">
+<img src="https://img.shields.io/badge/Nodemon-76D04B?style=for-the-badge&amp;logo=nodemon&amp;logoColor=white" alt="Nodemon"></p>
 
                 </div>
             </div>
@@ -146,9 +165,9 @@
                 <h2>Diagrama</h2>
                 
                 <div class="text-block-content">
-                    <img src="http://localhost:1313/2025-2-OncoMap/images/arquitetura/diagrama1.png" alt="Diagrama 1" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
-<img src="http://localhost:1313/2025-2-OncoMap/images/arquitetura/diagrama2.png" alt="Diagrama 2" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
-<img src="http://localhost:1313/2025-2-OncoMap/images/arquitetura/diagrama3.png" alt="Diagrama 3" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
+                    <img src="https://unb-mds.github.io/2025-2-OncoMap/images/arquitetura/diagrama1.png" alt="Diagrama 1" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
+<img src="https://unb-mds.github.io/2025-2-OncoMap/images/arquitetura/diagrama2.png" alt="Diagrama 2" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
+<img src="https://unb-mds.github.io/2025-2-OncoMap/images/arquitetura/diagrama3.png" alt="Diagrama 3" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
 
                 </div>
             </div>
@@ -173,18 +192,18 @@
             <div class="footer-column links">
                 <h3>Links Úteis</h3>
                 <ul>
-                    <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
-                    <li><a href="http://localhost:1313/2025-2-OncoMap/sprints">Sprints</a></li>
+                    <li><a href="https://unb-mds.github.io/2025-2-OncoMap/">Início</a></li>
+                    <li><a href="https://unb-mds.github.io/2025-2-OncoMap/sprints">Sprints</a></li>
                     
                     
                     
                     
-                        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+                        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/requisitos/">Requisitos</a></li>
                     
                     
                     
                     
-                        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+                        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
                     
                 </ul>
             </div>
@@ -207,6 +226,6 @@
     </div>
 </footer>
     
-    <script src="http://localhost:1313/2025-2-OncoMap/js/app.js"></script>
+    <script src="https://unb-mds.github.io/2025-2-OncoMap/js/app.js"></script>
 </body>
 </html>

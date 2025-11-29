@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        
+            [Feat] Geração relatórios PDF | OncoMap
+        
+    </title>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="https://unb-mds.github.io/2025-2-OncoMap/css/issues-page-bundle.min.css">
+
+
+
+</head>
+<body>
+
+    <nav class="navbar">
+
+    <a class="navbar-brand" href="https://unb-mds.github.io/2025-2-OncoMap/">
+        OncoMap
+    </a>
+
+    <ul class="navbar-links">
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/">Início</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/sprints/">Sprints</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/diversos/">Diversos</a></li>
+    </ul>
+
+    <div class="navbar-right">
+        <a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a>
+    </div>
+
+</nav>
+
+    <section class="hero">
+    <div class="container">
+        <h1>[Feat] Geração relatórios PDF</h1>
+        
+        
+        
+        </div>
+</section>
+
+    <main>
+        
+
+    <div class="container page-single">
+        <h1>[Feat] Geração relatórios PDF</h1>
+        
+        <div class="content">
+            <h2 id="-descrição">🎯 Descrição</h2>
+<p>Implementar um sistema de <strong>Exportação de Relatórios em PDF</strong> enriquecidos com Inteligência Artificial.</p>
+<p>Atualmente, o usuário visualiza os dados no mapa, mas não tem uma forma fácil de extrair um documento formal ou analítico sobre o que está vendo. O objetivo é permitir que o usuário baixe relatórios prontos para uso (Regionais, Estaduais ou Municipais).</p>
+<hr>
+<h2 id="-objetivo">✅ Objetivo</h2>
+<p>Fornecer aos gestores públicos, jornalistas e pesquisadores uma ferramenta de <strong>análise automatizada</strong>.</p>
+<p>Em vez de apenas entregar uma planilha de números, o sistema deve usar o <strong>Gemini</strong> para &ldquo;ler&rdquo; os dados agregados do banco e escrever um relatório textual (com introdução, análise e conclusão), formatado elegantemente em PDF. Isso agrega valor ao transformar dados brutos em <em>insights</em> consumíveis.</p>
+<hr>
+<h2 id="-detalhes-da-implementação">📝 Detalhes da Implementação</h2>
+<h3 id="backend">Backend</h3>
+<ul>
+<li><strong>Controlador (<code>reportController.js</code>):</strong>
+<ul>
+<li>Criar funções que busquem dados agregados no banco (<code>mentions</code> e <code>final_extracted_value</code>).</li>
+<li>Implementar lógica de Prompt Engineering para enviar esses dados ao Gemini e solicitar um retorno em HTML formatado.</li>
+<li>Usar uma biblioteca como <code>html-pdf-node</code> ou <code>puppeteer</code> para converter o HTML gerado em binário PDF.</li>
+</ul>
+</li>
+<li><strong>Rotas (<code>reportRoutes.js</code>):</strong>
+<ul>
+<li><code>GET /api/report/region/:regionName/pdf</code></li>
+<li><code>GET /api/report/state/:uf/pdf</code></li>
+<li><code>GET /api/report/municipality/:ibge/pdf</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="design-do-relatório">Design do Relatório</h3>
+<ul>
+<li>O PDF deve ter um cabeçalho padrão do OncoMap.</li>
+<li>Deve incluir tabelas de dados (geradas pela IA ou montadas no código).</li>
+<li>Deve incluir textos analíticos (ex: &ldquo;O estado X lidera os investimentos com 40% do total&hellip;&rdquo;).</li>
+</ul>
+<hr>
+<h2 id="-critérios-de-aceitação">📊 Critérios de Aceitação</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> O sistema deve gerar PDFs válidos para download direto no navegador.</li>
+<li><input checked="" disabled="" type="checkbox"> O relatório deve suportar três níveis de granularidade: Região, Estado e Município.</li>
+<li><input checked="" disabled="" type="checkbox"> O conteúdo textual deve ser dinâmico (gerado pela IA com base nos dados reais do momento).</li>
+<li><input checked="" disabled="" type="checkbox"> O relatório deve exibir corretamente os valores monetários formatados (R$).</li>
+<li><input checked="" disabled="" type="checkbox"> Caso a região/estado/município não tenha dados, a API deve retornar um erro 400 ou 404 claro, sem tentar gerar um PDF vazio.</li>
+</ul>
+<hr>
+
+        </div>
+    </div>
+
+
+    </main>
+
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            
+            <div class="footer-column about">
+                <h3>OncoMap</h3>
+                <p>Mapa de investimento em saúde oncológica</p>
+            </div>
+            
+            <div class="footer-column links">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li><a href="https://unb-mds.github.io/2025-2-OncoMap/">Início</a></li>
+                    <li><a href="https://unb-mds.github.io/2025-2-OncoMap/sprints">Sprints</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="https://unb-mds.github.io/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+                    
+                </ul>
+            </div>
+            
+            <div class="footer-column contact">
+                <h3>Contato</h3>
+                <ul>
+                    <li><a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="container">
+            <p>&copy; 2025 OncoMap. Todos os direitos reservados.</p>
+            <p>Desenvolvido pela equipe UnB-MDS</p>
+        </div>
+    </div>
+</footer>
+    
+    <script src="https://unb-mds.github.io/2025-2-OncoMap/js/app.js"></script>
+</body>
+</html>
