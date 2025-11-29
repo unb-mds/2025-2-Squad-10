@@ -1,0 +1,64 @@
+/* src/style/PDFBotao.css */
+
+/* Variáveis locais para garantir consistência (ou use as globais se já tiver importado) */
+:root {
+  --btn-cor-destaque: #3DA35D;
+  --btn-cor-hover: #2E7D32;
+}
+
+.pdf-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  margin-top: 25px; /* Espaço acima do botão */
+  background-color: transparent;
+  color: var(--btn-cor-destaque);
+  border: 2px solid var(--btn-cor-destaque);
+  border-radius: 8px;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Estado: Hover (Mouse em cima) */
+.pdf-btn:hover:not(:disabled) {
+  background-color: var(--btn-cor-destaque);
+  color: white;
+  box-shadow: 0 5px 15px rgba(61, 163, 93, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Estado: Carregando (Disabled) */
+.pdf-btn:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  border-color: #888;
+  color: #888;
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Spinner animado DENTRO do botão */
+.pdf-btn-spinner {
+  width: 18px; 
+  height: 18px; 
+  border: 2px solid rgba(0, 0, 0, 0.1); 
+  border-top: 2px solid currentColor; /* Usa a cor do texto do botão */
+  border-radius: 50%; 
+  animation: spin-button 1s linear infinite;
+  display: inline-block;
+}
+
+/* Animação de Rotação */
+@keyframes spin-button {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -1,4 +1,3 @@
-// backend/src/api/controllers/reportController.js
 const db = require('../../config/database');
 const { getStatesByRegion } = require('../../utils/regionMap');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -6,49 +5,73 @@ const pdf = require('html-pdf-node');
 require('dotenv').config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-// Usando o modelo 1.5 Pro para melhor capacidade de escrita e formatação
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
-// Função auxiliar para gerar o PDF a partir do HTML
+// Formatador
+const fmt = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+// Auxiliares
+const somaCategorias = (target, analysis) => {
+    if (!analysis) return;
+    target.medicamentos += parseFloat(analysis.medicamentos || 0);
+    target.equipamentos += parseFloat(analysis.equipamentos || 0);
+    target.obras += parseFloat(analysis.obras_infraestrutura || 0);
+    target.servicos += parseFloat(analysis.servicos_saude || 0);
+    target.estadia += parseFloat(analysis.estadia_paciente || 0);
+    target.outros += parseFloat(analysis.outros_relacionados || 0);
+};
+
+const initCategories = () => ({
+    medicamentos: 0, equipamentos: 0, obras: 0, servicos: 0, estadia: 0, outros: 0
+});
+
+const cleanGeminiResponse = (text) => {
+    const codeBlockMatch = text.match(/```html([\s\S]*?)```/);
+    if (codeBlockMatch && codeBlockMatch[1]) return codeBlockMatch[1].trim();
+    const htmlStart = text.indexOf('<h1');
+    if (htmlStart !== -1) return text.substring(htmlStart).replace(/```/g, '').trim();
+    return text.replace(/```html/g, '').replace(/```/g, '').trim();
+};
+
+// --- GERAÇÃO DO PDF ---
 const createPdf = async (htmlContent) => {
     const finalHtml = `
         <html>
             <head>
                 <style>
-                    body { font-family: Arial, Helvetica, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
-                    h1 { color: #0D4B55; border-bottom: 2px solid #0D4B55; padding-bottom: 10px; margin-bottom: 20px; }
-                    h2 { color: #0D4B55; margin-top: 30px; margin-bottom: 15px; border-left: 5px solid #0D4B55; padding-left: 10px; }
-                    p { margin-bottom: 15px; text-align: justify; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 30px; font-size: 14px; }
-                    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                    body { font-family: 'Helvetica', Arial, sans-serif; padding: 40px; padding-bottom: 60px; color: #333; line-height: 1.5; }
+                    
+                    h1 { color: #0D4B55; text-align: center; border-bottom: 3px solid #0D4B55; padding-bottom: 10px; margin-bottom: 30px; font-size: 22px; }
+                    h2 { color: #2E7D32; margin-top: 30px; border-left: 6px solid #2E7D32; padding-left: 10px; font-size: 18px; background-color: #f1f8e9; padding: 5px 10px; }
+                    h3 { color: #555; margin-top: 20px; margin-bottom: 5px; font-size: 14px; text-transform: uppercase; font-weight: bold; border-bottom: 1px dashed #ccc; }
+                    p { text-align: justify; margin-bottom: 10px; font-size: 12px; }
+                    
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; page-break-inside: avoid; }
+                    th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
                     th { background-color: #0D4B55; color: white; font-weight: bold; }
-                    tr:nth-child(even) { background-color: #f2f2f2; }
-                    .highlight { font-weight: bold; color: #0D4B55; }
-                    .note { font-size: 12px; color: #666; font-style: italic; margin-top: -10px; margin-bottom: 20px; }
-                    .footer { margin-top: 50px; font-size: 10px; color: gray; text-align: center; border-top: 1px solid #ccc; padding-top: 10px; }
+                    tr:nth-child(even) { background-color: #f9f9f9; }
+                    .valor { text-align: right; white-space: nowrap; font-weight: bold; }
+                    
+                    .total-geral { font-size: 16px; font-weight: bold; text-align: center; margin: 20px 0; padding: 15px; background: #e0f2f1; border: 1px solid #00695c; color: #004d40; border-radius: 5px; }
+                    .ano-section { margin-bottom: 40px; page-break-inside: avoid; }
+                    
+                    .footer { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; text-align: center; font-size: 9px; color: #666; border-top: 1px solid #ccc; padding-top: 10px; background-color: white; }
                 </style>
             </head>
             <body>
                 ${htmlContent}
                 <div class="footer">
                     Relatório gerado automaticamente pelo OncoMap em ${new Date().toLocaleDateString()}.<br/>
-                    Fonte de Dados: Diários Oficiais Municipais (via Querido Diário).
+                    <strong>Fonte de Dados:</strong> Diários Oficiais Municipais (via Querido Diário).
                 </div>
             </body>
         </html>
     `;
-    
-    const options = { 
-        format: 'A4', 
-        printBackground: true,
-        margin: { top: "20px", bottom: "20px", left: "20px", right: "20px" } 
-    };
-    
-    const file = { content: finalHtml };
-    return pdf.generatePdf(file, options);
+    const options = { format: 'A4', printBackground: true, margin: { top: "30px", bottom: "60px", left: "20px", right: "20px" } };
+    return pdf.generatePdf({ content: finalHtml }, options);
 };
 
-// 1. RELATÓRIO POR REGIÃO
+// --- 1. RELATÓRIO POR REGIÃO ---
 const generateRegionReport = async (req, res) => {
     const { regionName } = req.params;
     const states = getStatesByRegion(regionName);
@@ -57,250 +80,288 @@ const generateRegionReport = async (req, res) => {
 
     try {
         const query = `
-            SELECT state_uf, COUNT(*) as total_mentions, SUM(final_extracted_value) as total_value
-            FROM mentions WHERE state_uf = ANY($1) AND final_extracted_value IS NOT NULL
-            GROUP BY state_uf ORDER BY total_value DESC;
+            SELECT EXTRACT(YEAR FROM publication_date) as ano, state_uf,
+            SUM(COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as total_value
+            FROM mentions 
+            WHERE state_uf = ANY($1) 
+            AND (extracted_value > 0 OR extracted_value_txt > 0)
+            GROUP BY ano, state_uf
+            ORDER BY ano DESC, total_value DESC;
         `;
         const { rows } = await db.query(query, [states]);
-        
-        const totalRegionValue = rows.reduce((acc, r) => acc + parseFloat(r.total_value), 0);
-        
-        const dataContext = JSON.stringify({
-            regiao: regionName,
-            investimento_total: totalRegionValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-            detalhes_por_estado: rows.map(r => ({
-                estado: r.state_uf,
-                valor: parseFloat(r.total_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                qtd_contratos: r.total_mentions
-            }))
+
+        const dadosPorAno = {};
+        let totalGeral = 0;
+        const categoriasGerais = initCategories();
+
+        // Para pegar categorias, precisamos de uma query secundária ou mudar a lógica.
+        // Como o agrupamento SQL acima perde os detalhes de categoria, vamos buscar os dados brutos para alimentar a IA corretamente.
+        // CORREÇÃO: Buscando dados brutos para permitir análise de categoria pela IA
+        const queryRaw = `
+            SELECT EXTRACT(YEAR FROM publication_date) as ano, state_uf,
+            COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor,
+            gemini_analysis, gemini_analysis_txt
+            FROM mentions WHERE state_uf = ANY($1) AND (extracted_value > 0 OR extracted_value_txt > 0)
+            ORDER BY publication_date DESC;
+        `;
+        const { rows: rowsRaw } = await db.query(queryRaw, [states]);
+
+        rowsRaw.forEach(row => {
+            const ano = row.ano || 'Indefinido';
+            const valor = parseFloat(row.valor);
+            const analysis = row.gemini_analysis_txt || row.gemini_analysis;
+
+            totalGeral += valor;
+            somaCategorias(categoriasGerais, analysis);
+
+            if (!dadosPorAno[ano]) {
+                dadosPorAno[ano] = { total: 0, categorias: initCategories(), estados: {} };
+            }
+            dadosPorAno[ano].total += valor;
+            somaCategorias(dadosPorAno[ano].categorias, analysis);
+
+            if (!dadosPorAno[ano].estados[row.state_uf]) dadosPorAno[ano].estados[row.state_uf] = 0;
+            dadosPorAno[ano].estados[row.state_uf] += valor;
         });
 
-        // PROMPT PADRONIZADO - REGIÃO
+        const yearsData = Object.entries(dadosPorAno)
+            .sort((a, b) => b[0] - a[0])
+            .map(([ano, dados]) => ({
+                ano,
+                total: fmt(dados.total),
+                categorias: Object.entries(dados.categorias).reduce((acc, [k, v]) => ({...acc, [k]: fmt(v)}), {}),
+                estados: Object.entries(dados.estados)
+                    .map(([uf, val]) => ({ uf, valor: fmt(val) }))
+                    .sort((a, b) => parseFloat(b.valor.replace(/\D/g, '')) - parseFloat(a.valor.replace(/\D/g, '')))
+            }));
+
+        const dataContext = JSON.stringify({
+            regiao: regionName.toUpperCase(),
+            total_acumulado: fmt(totalGeral),
+            categorias_gerais: Object.entries(categoriasGerais).reduce((acc, [k, v]) => ({...acc, [k]: fmt(v)}), {}),
+            evolucao_anual: yearsData
+        });
+
+        // PROMPT REFORÇADO PARA ANÁLISE REAL
         const prompt = `
-            Você é um especialista em relatórios de transparência pública.
+            ATENÇÃO: Você é um analista financeiro senior. Retorne APENAS HTML.
+            
+            Sua tarefa: Gerar um relatório sobre a Região ${regionName.toUpperCase()}.
+            DADOS: ${dataContext}
 
-            Gere um relatório técnico e elegante em formato HTML (apenas o conteúdo dentro de <body>, sem tags html/head) sobre os investimentos em oncologia na Região ${regionName}.
+            ESTRUTURA OBRIGATÓRIA (HTML dentro do body):
+            
+            1. <h1>Relatório Regional: ${regionName.toUpperCase()}</h1>
+            2. <div class="total-geral">Investimento Total Acumulado: ${fmt(totalGeral)}</div>
+            
+            3. <h2>Visão Geral do Período</h2>
+            - Crie uma Tabela HTML única somando todas as categorias do período.
+            - <p>[ESCREVA AQUI UM PARÁGRAFO ANALISANDO QUAIS CATEGORIAS RECEBERAM MAIS RECURSOS NO TOTAL E O QUE ISSO INDICA SOBRE A REGIÃO.]</p>
 
-            DADOS REAIS DO BANCO DE DADOS:
-            ${dataContext}
-
-            REGRAS DE FORMATAÇÃO:
-            - Use tags <h1> para o título principal.
-            - Use <h2> para seções (subtítulos).
-            - Crie uma tabela HTML elegante com bordas para mostrar os dados por estado.
-            - Escreva um parágrafo de análise interpretando os dados (qual estado investiu mais, a disparidade regional, etc).
-            - Adicione uma conclusão sobre a importância desses investimentos.
-            - Use CSS inline para deixar o relatório bonito (fonte Arial, cores sóbrias, tabela zebrada).
-            - NÃO INVENTE DADOS. Use estritamente os números fornecidos.
-
-            Use de Base o seguinte Modelo pro texto:
-
-            Relatório de Investimentos em Oncologia na Região ${regionName} (TITULO)
-
-            Visão Geral dos Investimentos (SUBTITULO)
-            [Breve introdução sobre o relatório].
-            <p class="note">Nota: Os dados apresentados neste relatório compreendem o período a partir do ano de 2022.</p>
-
-            Investimento Total (SUBTITULO)
-            O investimento total identificado em oncologia na Região ${regionName} foi de [Inserir Valor Total].
-
-            Dados por Estado (SUBTITULO)
-            (Tabela com colunas: Estado, Valor Investido, Quantidade de Contratos)
-
-            Análise dos Dados (SUBTITULO)
-            [Texto analítico comparando os estados...]
-
-            Conclusão (SUBTITULO)
-            [Texto de conclusão...]
+            4. (LOOP PARA CADA ANO - GERE UMA DIV .ano-section PARA CADA):
+               <h2>Exercício de [ANO]</h2>
+               <h3>1. Distribuição por Estado</h3>
+               - Tabela HTML (Estado | Valor).
+               
+               <h3>2. Detalhamento Temático</h3>
+               - Tabela HTML (Categoria | Valor).
+               
+               <h3>3. Análise do Ano</h3>
+               - <p>[ESCREVA AQUI UMA ANÁLISE REAL DESTE ANO. COMPARE OS ESTADOS (QUAL INVESTIU MAIS?) E AS CATEGORIAS. NÃO USE PLACEHOLDERS. ESCREVA O TEXTO.]</p>
+            
+            5. <h2>Conclusão Regional</h2>
+            - <p>[ESCREVA UMA CONCLUSÃO FINAL SOBRE A TENDÊNCIA DE INVESTIMENTO AO LONGO DOS ANOS NA REGIÃO.]</p>
         `;
 
         const result = await model.generateContent(prompt);
-        const cleanHtml = result.response.text().replace(/```html|```/g, '');
-        const pdfBuffer = await createPdf(cleanHtml);
-
+        const pdfBuffer = await createPdf(cleanGeminiResponse(result.response.text()));
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=relatorio-regiao-${regionName}.pdf`);
         res.send(pdfBuffer);
 
     } catch (error) {
-        console.error("Erro relatório região:", error);
+        console.error("Erro Região PDF:", error);
         res.status(500).json({ error: "Erro ao gerar PDF." });
     }
 };
 
-// 2. RELATÓRIO POR ESTADO
+// --- 2. RELATÓRIO POR ESTADO ---
 const generateStateReport = async (req, res) => {
     const { uf } = req.params;
 
     try {
         const query = `
-            SELECT municipality_name, COUNT(*) as total_mentions, SUM(final_extracted_value) as total_value
-            FROM mentions WHERE state_uf = $1 AND final_extracted_value IS NOT NULL
-            GROUP BY municipality_name ORDER BY total_value DESC LIMIT 15;
+            SELECT EXTRACT(YEAR FROM publication_date) as ano, municipality_name,
+            COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor,
+            gemini_analysis, gemini_analysis_txt
+            FROM mentions WHERE state_uf = $1 AND (extracted_value > 0 OR extracted_value_txt > 0)
+            ORDER BY publication_date DESC;
         `;
         const { rows } = await db.query(query, [uf.toUpperCase()]);
 
-        if (rows.length === 0) return res.status(404).json({ error: "Sem dados para este estado." });
+        if (rows.length === 0) return res.status(404).json({ error: "Sem dados." });
 
-        const totalStateValue = rows.reduce((acc, r) => acc + parseFloat(r.total_value), 0);
-        
-        const dataContext = JSON.stringify({
-            estado: uf.toUpperCase(),
-            investimento_total_amostra: totalStateValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-            top_municipios: rows.map(r => ({
-                municipio: r.municipality_name,
-                valor: parseFloat(r.total_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                contratos: r.total_mentions
-            }))
+        const dadosPorAno = {};
+        let totalGeral = 0;
+        const categoriasGerais = initCategories();
+
+        rows.forEach(row => {
+            const val = parseFloat(row.valor);
+            const ano = row.ano || 'Indefinido';
+            const analysis = row.gemini_analysis_txt || row.gemini_analysis;
+
+            totalGeral += val;
+            somaCategorias(categoriasGerais, analysis);
+
+            if (!dadosPorAno[ano]) {
+                dadosPorAno[ano] = { total: 0, categorias: initCategories(), municipios: {} };
+            }
+            dadosPorAno[ano].total += val;
+            somaCategorias(dadosPorAno[ano].categorias, analysis);
+
+            if (!dadosPorAno[ano].municipios[row.municipality_name]) dadosPorAno[ano].municipios[row.municipality_name] = 0;
+            dadosPorAno[ano].municipios[row.municipality_name] += val;
         });
 
-        // PROMPT PADRONIZADO - ESTADO
+        const yearsData = Object.entries(dadosPorAno)
+            .sort((a, b) => b[0] - a[0])
+            .map(([ano, dados]) => ({
+                ano,
+                total: fmt(dados.total),
+                categorias: Object.entries(dados.categorias).reduce((acc, [k, v]) => ({...acc, [k]: fmt(v)}), {}),
+                top_municipios: Object.entries(dados.municipios)
+                    .map(([nome, val]) => ({ nome, valor: fmt(val) }))
+                    .sort((a, b) => parseFloat(b.valor.replace(/\D/g, '')) - parseFloat(a.valor.replace(/\D/g, '')))
+                    .slice(0, 15)
+            }));
+
+        const dataContext = JSON.stringify({
+            estado: uf.toUpperCase(),
+            total_acumulado: fmt(totalGeral),
+            categorias_acumuladas: Object.entries(categoriasGerais).reduce((acc, [k, v]) => ({...acc, [k]: fmt(v)}), {}),
+            evolucao_anual: yearsData
+        });
+
+        // PROMPT REFORÇADO
         const prompt = `
-            Você é um especialista em relatórios de transparência pública.
+            ATENÇÃO: Retorne APENAS HTML. Você é um analista financeiro.
+            
+            Relatório do Estado: ${uf.toUpperCase()}.
+            DADOS: ${dataContext}
+            
+            ESTRUTURA OBRIGATÓRIA:
+            1. <h1>Relatório Estadual: ${uf.toUpperCase()}</h1>
+            2. <div class="total-geral">Total Acumulado: ${fmt(totalGeral)}</div>
+            
+            3. <h2>Visão Geral do Período</h2>
+            - Tabela única com categorias acumuladas.
+            - <p>[ESCREVA UMA ANÁLISE GERAL SOBRE ONDE O ESTADO MAIS INVESTIU NO TOTAL.]</p>
 
-            Gere um relatório técnico e elegante em formato HTML (apenas o conteúdo dentro de <body>, sem tags html/head) sobre os investimentos em oncologia no Estado de ${uf.toUpperCase()}.
-
-            DADOS REAIS DO BANCO DE DADOS:
-            ${dataContext}
-
-            REGRAS DE FORMATAÇÃO:
-            - Use tags <h1> para o título principal.
-            - Use <h2> para seções (subtítulos).
-            - Crie uma tabela HTML elegante com bordas para mostrar os dados por município.
-            - Escreva um parágrafo de análise interpretando os dados (concentração de recursos, municípios destaque, etc).
-            - Adicione uma conclusão sobre o cenário estadual.
-            - Use CSS inline para deixar o relatório bonito (fonte Arial, cores sóbrias, tabela zebrada).
-            - NÃO INVENTE DADOS. Use estritamente os números fornecidos.
-
-            Use de Base o seguinte Modelo pro texto:
-
-            Relatório de Investimentos em Oncologia no Estado de ${uf.toUpperCase()} (TITULO)
-
-            Visão Geral dos Investimentos (SUBTITULO)
-            [Breve introdução sobre o relatório estadual].
-            <p class="note">Nota: Os dados apresentados neste relatório compreendem o período a partir do ano de 2022.</p>
-
-            Investimento Total da Amostra (SUBTITULO)
-            O investimento total identificado nos principais municípios do estado foi de [Inserir Valor Total].
-
-            Principais Municípios Investidores (SUBTITULO)
-            (Tabela com colunas: Município, Valor Investido, Quantidade de Contratos)
-
-            Análise dos Dados (SUBTITULO)
-            [Texto analítico sobre a distribuição dos recursos no estado...]
-
-            Conclusão (SUBTITULO)
-            [Texto de conclusão...]
+            4. (LOOP PARA CADA ANO PRESENTE):
+               <div class="ano-section">
+                   <h2>Exercício de [ANO]</h2>
+                   
+                   <h3>1. Detalhamento Temático (Categorias)</h3>
+                   - Tabela HTML (Categoria | Valor).
+                   
+                   <h3>2. Principais Municípios</h3>
+                   - Tabela HTML (Município | Valor).
+                   
+                   <h3>3. Análise do Ano</h3>
+                   - <p>[ESCREVA UMA ANÁLISE DETALHADA DESTE ANO. MENCIONE O MUNICÍPIO QUE MAIS GASTOU E A CATEGORIA PRINCIPAL. NÃO USE PLACEHOLDERS.]</p>
+               </div>
+            
+            5. <h2>Conclusão Estadual</h2>
+            - <p>[TEXTO CONCLUSIVO SOBRE A EVOLUÇÃO NO ESTADO.]</p>
         `;
 
         const result = await model.generateContent(prompt);
-        const cleanHtml = result.response.text().replace(/```html|```/g, '');
-        const pdfBuffer = await createPdf(cleanHtml);
-
+        const pdfBuffer = await createPdf(cleanGeminiResponse(result.response.text()));
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=relatorio-estado-${uf}.pdf`);
         res.send(pdfBuffer);
 
     } catch (error) {
-        console.error("Erro relatório estado:", error);
+        console.error("Erro Estado PDF:", error);
         res.status(500).json({ error: "Erro ao gerar PDF." });
     }
 };
 
-// 3. RELATÓRIO POR MUNICÍPIO
+// --- 3. RELATÓRIO MUNICIPAL ---
 const generateMunicipalityReport = async (req, res) => {
     const { ibge } = req.params;
 
     try {
         const query = `
-            SELECT municipality_name, state_uf, final_extracted_value, gemini_analysis
-            FROM mentions WHERE municipality_ibge_code = $1 AND final_extracted_value IS NOT NULL;
+            SELECT EXTRACT(YEAR FROM publication_date) as ano, municipality_name, state_uf,
+            COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor,
+            gemini_analysis, gemini_analysis_txt
+            FROM mentions WHERE municipality_ibge_code = $1 AND (extracted_value > 0 OR extracted_value_txt > 0)
+            ORDER BY publication_date DESC;
         `;
         const { rows } = await db.query(query, [ibge]);
 
-        if (rows.length === 0) return res.status(404).json({ error: "Sem dados para este município." });
+        if (rows.length === 0) return res.status(404).json({ error: "Sem dados." });
 
-        const categories = { medicamentos: 0, equipamentos: 0, obras: 0, servicos: 0, outros: 0, estadia: 0 };
-        let totalValue = 0;
+        const dadosPorAno = {};
+        let totalGeral = 0;
+        const categoriasGerais = initCategories();
 
         rows.forEach(row => {
-            totalValue += parseFloat(row.final_extracted_value);
-            const analysis = row.gemini_analysis;
-            if (analysis) {
-                categories.medicamentos += parseFloat(analysis.medicamentos || 0);
-                categories.equipamentos += parseFloat(analysis.equipamentos || 0);
-                categories.obras += parseFloat(analysis.obras_infraestrutura || 0);
-                categories.servicos += parseFloat(analysis.servicos_saude || 0);
-                categories.estadia += parseFloat(analysis.estadia_paciente || 0);
-                categories.outros += parseFloat(analysis.outros_relacionados || 0);
+            const val = parseFloat(row.valor);
+            const ano = row.ano || 'Indefinido';
+            const analysis = row.gemini_analysis_txt || row.gemini_analysis;
+
+            totalGeral += val;
+            somaCategorias(categoriasGerais, analysis);
+
+            if (!dadosPorAno[ano]) {
+                dadosPorAno[ano] = { total: 0, categorias: initCategories() };
             }
+            dadosPorAno[ano].total += val;
+            somaCategorias(dadosPorAno[ano].categorias, analysis);
         });
 
-        const municipalityName = rows[0].municipality_name;
-        const stateUf = rows[0].state_uf;
-
-        const dataContext = JSON.stringify({
-            municipio: municipalityName,
-            uf: stateUf,
-            total_investido: totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-            categorias: {
-                "Medicamentos": categories.medicamentos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                "Equipamentos": categories.equipamentos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                "Obras e Infraestrutura": categories.obras.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                "Serviços de Saúde": categories.servicos.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                "Outros": categories.outros.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-            }
+        Object.keys(dadosPorAno).forEach(ano => {
+            dadosPorAno[ano].total_fmt = fmt(dadosPorAno[ano].total);
+            Object.keys(dadosPorAno[ano].categorias).forEach(cat => {
+                dadosPorAno[ano].categorias[cat] = fmt(dadosPorAno[ano].categorias[cat]);
+            });
         });
 
-        // PROMPT PADRONIZADO - MUNICÍPIO
         const prompt = `
-            Você é um especialista em relatórios de transparência pública.
+            ATENÇÃO: Retorne APENAS HTML. Seja analítico.
+            
+            Relatório do Município: ${rows[0].municipality_name} (${rows[0].state_uf}).
+            DADOS: ${JSON.stringify(dadosPorAno)}
+            TOTAL GERAL: ${fmt(totalGeral)}
+            
+            ESTRUTURA OBRIGATÓRIA:
+            1. <h1>Relatório Municipal: ${rows[0].municipality_name}</h1>
+            2. <div class="total-geral">Total Acumulado: ${fmt(totalGeral)}</div>
+            
+            3. <h2>Visão Geral</h2>
+            - Tabela com as categorias somadas de todo o período.
+            - <p>[ANÁLISE GERAL DO PERÍODO]</p>
 
-            Gere um relatório técnico e elegante em formato HTML (apenas o conteúdo dentro de <body>, sem tags html/head) sobre os investimentos em oncologia no Município de ${municipalityName} (${stateUf}).
-
-            DADOS REAIS DO BANCO DE DADOS:
-            ${dataContext}
-
-            REGRAS DE FORMATAÇÃO:
-            - Use tags <h1> para o título principal.
-            - Use <h2> para seções (subtítulos).
-            - Crie uma tabela HTML elegante com bordas para mostrar o detalhamento por categoria.
-            - Escreva um parágrafo de análise interpretando onde o município focou seus recursos.
-            - Adicione uma conclusão sobre o perfil de investimento local.
-            - Use CSS inline para deixar o relatório bonito (fonte Arial, cores sóbrias, tabela zebrada).
-            - NÃO INVENTE DADOS. Use estritamente os números fornecidos.
-
-            Use de Base o seguinte Modelo pro texto:
-
-            Relatório de Investimentos em Oncologia em ${municipalityName} - ${stateUf} (TITULO)
-
-            Visão Geral dos Investimentos (SUBTITULO)
-            [Breve introdução sobre o relatório municipal].
-            <p class="note">Nota: Os dados apresentados neste relatório compreendem o período a partir do ano de 2022.</p>
-
-            Investimento Total (SUBTITULO)
-            O investimento total identificado em oncologia no município foi de [Inserir Valor Total].
-
-            Detalhamento por Categoria de Gasto (SUBTITULO)
-            (Tabela com colunas: Categoria, Valor Investido)
-
-            Análise dos Dados (SUBTITULO)
-            [Texto analítico sobre as prioridades de gasto do município (ex: foco em remédios vs equipamentos)...]
-
-            Conclusão (SUBTITULO)
-            [Texto de conclusão...]
+            4. (LOOP PARA CADA ANO):
+               <div class="ano-section">
+                   <h2>Exercício de [ANO] - Total: [Valor Total]</h2>
+                   <h3>Destinação dos Recursos</h3>
+                   - Tabela HTML (Categoria | Valor).
+                   <h3>Análise do Ano</h3>
+                   - <p>[ESCREVA UMA ANÁLISE ESPECÍFICA SOBRE OS GASTOS DESTE ANO. FOCO EM QUAL ÁREA RECEBEU MAIS RECURSOS.]</p>
+               </div>
+            
+            5. <h2>Conclusão Municipal</h2>
+            - <p>[TEXTO FINAL SOBRE O PERFIL DE INVESTIMENTO DA CIDADE.]</p>
         `;
 
         const result = await model.generateContent(prompt);
-        const cleanHtml = result.response.text().replace(/```html|```/g, '');
-        const pdfBuffer = await createPdf(cleanHtml);
-
+        const pdfBuffer = await createPdf(cleanGeminiResponse(result.response.text()));
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=relatorio-municipio-${municipalityName}.pdf`);
         res.send(pdfBuffer);
 
     } catch (error) {
-        console.error("Erro relatório município:", error);
+        console.error("Erro Município PDF:", error);
         res.status(500).json({ error: "Erro ao gerar PDF." });
     }
 };

@@ -1,4 +1,3 @@
-// src/components/MapaPage/mapa.tsx
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, GeoJSON } from 'react-leaflet';
@@ -7,8 +6,6 @@ import L, { type Layer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../../style/MapaPage.css';
 import { regioesGeoJson } from '../../data/regioes';
-import localInvestimentos from '../../data/investimentos_fallback.json';
-import { type DadosInvestimentos } from './TabelaInfo';
 
 interface GeoProperties {
   codarea?: string;
@@ -32,19 +29,15 @@ interface MapProps {
   setSelectedRegion: (region: string | null) => void;
   selectedState: string | null;
   setSelectedState: (state: string | null) => void;
-  setDadosInvestimentos: (dados: DadosInvestimentos | null) => void;
   setMunicipiosData: (data: FeatureCollection | null) => void; 
   searchedMunicipioName: string | null;
 }
-
-// --- REMOVIDO: const ZoomOutButton ... ---
 
 const MapaInterativo: React.FC<MapProps> = ({
   selectedRegion,
   setSelectedRegion,
   selectedState,
   setSelectedState,
-  setDadosInvestimentos,
   setMunicipiosData, 
   searchedMunicipioName,
 }) => {
@@ -53,8 +46,6 @@ const MapaInterativo: React.FC<MapProps> = ({
   
   const [municipiosGeoJSON, setMunicipiosGeoJSON] = useState<FeatureCollection | null>(null);
   const [hoveredMunicipio, setHoveredMunicipio] = useState<GeoFeature | null>(null);
-  const [loadingInvestimentos, setLoadingInvestimentos] = useState(true);
-  const [dadosInvestimentosLocal, setDadosInvestimentosLocal] = useState<DadosInvestimentos | null>(null);
 
   const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
   const municipiosLayerRef = useRef<L.GeoJSON | null>(null);
@@ -64,45 +55,15 @@ const MapaInterativo: React.FC<MapProps> = ({
     []
   );
 
-  useEffect(() => {
-    async function fetchInvestimentos() {
-      try {
-        const response = await fetch('http://localhost:3001/api/map/investimentos');
-        if (!response.ok) throw new Error(`Resposta não-ok: ${response.status}`);
-        const data: DadosInvestimentos = await response.json();
-        setDadosInvestimentos(data); 
-        setDadosInvestimentosLocal(data); 
-      } catch (error) {
-        console.warn('Erro ao buscar dados do backend, usando fallback local:', error);
-        setDadosInvestimentos(localInvestimentos as DadosInvestimentos); 
-        setDadosInvestimentosLocal(localInvestimentos as DadosInvestimentos); 
-      } finally {
-        setLoadingInvestimentos(false);
-      }
-    }
-    fetchInvestimentos();
-  }, [setDadosInvestimentos]);
-
-  const todosOsEstadosComNomes = useMemo(() => {
-    if (!dadosInvestimentosLocal) return new Map<string, string>();
-    const mapa = new Map<string, string>();
-    Object.values(dadosInvestimentosLocal).forEach((regiao) => {
-      regiao.municipios.forEach((estado) => {
-        mapa.set(estado.codarea, estado.nome);
-      });
-    });
-    return mapa;
-  }, [dadosInvestimentosLocal]);
 
   useEffect(() => {
     if (map) setTimeout(() => map.invalidateSize(), 500);
   }, [map, selectedRegion, selectedState]);
 
-  // --- LÓGICA DE ZOOM CENTRALIZADA ---
+ 
   useEffect(() => {
     if (!map) return;
 
-    // 1. Zoom no Estado
     if (selectedState) {
       const targetStateFeature = allStatesFeatures.find(
         (f) => f.properties.codarea === selectedState
@@ -114,14 +75,12 @@ const MapaInterativo: React.FC<MapProps> = ({
         }
       }
     } 
-    // 2. Zoom na Região
     else if (selectedRegion && geoJsonLayerRef.current) {
       const bounds = geoJsonLayerRef.current.getBounds();
       if (bounds.isValid()) {
         map.flyToBounds(bounds, { padding: [50, 50], duration: 1.0 });
       }
     } 
-    // 3. Zoom Inicial (Brasil)
     else {
       map.flyTo(INITIAL_VIEW.center, INITIAL_VIEW.zoom, { duration: 1.0 });
     }
@@ -151,8 +110,6 @@ const MapaInterativo: React.FC<MapProps> = ({
       setMunicipiosData(null);     
     }
   }, [selectedState, setMunicipiosData]); 
-  
-  // --- REMOVIDO: handleResetView ---
 
   const statesStyle = (feature?: GeoFeature) => {
     if (!feature) return {};
@@ -176,11 +133,8 @@ const MapaInterativo: React.FC<MapProps> = ({
   };
 
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
-    const codareaDoEstado = feature.properties.codarea;
     const regiaoDoEstado = feature.properties.regiao || 'Região';
-    const nomeDoEstado = codareaDoEstado
-      ? todosOsEstadosComNomes.get(codareaDoEstado) || 'Estado'
-      : 'Estado'; 
+    const nomeDoEstado = feature.properties.nome || feature.properties.name || 'Estado';
 
     const tooltipContent = selectedRegion
       ? nomeDoEstado 
@@ -193,7 +147,8 @@ const MapaInterativo: React.FC<MapProps> = ({
       mouseout: () => setHoveredObject(null),
       click: () => { 
         if (!selectedRegion) {
-          setSelectedRegion(feature.properties.regiao || null);
+          const regiao = feature.properties.regiao?.toLowerCase() || null;
+          setSelectedRegion(regiao);
         } else if (!selectedState) {
           setSelectedState(feature.properties.codarea || null);
         }
@@ -252,10 +207,6 @@ const MapaInterativo: React.FC<MapProps> = ({
     return { type: 'FeatureCollection', features: allStatesFeatures };
   }, [selectedRegion, selectedState, allStatesFeatures]);
 
-  if (loadingInvestimentos) {
-    return <div className="mapa-loading">Carregando dados...</div>;
-  }
-
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <MapContainer
@@ -283,8 +234,6 @@ const MapaInterativo: React.FC<MapProps> = ({
             onEachFeature={onEachMunicipioFeature}
           />
         )}
-        
-        {/* REMOVIDO: <ZoomOutButton ... /> */}
       </MapContainer>
     </div>
   );
