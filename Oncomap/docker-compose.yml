@@ -1,0 +1,49 @@
+services:
+  # 1. SERVIÇO DE BANCO DE DADOS (PostgreSQL)
+  db:
+    container_name: oncomap-db
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: oncomap_user
+      POSTGRES_PASSWORD: oncomap_password
+      POSTGRES_DB: oncomap_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. SERVIÇO DE BACKEND (Node.js)
+  backend:
+    container_name: oncomap-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      # Conecta ao serviço 'db' usando as credenciais definidas acima
+      DATABASE_URL: postgres://oncomap_user:oncomap_password@db:5432/oncomap_db
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+
+  # 3. SERVIÇO DE FRONTEND (Nginx/React)
+  frontend:
+    container_name: oncomap-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+
+# Volume para persistir os dados do banco
+volumes:
+  postgres_data:
