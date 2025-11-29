@@ -1,56 +1,53 @@
-# .github/workflows/deploy.yml
-
 name: Build and Deploy Hugo Site to GitHub Pages
 
 on:
   push:
     branches:
-      - main # 1. O workflow continua a ser acionado por pushes nesta branch
+      - main # O workflow é acionado por pushes para a branch principal (main)
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 2. Faz o checkout do seu código-fonte da branch 'gh-pages'
-      - name: Checkout
+      # 1. Faz o checkout do código-fonte. AGORA BUSCA A BRANCH 'gh-pages', onde o Hugo Source está.
+      - name: Checkout Source Code from gh-pages
         uses: actions/checkout@v4
         with:
-          submodules: true # Necessário se você usar temas como submódulos
-
-      # 3. Instala a versão mais recente do Hugo
+          submodules: true # Necessário se temas forem usados como submódulos Git
+          ref: gh-pages # IMPORTANTE: Busca o código da branch 'gh-pages'
+          
+      # 2. Instala a versão mais recente do Hugo para a construção do site
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: 'latest'
 
-      # 4. Instala Python e as dependências para seus scripts
+      # 3. Instala Python e dependências necessárias para os scripts de busca de dados
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: pip install requests
 
-      # 5. Executa seus scripts para buscar dados
-      - name: Fetch Data
+      # 4. Executa scripts Python para buscar e preparar dados (Issues, Milestones, Atas)
+      - name: Fetch Data Scripts
         run: |
           python ./scripts/fetch_issues.py
           python ./scripts/fetch_milestones.py
           python ./scripts/fetch_atas.py
 
-      # 6. Constrói o site Hugo. O resultado vai para a pasta 'public'
+      # 5. Constrói o site Hugo. O conteúdo estático é gerado na pasta 'public'
       - name: Build Hugo Site
         run: hugo --minify
 
-      # 7. Publica o conteúdo da pasta 'public' para uma branch de deploy
-      # Esta é a etapa mais importante.
+      # 6. Publica o conteúdo da pasta 'public' para a branch de deploy
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # A branch para a qual o site construído será enviado.
-          # Pode ser qualquer nome, mas 'gh-pages-deploy' é claro.
+          # A branch para a qual o site construído será enviado (mantido em gh-pages-deploy)
           publish_branch: gh-pages-deploy
-          # O diretório que contém o site construído.
+          # O diretório que contém o site construído (saída do comando 'hugo')
           publish_dir: ./public
