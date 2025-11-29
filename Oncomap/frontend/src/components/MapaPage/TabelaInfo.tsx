@@ -3,6 +3,7 @@ import '../../style/Tabelainfo.css';
 import type { FeatureCollection } from 'geojson';
 import { mapService, type DetalhesEstado } from '../../services/mapService';
 import type { DadosRegiao, DetalhesMunicipio } from '../../types/apiTypes';
+import PdfButton from '../MapaPage/PDFButao'; 
 
 interface TabelaInfoProps {
   dadosDaRegiao: DadosRegiao;
@@ -13,7 +14,6 @@ interface TabelaInfoProps {
   setSearchedMunicipioName: (name: string | null) => void;
 }
 
-// Ordem fixa para exibição das categorias
 const CATEGORIAS_ORDEM = [
   { key: 'medicamentos', label: 'Medicamentos' },
   { key: 'equipamentos', label: 'Equipamentos' },
@@ -37,34 +37,22 @@ const TabelaInfo = ({
   const [loadingDetalhes, setLoadingDetalhes] = useState(false);
   const [detalhesEstado, setDetalhesEstado] = useState<DetalhesEstado | null>(null);
 
-  // Ref para o container principal do componente
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // URL base para os relatórios (ajuste conforme seu env se necessário)
+  const API_BASE_URL = "http://localhost:3001/api/report";
 
   const dadosDoEstado = estadoCodarea
     ? dadosDaRegiao.municipios.find((m) => String(m.codarea) === String(estadoCodarea))
     : null;
 
-  // --- CORREÇÃO DEFINITIVA DO SCROLL ---
-  // Sempre que mudar a tela (entrar no município, voltar pro estado, etc),
-  // forçamos o scroll do painel pai a voltar para o topo (0).
+  // Scroll Reset Effect
   useEffect(() => {
-    // 1. Tenta rolar o próprio elemento (se ele tiver scroll)
-    if (containerRef.current) {
-      containerRef.current.scrollTop = 0;
-    }
-
-    // 2. Tenta rolar o painel lateral (geralmente a classe .panel-area no MapaPage)
+    if (containerRef.current) containerRef.current.scrollTop = 0;
     const painelLateral = document.querySelector('.panel-area');
-    if (painelLateral) {
-      painelLateral.scrollTop = 0;
-    }
-
-    // 3. Fallback: Rola o elemento para o topo da visão
-    if (containerRef.current) {
-        containerRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
-    }
-  }, [detalhesMunicipio, estadoCodarea]); // Dispara quando muda o município ou o estado
-
+    if (painelLateral) painelLateral.scrollTop = 0;
+    if (containerRef.current) containerRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }, [detalhesMunicipio, estadoCodarea]);
 
   // Carrega Detalhes do Estado
   useEffect(() => {
@@ -91,8 +79,8 @@ const TabelaInfo = ({
       const detalhes = await mapService.getDetalhesMunicipio(codIbge);
       setDetalhesMunicipio(detalhes);
     } catch (error) {
-      console.error("Erro ao carregar detalhes:", error);
-      alert("Não foi possível carregar os detalhes deste município.");
+      console.error("Erro:", error);
+      alert("Não foi possível carregar os detalhes.");
     } finally {
       setLoadingDetalhes(false);
     }
@@ -116,7 +104,6 @@ const TabelaInfo = ({
   const handleSelecionarSugestao = (nomeMunicipio: string) => {
     setTermoBuscaMunicipio(nomeMunicipio);
     setSearchedMunicipioName(nomeMunicipio);
-
     if (dadosDoEstado) {
       const municipioEncontrado = dadosDoEstado.investimentos.find(
         inv => inv.nome.toLowerCase() === nomeMunicipio.toLowerCase()
@@ -127,20 +114,13 @@ const TabelaInfo = ({
     }
   };
 
-  const handleGerarPDF = () => {
-    const baseURL = "http://localhost:3001/api/report";
-    if (detalhesMunicipio) {
-       window.open(`${baseURL}/municipality/${detalhesMunicipio.ibge}/pdf`, '_blank');
-    } else if (dadosDoEstado && detalhesEstado) {
-       window.open(`${baseURL}/state/${detalhesEstado.uf}/pdf`, '_blank');
-    } else {
-       const nomeRegiao = dadosDaRegiao.regiao.toLowerCase();
-       window.open(`${baseURL}/region/${nomeRegiao}/pdf`, '_blank');
-    }
-  };
+  // --- RENDERIZAÇÃO ---
 
-  // --- 1. TELA DE DETALHES DO MUNICÍPIO (Nível 3) ---
+  // 1. TELA DE DETALHES DO MUNICÍPIO (Nível 3)
   if (detalhesMunicipio) {
+    // URL específica para o PDF deste município
+    const pdfUrl = `${API_BASE_URL}/municipality/${detalhesMunicipio.ibge}/pdf`;
+
     return (
       <div className="info-container" ref={containerRef}>
         <div className="visao-detalhes">
@@ -192,9 +172,7 @@ const TabelaInfo = ({
                         <strong>{new Date(mencao.date).toLocaleDateString()}</strong>
                         <span className="link-valor">{mencao.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                     </div>
-                    <a href={mencao.url} target="_blank" rel="noreferrer">
-                      📄 Ver Documento Original
-                    </a>
+                    <a href={mencao.url} target="_blank" rel="noreferrer">📄 Ver Documento Original</a>
                   </li>
                 ))
             ) : (
@@ -202,9 +180,11 @@ const TabelaInfo = ({
             )}
           </ul>
 
-          <button className="btn-pdf" onClick={handleGerarPDF}>
-            Baixar Relatório Completo (PDF)
-          </button>
+          {/* NOVO BOTÃO USADO AQUI */}
+          <PdfButton 
+            url={pdfUrl} 
+            label="Baixar Relatório Completo (PDF)" 
+          />
         </div>
       </div>
     );
@@ -212,6 +192,12 @@ const TabelaInfo = ({
 
   // --- 2. VISÃO DO ESTADO SELECIONADO (Nível 2) ---
   if (dadosDoEstado) {
+    // Define a URL do PDF (Prioriza detalhesEstado se carregado para pegar UF correta)
+    // Se detalhesEstado ainda não carregou, o botão pode ficar desabilitado ou usar fallback
+    const pdfUrl = detalhesEstado 
+        ? `${API_BASE_URL}/state/${detalhesEstado.uf}/pdf`
+        : '#'; // Evita erro se não carregou
+
     return (
       <div className="info-container" ref={containerRef}>
         <div className="visao-estado">
@@ -309,15 +295,21 @@ const TabelaInfo = ({
             </div>
           )}
 
-          <button className="btn-pdf" onClick={handleGerarPDF}>
-            Baixar Relatório Estadual (PDF)
-          </button>
+          {/* NOVO BOTÃO USADO AQUI */}
+          {detalhesEstado && (
+            <PdfButton 
+              url={pdfUrl} 
+              label="Baixar Relatório Estadual (PDF)" 
+            />
+          )}
         </div>
       </div>
     );
   }
 
   // --- 3. VISÃO DA REGIÃO (Nível 1) ---
+  const regionPdfUrl = `${API_BASE_URL}/region/${dadosDaRegiao.regiao.toLowerCase()}/pdf`;
+
   return (
     <div className="info-container" ref={containerRef}>
       <div className="visao-regiao">
@@ -354,9 +346,11 @@ const TabelaInfo = ({
           </div>
         </div>
 
-        <button className="btn-pdf" onClick={handleGerarPDF}>
-          Baixar Relatório Regional (PDF)
-        </button>
+        {/* NOVO BOTÃO USADO AQUI */}
+        <PdfButton 
+          url={regionPdfUrl} 
+          label="Baixar Relatório Regional (PDF)" 
+        />
       </div>
     </div>
   );
