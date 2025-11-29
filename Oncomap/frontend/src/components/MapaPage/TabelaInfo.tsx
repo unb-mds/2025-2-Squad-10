@@ -40,7 +40,7 @@ const TabelaInfo = ({
   const containerRef = useRef<HTMLDivElement>(null);
   
   // URL base para os relatórios (ajuste conforme seu env se necessário)
-  const API_BASE_URL = "http://localhost:3001/api/report";
+  const API_BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:3001"}/api/report`;
 
   const dadosDoEstado = estadoCodarea
     ? dadosDaRegiao.municipios.find((m) => String(m.codarea) === String(estadoCodarea))
@@ -211,7 +211,7 @@ const TabelaInfo = ({
 
           {detalhesEstado && (
             <div className="detalhes-estado-header">
-               <div className="estado-total-label">Total no Estado (IA):</div>
+               <div className="estado-total-label">Total no Estado:</div>
                <div className="periodo-acumulado">(Acumulado desde 2022)</div>
                <div className="estado-total-valor">
                  {detalhesEstado.total_invested.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}

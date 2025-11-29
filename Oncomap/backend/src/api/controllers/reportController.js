@@ -67,7 +67,20 @@ const createPdf = async (htmlContent) => {
             </body>
         </html>
     `;
-    const options = { format: 'A4', printBackground: true, margin: { top: "30px", bottom: "60px", left: "20px", right: "20px" } };
+
+    // --- AQUI ESTÁ A MUDANÇA IMPORTANTE ---
+    const options = { 
+        format: 'A4', 
+        printBackground: true, 
+        margin: { top: "30px", bottom: "60px", left: "20px", right: "20px" },
+        args: [
+            '--no-sandbox', 
+            '--disable-setuid-sandbox',
+            '--disable-gpu'
+        ]
+    };
+    // ------------------------------------------------------------------
+
     return pdf.generatePdf({ content: finalHtml }, options);
 };
 

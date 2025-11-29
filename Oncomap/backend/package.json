@@ -23,6 +23,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "setup": "sudo bash setup-ubuntu.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:setup": "node src/scripts/setup_municipalities.js",
     "db:collect": "node src/scripts/collector.js",
