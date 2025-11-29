@@ -1,4 +1,3 @@
-// src/components/MapaPage/mapa.tsx
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, GeoJSON } from 'react-leaflet';
@@ -30,7 +29,6 @@ interface MapProps {
   setSelectedRegion: (region: string | null) => void;
   selectedState: string | null;
   setSelectedState: (state: string | null) => void;
-  // REMOVIDO: setDadosInvestimentos (agora é responsabilidade da MapaPage)
   setMunicipiosData: (data: FeatureCollection | null) => void; 
   searchedMunicipioName: string | null;
 }
@@ -57,14 +55,12 @@ const MapaInterativo: React.FC<MapProps> = ({
     []
   );
 
-  // --- REMOVIDO: useEffect que fazia fetch dos dados ---
-  // O mapa agora é "burro", ele não sabe sobre valores financeiros, só geografia.
 
   useEffect(() => {
     if (map) setTimeout(() => map.invalidateSize(), 500);
   }, [map, selectedRegion, selectedState]);
 
-  // --- LÓGICA DE ZOOM ---
+ 
   useEffect(() => {
     if (!map) return;
 
@@ -90,7 +86,6 @@ const MapaInterativo: React.FC<MapProps> = ({
     }
   }, [selectedRegion, selectedState, map, allStatesFeatures]);
 
-  // --- Carregamento dinâmico de Municípios (Mantido) ---
   useEffect(() => {
     if (selectedState) {
       const codigoUF = selectedState;
@@ -139,8 +134,6 @@ const MapaInterativo: React.FC<MapProps> = ({
 
   const onEachStateFeature = (feature: GeoFeature, layer: Layer) => {
     const regiaoDoEstado = feature.properties.regiao || 'Região';
-    // Se o feature tiver a propriedade "nome" ou "name", usamos ela. 
-    // Caso contrário, usamos um fallback genérico.
     const nomeDoEstado = feature.properties.nome || feature.properties.name || 'Estado';
 
     const tooltipContent = selectedRegion
@@ -154,7 +147,6 @@ const MapaInterativo: React.FC<MapProps> = ({
       mouseout: () => setHoveredObject(null),
       click: () => { 
         if (!selectedRegion) {
-          // Normalizamos a string da região para garantir match com o backend (ex: 'Sudeste' -> 'sudeste')
           const regiao = feature.properties.regiao?.toLowerCase() || null;
           setSelectedRegion(regiao);
         } else if (!selectedState) {
@@ -205,10 +197,6 @@ const MapaInterativo: React.FC<MapProps> = ({
         : { type: 'FeatureCollection', features: [] };
     }
     if (selectedRegion) {
-      // Importante: certifique-se que regioesGeoJson usa chaves que batem com 'selectedRegion'
-      // O backend pode esperar 'sudeste', mas o geojson talvez use 'Sudeste'. 
-      // Se necessário, faça a conversão aqui. Ex:
-      // const key = selectedRegion.charAt(0).toUpperCase() + selectedRegion.slice(1);
       return (
         regioesGeoJson[selectedRegion as keyof typeof regioesGeoJson] || {
           type: 'FeatureCollection',
