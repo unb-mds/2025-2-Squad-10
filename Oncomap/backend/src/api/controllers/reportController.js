@@ -81,10 +81,10 @@ const generateRegionReport = async (req, res) => {
     try {
         const query = `
             SELECT EXTRACT(YEAR FROM publication_date) as ano, state_uf,
-            SUM(COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as total_value
+            SUM(COALESCE(final_extracted_value, COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0))) as total_value
             FROM mentions 
             WHERE state_uf = ANY($1) 
-            AND (extracted_value > 0 OR extracted_value_txt > 0)
+            AND (final_extracted_value IS NOT NULL OR extracted_value > 0 OR extracted_value_txt > 0)
             GROUP BY ano, state_uf
             ORDER BY ano DESC, total_value DESC;
         `;
@@ -99,9 +99,9 @@ const generateRegionReport = async (req, res) => {
         // CORREÇÃO: Buscando dados brutos para permitir análise de categoria pela IA
         const queryRaw = `
             SELECT EXTRACT(YEAR FROM publication_date) as ano, state_uf,
-            COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor,
+            COALESCE(final_extracted_value, COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as valor,
             gemini_analysis, gemini_analysis_txt
-            FROM mentions WHERE state_uf = ANY($1) AND (extracted_value > 0 OR extracted_value_txt > 0)
+            FROM mentions WHERE state_uf = ANY($1) AND (final_extracted_value IS NOT NULL OR extracted_value > 0 OR extracted_value_txt > 0)
             ORDER BY publication_date DESC;
         `;
         const { rows: rowsRaw } = await db.query(queryRaw, [states]);
@@ -191,9 +191,9 @@ const generateStateReport = async (req, res) => {
     try {
         const query = `
             SELECT EXTRACT(YEAR FROM publication_date) as ano, municipality_name,
-            COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor,
+            COALESCE(final_extracted_value, COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as valor,
             gemini_analysis, gemini_analysis_txt
-            FROM mentions WHERE state_uf = $1 AND (extracted_value > 0 OR extracted_value_txt > 0)
+            FROM mentions WHERE state_uf = $1 AND (final_extracted_value IS NOT NULL OR extracted_value > 0 OR extracted_value_txt > 0)
             ORDER BY publication_date DESC;
         `;
         const { rows } = await db.query(query, [uf.toUpperCase()]);
@@ -292,9 +292,9 @@ const generateMunicipalityReport = async (req, res) => {
     try {
         const query = `
             SELECT EXTRACT(YEAR FROM publication_date) as ano, municipality_name, state_uf,
-            COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor,
+            COALESCE(final_extracted_value, COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as valor,
             gemini_analysis, gemini_analysis_txt
-            FROM mentions WHERE municipality_ibge_code = $1 AND (extracted_value > 0 OR extracted_value_txt > 0)
+            FROM mentions WHERE municipality_ibge_code = $1 AND (final_extracted_value IS NOT NULL OR extracted_value > 0 OR extracted_value_txt > 0)
             ORDER BY publication_date DESC;
         `;
         const { rows } = await db.query(query, [ibge]);

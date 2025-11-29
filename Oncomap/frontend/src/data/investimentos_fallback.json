@@ -127,7 +127,7 @@
       }
     ]
   },
-  "centroOeste": {
+  "centro-oeste": {
     "regiao": "Centro-Oeste",
     "investimentosGerais": [
       { "nome": "Medicamentos (Regional)", "valor": "R$ 18.900.000,00" },

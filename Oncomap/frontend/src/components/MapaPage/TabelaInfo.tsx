@@ -170,7 +170,6 @@ const TabelaInfo = ({
                   <li key={idx} className="lista-links-item">
                     <div className="link-header">
                         <strong>{new Date(mencao.date).toLocaleDateString()}</strong>
-                        <span className="link-valor">{mencao.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                     </div>
                     <a href={mencao.url} target="_blank" rel="noreferrer">📄 Ver Documento Original</a>
                   </li>

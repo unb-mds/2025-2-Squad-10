@@ -49,11 +49,11 @@ router.get('/regiao/:regiaoSlug', async (req, res) => {
                 municipality_name as nome,
                 municipality_ibge_code as codarea,
                 state_uf as uf,
-                SUM(COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as total_investido
+                SUM(COALESCE(final_extracted_value, COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0))) as total_investido
             FROM mentions
             WHERE state_uf = ANY($1) 
             GROUP BY municipality_name, municipality_ibge_code, state_uf
-            HAVING SUM(COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) > 0
+            HAVING SUM(COALESCE(final_extracted_value, COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0))) > 0
             ORDER BY state_uf, total_investido DESC
         `;
 
@@ -114,12 +114,12 @@ router.get('/municipio/:ibge', async (req, res) => {
     try {
         const query = `
             SELECT municipality_name, state_uf, publication_date, source_url,
-                COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor_final,
+                COALESCE(final_extracted_value, COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as valor_final,
                 gemini_analysis, gemini_analysis_txt
-            FROM mentions
-            WHERE municipality_ibge_code = $1 
-            AND (extracted_value > 0 OR extracted_value_txt > 0)
-            ORDER BY publication_date DESC;
+                FROM mentions
+                WHERE municipality_ibge_code = $1 
+                AND (final_extracted_value IS NOT NULL OR extracted_value > 0 OR extracted_value_txt > 0)
+                ORDER BY publication_date DESC;
         `;
         const { rows } = await db.query(query, [ibge]);
 
@@ -172,11 +172,11 @@ router.get('/estado/:codIbge', async (req, res) => {
     try {
         const query = `
             SELECT 
-                COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0) as valor_final,
+                COALESCE(final_extracted_value, COALESCE(extracted_value, 0) + COALESCE(extracted_value_txt, 0)) as valor_final,
                 gemini_analysis, gemini_analysis_txt
-            FROM mentions
-            WHERE state_uf = $1 
-            AND (extracted_value > 0 OR extracted_value_txt > 0);
+                FROM mentions
+                WHERE state_uf = $1 
+                AND (final_extracted_value IS NOT NULL OR extracted_value > 0 OR extracted_value_txt > 0);
         `;
 
         const { rows } = await db.query(query, [uf]);
