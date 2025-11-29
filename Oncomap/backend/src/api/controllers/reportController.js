@@ -300,6 +300,12 @@ const generateStateReport = async (req, res) => {
 
 // --- 3. RELATÓRIO MUNICIPAL ---
 const generateMunicipalityReport = async (req, res) => {
+    // Cole isso logo na primeira linha DENTRO da função generateMunicipalityReport
+    console.log("=========================================");
+    console.log("🕵️ DETETIVE DE ERROS ONCOMAP");
+    console.log("1. Buscando IBGE:", req.params.ibge);
+    console.log("2. URL que o sistema está usando:", process.env.DATABASE_URL); // VAI MOSTRAR A VERDADE
+    console.log("=========================================");
     const { ibge } = req.params;
 
     try {
