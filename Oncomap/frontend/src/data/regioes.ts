@@ -92,7 +92,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
       'nordeste'
     ),
   },
-  centroOeste: {
+  'centro-oeste': {
     type: 'FeatureCollection',
     features: addRegionToFeatures(
       [
@@ -101,7 +101,7 @@ export const regioesGeoJson: Record<string, EstadoFeatureCollection> = {
         ...MS.features,
         ...DF.features
       ] as EstadoFeature[],
-      'centroOeste'
+      'centro-oeste'
     ),
   },
   sudeste: {
