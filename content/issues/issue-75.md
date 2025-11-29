@@ -1,6 +1,6 @@
 ---
 title: "[BUG] - NOMECLATURA DOS ESTADOS"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Sprint 10"
 type: "issue"
 draft: false

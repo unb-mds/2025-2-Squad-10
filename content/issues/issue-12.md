@@ -1,6 +1,6 @@
 ---
 title: "Estudo de Node.js"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Sprint 1"
 type: "issue"
 draft: false

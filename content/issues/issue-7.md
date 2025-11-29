@@ -1,6 +1,6 @@
 ---
 title: "Banco de dados"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Sprint 1"
 type: "issue"
 draft: false

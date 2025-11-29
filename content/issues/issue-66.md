@@ -1,6 +1,6 @@
 ---
 title: "[FIX] Concertando o zoom do mapa"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Sprint 8"
 type: "issue"
 draft: false

@@ -30,6 +30,11 @@
         {{ $issueCSS := resources.Get "css/issues.css" }}
         {{ $cssBundle = $cssBundle | append $issueCSS }}
     {{ end }}
+
+    {{ if eq .Section "doc" }}
+        {{ $docCSS := resources.Get "css/doc.css" }}
+        {{ $cssBundle = $cssBundle | append $docCSS }}
+    {{ end }}
     
     {{/* 4. Adiciona CSS se o layout for "embed" */}}
     {{ if eq .Params.layout "embed" }}

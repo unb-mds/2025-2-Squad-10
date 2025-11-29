@@ -1,6 +1,6 @@
 ---
 title: "[BUG] - Ajustes de CSS na Navbar/Footer e Lógica de Zoom Sincronizado no Mapa"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Nenhuma"
 type: "issue"
 draft: false

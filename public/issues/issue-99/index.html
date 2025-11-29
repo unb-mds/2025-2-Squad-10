@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/2025-2-OncoMap/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=2025-2-OncoMap/livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        
+            [FEATURE] Fazendo a integração do frontend e do backend | OncoMap
+        
+    </title>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/2025-2-OncoMap/css/issues-page-bundle.min.css">
+
+
+
+</head>
+<body>
+
+    <nav class="navbar">
+
+    <a class="navbar-brand" href="http://localhost:1313/2025-2-OncoMap/">
+        OncoMap
+    </a>
+
+    <ul class="navbar-links">
+        <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/sprints/">Sprints</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/diversos/">Diversos</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/doc/">Documentação</a></li>
+    </ul>
+
+    <div class="navbar-right">
+        <a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a>
+    </div>
+
+</nav>
+
+    <section class="hero">
+    <div class="container">
+        <h1>[FEATURE] Fazendo a integração do frontend e do backend</h1>
+        
+        
+        
+        </div>
+</section>
+
+    <main>
+        
+
+    <div class="container page-single">
+        <h1>[FEATURE] Fazendo a integração do frontend e do backend</h1>
+        
+        <div class="content">
+            <h2 id="-descrição">🎯 Descrição</h2>
+<p>Implementação completa da integração Frontend-Backend para visualização hierárquica de dados (Região → Estado → Município) e geração de relatórios PDF detalhados com inteligência artificial. O sistema agora consome dados reais do banco PostgreSQL, permitindo navegação &ldquo;drill-down&rdquo; no mapa e na tabela lateral, além de oferecer feedback visual de carregamento e downloads de relatórios anuais.</p>
+<hr>
+<h2 id="-objetivo">✅ Objetivo</h2>
+<p>Esta feature resolve a desconexão entre a interface do mapa e os dados reais coletados pelos scripts de IA.</p>
+<p><strong>Principais melhorias:</strong></p>
+<ol>
+<li><strong>Visualização Granular:</strong> Permite ao usuário ver desde o macro (Total da Região) até o micro (Gastos com medicamentos em um município específico por ano).</li>
+<li><strong>Relatórios Inteligentes:</strong> Substituição de PDFs estáticos por documentos gerados via <strong>Google Gemini</strong>, contendo análises qualitativas e tabelas consolidadas por ano.</li>
+<li><strong>Experiência do Usuário (UX):</strong> Correção de bugs visuais (números vazando, pesquisa quebrada) e implementação de feedbacks de carregamento (Spinner no mapa e aba de processamento para PDFs).</li>
+</ol>
+<hr>
+<h2 id="-detalhes-da-implementação">📝 Detalhes da Implementação</h2>
+<h3 id="backend-nodejsexpress">Backend (Node.js/Express)</h3>
+<ul>
+<li><strong>Rotas de Mapa (<code>src/api/routes/mapRoutes.js</code>):</strong>
+<ul>
+<li>Criação de endpoints hierárquicos:
+<ul>
+<li><code>GET /regiao/:regiaoSlug</code>: Retorna totais da região e lista de estados agrupados.</li>
+<li><code>GET /estado/:codIbge</code>: Retorna totais do estado, categorias agregadas e lista de municípios.</li>
+<li><code>GET /municipio/:ibge</code>: Retorna detalhes profundos (categorias, lista de diários e links originais).</li>
+</ul>
+</li>
+<li>Ajuste nas queries SQL para somar valores de PDF (<code>extracted_value</code>) e TXT (<code>extracted_value_txt</code>).</li>
+</ul>
+</li>
+<li><strong>Controller de Relatórios (<code>src/api/controllers/reportController.js</code>):</strong>
+<ul>
+<li>Implementação de lógica de agrupamento temporal (Ano a Ano).</li>
+<li>Criação de prompts específicos para o Gemini gerar HTML estruturado para Região, Estado e Município.</li>
+<li>Configuração do rodapé fixo e margens no <code>html-pdf-node</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="frontend-reacttypescript">Frontend (React/TypeScript)</h3>
+<ul>
+<li><strong>Serviços (<code>src/services/mapService.ts</code>):</strong>
+<ul>
+<li>Adição de métodos tipados (<code>getDetalhesEstado</code>, <code>getDetalhesMunicipio</code>) para consumir as novas rotas.</li>
+</ul>
+</li>
+<li><strong>Componente de Tabela (<code>src/components/MapaPage/TabelaInfo.tsx</code>):</strong>
+<ul>
+<li>Refatoração total para suportar 3 níveis de navegação.</li>
+<li>Implementação de filtro de busca local na tabela de municípios.</li>
+<li>Correção de bug no clique da linha da tabela (uso correto do <code>codarea</code>).</li>
+</ul>
+</li>
+<li><strong>Novo Componente (<code>src/components/Geral/PdfButton.tsx</code>):</strong>
+<ul>
+<li>Criação de botão isolado que gerencia o fluxo de download: <em>Abre aba de carregamento -&gt; Aguarda Backend -&gt; Força Download -&gt; Fecha aba automaticamente</em>.</li>
+</ul>
+</li>
+<li><strong>Mapa Interativo (<code>src/components/MapaPage/mapa.tsx</code>):</strong>
+<ul>
+<li>Adição de Overlay de &ldquo;Carregando Mapa&hellip;&rdquo; ao iniciar a aplicação e ao carregar GeoJSONs pesados de municípios.</li>
+</ul>
+</li>
+<li><strong>Estilização (<code>src/style/Tabelainfo.css</code>):</strong>
+<ul>
+<li>Aplicação do tema <strong>Dark/Verde</strong> nos detalhes do estado (removido fundo branco).</li>
+<li>Correção de quebra de layout para números financeiros grandes (<code>word-wrap</code>).</li>
+<li>Fixação do posicionamento da lista de sugestões da pesquisa (<code>position: absolute</code>).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="-critérios-de-aceitação">📊 Critérios de Aceitação</h2>
+<h3 id="funcionalidades-de-dados">Funcionalidades de Dados</h3>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Ao clicar na <strong>Região</strong>, exibe o total acumulado e lista de Estados.</li>
+<li><input checked="" disabled="" type="checkbox"> Ao clicar no <strong>Estado</strong>, exibe o total do estado, cards com categorias somadas e lista de Municípios.</li>
+<li><input checked="" disabled="" type="checkbox"> Ao clicar no <strong>Município</strong> (via mapa ou tabela), exibe detalhes profundos: categorias, valores e lista de links para os diários oficiais.</li>
+<li><input checked="" disabled="" type="checkbox"> A pesquisa de município filtra a tabela corretamente e permite clique para ver detalhes.</li>
+</ul>
+<h3 id="geração-de-relatórios-pdf">Geração de Relatórios (PDF)</h3>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> O botão de PDF gera um relatório contextualizado (Região, Estado ou Município).</li>
+<li><input checked="" disabled="" type="checkbox"> O PDF contém detalhamento histórico <strong>Ano a Ano</strong>.</li>
+<li><input checked="" disabled="" type="checkbox"> O PDF inclui tabelas de categorias e tabelas geográficas em cada seção anual.</li>
+<li><input checked="" disabled="" type="checkbox"> O download não é bloqueado pelo navegador (fluxo de nova aba temporária implementado).</li>
+</ul>
+<h3 id="interface-uiux">Interface (UI/UX)</h3>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Spinner de carregamento aparece ao baixar fronteiras de municípios no mapa.</li>
+<li><input checked="" disabled="" type="checkbox"> Layout da tabela segue o tema escuro/verde, sem caixas brancas ilegíveis.</li>
+<li><input checked="" disabled="" type="checkbox"> Valores monetários grandes (bilhões) não quebram o layout dos cards.</li>
+<li><input checked="" disabled="" type="checkbox"> Lista de autocomplete da pesquisa aparece logo abaixo do input, sem deslocamento.</li>
+</ul>
+
+        </div>
+    </div>
+
+
+    </main>
+
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            
+            <div class="footer-column about">
+                <h3>OncoMap</h3>
+                <p>Mapa de investimento em saúde oncológica</p>
+            </div>
+            
+            <div class="footer-column links">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/sprints">Sprints</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+                    
+                </ul>
+            </div>
+            
+            <div class="footer-column contact">
+                <h3>Contato</h3>
+                <ul>
+                    <li><a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="container">
+            <p>&copy; 2025 OncoMap. Todos os direitos reservados.</p>
+            <p>Desenvolvido pela equipe UnB-MDS</p>
+        </div>
+    </div>
+</footer>
+    
+    <script src="http://localhost:1313/2025-2-OncoMap/js/app.js"></script>
+</body>
+</html>

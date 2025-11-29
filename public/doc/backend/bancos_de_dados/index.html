@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/2025-2-OncoMap/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=2025-2-OncoMap/livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        
+            Bancos De Dados | OncoMap
+        
+    </title>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/2025-2-OncoMap/css/doc-page-bundle.min.css">
+
+
+
+</head>
+<body>
+
+    <nav class="navbar">
+
+    <a class="navbar-brand" href="http://localhost:1313/2025-2-OncoMap/">
+        OncoMap
+    </a>
+
+    <ul class="navbar-links">
+        <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/sprints/">Sprints</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/diversos/">Diversos</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/doc/">Documentação</a></li>
+    </ul>
+
+    <div class="navbar-right">
+        <a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a>
+    </div>
+
+</nav>
+
+    <section class="hero">
+    <div class="container">
+        <h1>Bancos De Dados</h1>
+        
+        
+        
+        </div>
+</section>
+
+    <main>
+        
+
+    <div class="container page-single">
+        
+        
+        
+        
+        <div class="content">
+            <h1 id="bancos-de-dados">Bancos de Dados</h1>
+<hr>
+<h2 id="-contexto">📖 Contexto</h2>
+<p>Antes de iniciar a implementação, precisamos decidir o banco de dados.<br>
+Como a linguagem do projeto ainda não foi definida, avaliaremos opções considerando:</p>
+<ul>
+<li><strong>Maturidade</strong></li>
+<li><strong>Flexibilidade</strong></li>
+<li><strong>Custo</strong></li>
+<li><strong>Desempenho</strong></li>
+<li><strong>Ecossistema de drivers/ORMs</strong></li>
+<li><strong>Facilidade de operação (self-hosted vs. gerenciado)</strong></li>
+</ul>
+<hr>
+<h2 id="o-que-é-um-banco-de-dados-resumo">O que é um Banco de Dados (resumo)</h2>
+<ul>
+<li><strong>Relacionais (SQL):</strong> modelo tabular, transações ACID, SQL (ex.: PostgreSQL, MySQL, SQLite).</li>
+<li><strong>Não relacionais (NoSQL):</strong> modelos flexíveis (documentos, chave-valor, grafo etc.) para casos de uso específicos (ex.: MongoDB, Redis).</li>
+</ul>
+<hr>
+<h2 id="compatibilidade-por-linguagem-driversorms-populares">Compatibilidade por Linguagem (drivers/ORMs populares)</h2>
+<blockquote>
+<p><strong>Observação:</strong> lista não exaustiva; todos são multiplataforma.</p></blockquote>
+<table>
+  <thead>
+      <tr>
+          <th>Banco</th>
+          <th>Python</th>
+          <th>Node.js</th>
+          <th>.NET</th>
+          <th>Go</th>
+          <th>Ruby</th>
+          <th>PHP</th>
+          <th>Rust</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>PostgreSQL</strong></td>
+          <td><code>psycopg</code>, <code>asyncpg</code>, SQLAlchemy, Django ORM</td>
+          <td><code>pg</code>, Prisma, Sequelize, Knex</td>
+          <td>Npgsql, EF Core</td>
+          <td><code>pgx</code>, GORM (postgres)</td>
+          <td>ActiveRecord, Sequel</td>
+          <td>PDO_PGSQL</td>
+          <td><code>sqlx</code>, Diesel</td>
+      </tr>
+      <tr>
+          <td><strong>MySQL/MariaDB</strong></td>
+          <td><code>mysqlclient</code>, <code>PyMySQL</code>, SQLAlchemy, Django ORM</td>
+          <td><code>mysql2</code>, Prisma, Sequelize, Knex</td>
+          <td>MySqlConnector, Pomelo EF Core</td>
+          <td><code>go-sql-driver/mysql</code>, GORM</td>
+          <td>ActiveRecord, Sequel</td>
+          <td>PDO_MYSQL, <code>mysqli</code></td>
+          <td><code>sqlx</code>, Diesel</td>
+      </tr>
+      <tr>
+          <td><strong>SQLite</strong></td>
+          <td><code>sqlite3</code> (stdlib), SQLAlchemy, Django ORM</td>
+          <td><code>better-sqlite3</code>, <code>sqlite3</code>, Prisma, Knex</td>
+          <td>Microsoft.Data.Sqlite, EF Core</td>
+          <td><code>mattn/go-sqlite3</code>, GORM</td>
+          <td>ActiveRecord</td>
+          <td>PDO_SQLITE</td>
+          <td><code>rusqlite</code>, <code>sqlx</code></td>
+      </tr>
+      <tr>
+          <td><strong>MongoDB</strong></td>
+          <td><code>pymongo</code>, <code>motor</code> (async)</td>
+          <td><code>mongodb</code>, Mongoose</td>
+          <td>MongoDB .NET Driver</td>
+          <td><code>mongo-go-driver</code></td>
+          <td><code>mongo</code>, Mongoid</td>
+          <td>Extensão <code>mongodb</code></td>
+          <td><code>mongodb</code> crate</td>
+      </tr>
+      <tr>
+          <td><strong>Redis</strong></td>
+          <td><code>redis</code> (redis-py)</td>
+          <td><code>redis</code>, <code>ioredis</code></td>
+          <td>StackExchange.Redis</td>
+          <td><code>go-redis</code></td>
+          <td><code>redis</code></td>
+          <td><code>phpredis</code></td>
+          <td><code>redis</code> crate</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="quando-usar-cada-um-resumo">Quando usar cada um (resumo)</h2>
+<ul>
+<li><strong>PostgreSQL (SQL):</strong> robustez, consultas complexas, dados relacionais, integrações avançadas (JSONB, extensões).</li>
+<li><strong>MySQL/MariaDB (SQL):</strong> simples, muito difundido, ótimo para leituras intensivas.</li>
+<li><strong>SQLite (SQL, arquivo único):</strong> protótipos, apps locais/embarcados, testes.</li>
+<li><strong>MongoDB (Documentos):</strong> esquema flexível, iteração rápida em modelos de dados variáveis.</li>
+<li><strong>Redis (Chave-valor em memória):</strong> cache, sessões, filas/pub-sub (uso complementar).</li>
+</ul>
+<hr>
+<h2 id="vantagens--desvantagens">Vantagens &amp; Desvantagens</h2>
+<h3 id="postgresql">PostgreSQL</h3>
+<ul>
+<li>✅ Rico em recursos (CTEs, JSONB, extensões), ACID forte, confiável.</li>
+<li>❌ Pode demandar mais tuning; um pouco mais “pesado” para apps mínimas.</li>
+</ul>
+<h3 id="mysqlmariadb">MySQL/MariaDB</h3>
+<ul>
+<li>✅ Amplo suporte, ótimo desempenho em leituras, fácil operação.</li>
+<li>❌ Menos recursos SQL avançados que Postgres; particionamento/consultas complexas podem exigir workarounds.</li>
+</ul>
+<h3 id="sqlite">SQLite</h3>
+<ul>
+<li>✅ Zero configuração, leve, perfeito para prototipagem e testes.</li>
+<li>❌ Não indicado para alta concorrência/escala horizontal.</li>
+</ul>
+<h3 id="mongodb">MongoDB</h3>
+<ul>
+<li>✅ Flexível (documentos), bom para dados sem esquema rígido, fácil de evoluir.</li>
+<li>❌ Modelagem relacional complexa fica mais difícil; transações multi-documento exigem cuidado.</li>
+</ul>
+<h3 id="redis">Redis</h3>
+<ul>
+<li>✅ Latência baixíssima; excelente para cache/sessões/filas.</li>
+<li>❌ Memória é cara; não é banco primário para dados críticos a longo prazo.</li>
+</ul>
+
+        </div>
+    </div>
+
+
+    </main>
+
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            
+            <div class="footer-column about">
+                <h3>OncoMap</h3>
+                <p>Mapa de investimento em saúde oncológica</p>
+            </div>
+            
+            <div class="footer-column links">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/sprints">Sprints</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+                    
+                </ul>
+            </div>
+            
+            <div class="footer-column contact">
+                <h3>Contato</h3>
+                <ul>
+                    <li><a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="container">
+            <p>&copy; 2025 OncoMap. Todos os direitos reservados.</p>
+            <p>Desenvolvido pela equipe UnB-MDS</p>
+        </div>
+    </div>
+</footer>
+    
+    <script src="http://localhost:1313/2025-2-OncoMap/js/app.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 title: "[TASK] - Add .txt ao db"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Sprint 9"
 type: "issue"
 draft: false

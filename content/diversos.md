@@ -42,7 +42,7 @@ blocos_de_texto:
         <br>
         ### 👥 A Equipe
         <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 50px;">
-            <div style="text-align: center; width: 150px; margin-bottom: 0px;">
+            <div style="text-align: center; width: 200px; margin-bottom: 0px;">
                 <a href="https://github.com/Flyxs" title="Felype Carrijo no GitHub" target="_blank">
                     <img src="https://avatars.githubusercontent.com/u/168106790?v=4" alt="Foto de Felype Carrijo" style="width: 100%; height: auto; border-radius: 50%;">
                 </a>
@@ -50,7 +50,7 @@ blocos_de_texto:
                 <em>Frontend</em><br>
                 <a href="https://github.com/Flyxs" target="_blank">GitHub</a></p>
             </div>
-            <div style="text-align: center; width: 150px; margin-bottom: 0px;">
+            <div style="text-align: center; width: 200px; margin-bottom: 0px;">
                 <a href="https://github.com/Gotc2607" title="Giovani Coelho no GitHub" target="_blank">
                     <img src="https://avatars.githubusercontent.com/u/176083022?v=4" alt="Foto de Giovani Coelho" style="width: 100%; height: auto; border-radius: 50%;">
                 </a>
@@ -58,15 +58,7 @@ blocos_de_texto:
                 <em>Frontend</em><br>
                 <a href="https://github.com/Gotc2607" target="_blank">GitHub</a></p>
             </div>
-            <div style="text-align: center; width: 150px; margin-bottom: 0px;">
-                <a href="https://github.com/ArturFGaldino" title="Artur Galdino no GitHub" target="_blank">
-                    <img src="https://avatars.githubusercontent.com/u/187340217?v=4" alt="Foto de Artur Galdino" style="width: 100%; height: auto; border-radius: 50%;">
-                </a>
-                <p><strong>Artur Galdino</strong><br>
-                <em>Backend</em><br>
-                <a href="https://github.com/ArturFGaldino" target="_blank">GitHub</a></p>
-            </div>
-            <div style="text-align: center; width: 150px; margin-bottom: 0px;">
+            <div style="text-align: center; width: 200px; margin-bottom: 0px;">
                 <a href="https://github.com/Luizz97" title="Luiz no GitHub" target="_blank">
                     <img src="https://avatars.githubusercontent.com/u/212640680?v=4" alt="Foto de Luiz" style="width: 100%; height: auto; border-radius: 50%;">
                 </a>
@@ -74,7 +66,15 @@ blocos_de_texto:
                 <em>Frontend</em><br>
                 <a href="https://github.com/Luizz97" target="_blank">GitHub</a></p>
             </div>
-            <div style="text-align: center; width: 150px; margin-bottom: 0px;">
+            <div style="text-align: center; width: 200px; margin-bottom: 0px;">
+                <a href="https://github.com/ArturFGaldino" title="Artur Galdino no GitHub" target="_blank">
+                    <img src="https://avatars.githubusercontent.com/u/187340217?v=4" alt="Foto de Artur Galdino" style="width: 100%; height: auto; border-radius: 50%;">
+                </a>
+                <p><strong>Artur Galdino</strong><br>
+                <em>Backend</em><br>
+                <a href="https://github.com/ArturFGaldino" target="_blank">GitHub</a></p>
+            </div>
+            <div style="text-align: center; width: 200px; margin-bottom: 0px;">
                 <a href="https://github.com/joaoPedro-201" title="João Pedro no GitHub" target="_blank">
                     <img src="https://avatars.githubusercontent.com/u/178330046?v=4" alt="Foto de João Pedro" style="width: 100%; height: auto; border-radius: 50%;">
                 </a>
@@ -82,7 +82,7 @@ blocos_de_texto:
                 <em>Backend</em><br>
                 <a href="https://github.com/joaoPedro-201" target="_blank">GitHub</a></p>
             </div>
-            <div style="text-align: center; width: 150px; margin-bottom: 0px;">
+            <div style="text-align: center; width: 200px; margin-bottom: 0px;">
                 <a href="https://github.com/Alexandroni07" title="Gabriel Alexandroni no GitHub" target="_blank">
                     <img src="https://avatars.githubusercontent.com/u/170197026?v=4" alt="Foto de Gabriel Alexandroni" style="width: 100%; height: auto; border-radius: 50%;">
                 </a>

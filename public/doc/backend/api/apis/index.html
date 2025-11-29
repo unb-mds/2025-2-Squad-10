@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/2025-2-OncoMap/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=2025-2-OncoMap/livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        
+            Apis | OncoMap
+        
+    </title>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/2025-2-OncoMap/css/doc-page-bundle.min.css">
+
+
+
+</head>
+<body>
+
+    <nav class="navbar">
+
+    <a class="navbar-brand" href="http://localhost:1313/2025-2-OncoMap/">
+        OncoMap
+    </a>
+
+    <ul class="navbar-links">
+        <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/sprints/">Sprints</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/diversos/">Diversos</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/doc/">Documentação</a></li>
+    </ul>
+
+    <div class="navbar-right">
+        <a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a>
+    </div>
+
+</nav>
+
+    <section class="hero">
+    <div class="container">
+        <h1>Apis</h1>
+        
+        
+        
+        </div>
+</section>
+
+    <main>
+        
+
+    <div class="container page-single">
+        
+        
+        
+        
+        <div class="content">
+            <h1 id="apis">APIs</h1>
+<hr>
+<h2 id="-contexto">📖 Contexto</h2>
+<p>Uma <strong>API (Application Programming Interface)</strong> é um conjunto de regras e protocolos que permite que diferentes sistemas, serviços ou aplicações se comuniquem entre si.
+Elas são a base da integração moderna de software, permitindo reuso de funcionalidades, comunicação entre microsserviços e integração com serviços de terceiros.</p>
+<p>No projeto, precisamos avaliar quais tipos de APIs podem ser utilizados, como funcionam e quais ferramentas ajudam no desenvolvimento, teste e documentação.</p>
+<hr>
+<h2 id="o-que-é-uma-api-resumo">O que é uma API (resumo)</h2>
+<ul>
+<li>
+<p><strong>REST (Representational State Transfer):</strong>
+Baseada em HTTP, muito usada na web, geralmente utiliza JSON.</p>
+</li>
+<li>
+<p><strong>GraphQL:</strong>
+Linguagem de consulta onde o cliente define exatamente os dados que precisa.</p>
+</li>
+<li>
+<p><strong>gRPC (Google Remote Procedure Call):</strong>
+Usa Protobuf, altamente eficiente para comunicação entre microsserviços.</p>
+</li>
+<li>
+<p><strong>WebSockets:</strong>
+Comunicação em tempo real e bidirecional entre cliente e servidor.</p>
+</li>
+</ul>
+<hr>
+<h2 id="como-funciona-uma-api">Como funciona uma API</h2>
+<ol>
+<li><strong>Cliente</strong> faz uma requisição para um endpoint (ex.: <code>GET /users/1</code>).</li>
+<li><strong>Servidor</strong> processa a requisição e acessa dados/lógica necessária.</li>
+<li><strong>Resposta</strong> é enviada no formato definido (JSON, XML, Protobuf, etc.).</li>
+</ol>
+<p>Exemplo de requisição REST:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /users/1
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">Host: api.exemplo.com
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">Accept: application/json
+</span></span></span></code></pre></div><p>Resposta:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;nome&#34;</span>: <span style="color:#e6db74">&#34;Maria&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;email&#34;</span>: <span style="color:#e6db74">&#34;maria@exemplo.com&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="tecnologias-para-controle-e-documentação-de-apis">Tecnologias para controle e documentação de APIs</h2>
+<ul>
+<li><strong>Postman</strong> → testar e organizar requisições.</li>
+<li><strong>Insomnia</strong> → alternativa ao Postman, mais leve.</li>
+<li><strong>Swagger / OpenAPI</strong> → documentar APIs REST, gerar clientes e mocks.</li>
+<li><strong>API Gateway (Kong, Apigee, AWS API Gateway)</strong> → gerenciar múltiplas APIs (autenticação, rate limiting, monitoramento).</li>
+<li><strong>OAuth 2.0 / JWT</strong> → autenticação e autorização.</li>
+</ul>
+<hr>
+<h2 id="compatibilidade-com-linguagens-e-frameworks">Compatibilidade com Linguagens e Frameworks</h2>
+<table>
+  <thead>
+      <tr>
+          <th>API</th>
+          <th>Python</th>
+          <th>Node.js</th>
+          <th>.NET</th>
+          <th>Go</th>
+          <th>Java</th>
+          <th>PHP</th>
+          <th>Ruby</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>REST</strong></td>
+          <td>Flask, FastAPI, Django REST</td>
+          <td>Express, NestJS</td>
+          <td>ASP.NET Web API</td>
+          <td>Gin, Echo</td>
+          <td>Spring Boot</td>
+          <td>Laravel, Symfony</td>
+          <td>Rails, Sinatra</td>
+      </tr>
+      <tr>
+          <td><strong>GraphQL</strong></td>
+          <td>Graphene, Strawberry</td>
+          <td>Apollo, Yoga</td>
+          <td>Hot Chocolate</td>
+          <td>gqlgen</td>
+          <td>GraphQL Java</td>
+          <td>Lighthouse</td>
+          <td>GraphQL Ruby</td>
+      </tr>
+      <tr>
+          <td><strong>gRPC</strong></td>
+          <td>grpcio</td>
+          <td>grpc-node</td>
+          <td>gRPC for .NET</td>
+          <td>grpc-go</td>
+          <td>grpc-java</td>
+          <td>grpc-php</td>
+          <td>gRPC Ruby</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="quando-usar-cada-abordagem">Quando usar cada abordagem</h2>
+<ul>
+<li><strong>REST:</strong> padrão mais difundido, ótimo para web e mobile.</li>
+<li><strong>GraphQL:</strong> quando o cliente precisa de consultas flexíveis e evitar múltiplas requisições.</li>
+<li><strong>gRPC:</strong> ideal para microsserviços de alta performance.</li>
+<li><strong>WebSockets:</strong> indicado para comunicação em tempo real (chat, streaming, jogos online).</li>
+</ul>
+<hr>
+<h2 id="vantagens--desvantagens">Vantagens &amp; Desvantagens</h2>
+<h3 id="rest">REST</h3>
+<ul>
+<li>✅ Simples, maduro, muito suporte.</li>
+<li>❌ Muitas chamadas podem gerar sobrecarga.</li>
+</ul>
+<h3 id="graphql">GraphQL</h3>
+<ul>
+<li>✅ Flexível, cliente define dados necessários.</li>
+<li>❌ Implementação no servidor mais complexa.</li>
+</ul>
+<h3 id="grpc">gRPC</h3>
+<ul>
+<li>✅ Alta performance, ideal para microsserviços.</li>
+<li>❌ Não suportado nativamente em navegadores sem adaptação.</li>
+</ul>
+<h3 id="websockets">WebSockets</h3>
+<ul>
+<li>✅ Comunicação em tempo real, bidirecional.</li>
+<li>❌ Difícil de escalar e manter em grandes sistemas.</li>
+</ul>
+<hr>
+<h2 id="links-úteis">Links úteis</h2>
+<ul>
+<li><a href="https://www.postman.com/">Postman</a></li>
+<li><a href="https://swagger.io/">Swagger/OpenAPI</a></li>
+<li><a href="https://graphql.org/">GraphQL</a></li>
+<li><a href="https://grpc.io/">gRPC</a></li>
+<li><a href="https://insomnia.rest/">Insomnia</a></li>
+</ul>
+
+        </div>
+    </div>
+
+
+    </main>
+
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            
+            <div class="footer-column about">
+                <h3>OncoMap</h3>
+                <p>Mapa de investimento em saúde oncológica</p>
+            </div>
+            
+            <div class="footer-column links">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/sprints">Sprints</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+                    
+                </ul>
+            </div>
+            
+            <div class="footer-column contact">
+                <h3>Contato</h3>
+                <ul>
+                    <li><a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="container">
+            <p>&copy; 2025 OncoMap. Todos os direitos reservados.</p>
+            <p>Desenvolvido pela equipe UnB-MDS</p>
+        </div>
+    </div>
+</footer>
+    
+    <script src="http://localhost:1313/2025-2-OncoMap/js/app.js"></script>
+</body>
+</html>

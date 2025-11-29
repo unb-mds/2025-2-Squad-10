@@ -1,6 +1,6 @@
 ---
 title: "Software livre"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Sprint 5"
 type: "issue"
 draft: false

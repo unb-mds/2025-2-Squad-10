@@ -1,6 +1,6 @@
 ---
 title: "[FEATURE]fazendo a responsividade na navbar"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Sprint_12"
 type: "issue"
 draft: false

@@ -216,3 +216,34 @@ main {
     padding-left: 20px; /* Alinha a lista de issues */
     line-height: 1.7;
 }
+
+.content :not(pre) > code {
+    background-color: #e3effd; 
+    color: #1a5c20; 
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+/* --- BLOCO DE CÓDIGO (grande) --- */
+/* A classe .highlight é gerada pelo Hugo ao redor do código */
+.content .highlight,
+.content pre {
+    background-color: #444444 !important; /* !important vence o Hugo */
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Garante que o pre interno fique transparente para usar a cor do pai */
+.content .highlight pre {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 20px;
+    margin: 0;
+    overflow-x: auto; /* Barra de rolagem se o código for longo */
+}
+
+/* Ajusta a cor do texto base (atenção: syntax highlighting pode ter cores próprias) */
+.content pre code {
+    color: #f8f8f2 !important; 
+    font-family: 'Consolas', monospace;
+}

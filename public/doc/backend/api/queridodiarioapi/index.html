@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/2025-2-OncoMap/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=2025-2-OncoMap/livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        
+            Queridodiarioapi | OncoMap
+        
+    </title>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="http://localhost:1313/2025-2-OncoMap/css/doc-page-bundle.min.css">
+
+
+
+</head>
+<body>
+
+    <nav class="navbar">
+
+    <a class="navbar-brand" href="http://localhost:1313/2025-2-OncoMap/">
+        OncoMap
+    </a>
+
+    <ul class="navbar-links">
+        <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/sprints/">Sprints</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/diversos/">Diversos</a></li>
+        <li><a href="http://localhost:1313/2025-2-OncoMap/doc/">Documentação</a></li>
+    </ul>
+
+    <div class="navbar-right">
+        <a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a>
+    </div>
+
+</nav>
+
+    <section class="hero">
+    <div class="container">
+        <h1>Queridodiarioapi</h1>
+        
+        
+        
+        </div>
+</section>
+
+    <main>
+        
+
+    <div class="container page-single">
+        
+        
+        
+        
+        <div class="content">
+            <h1 id="querido-diário-api---documentação-para-issue">Querido Diário API - Documentação para Issue</h1>
+<hr>
+<h2 id="-contexto">📖 Contexto</h2>
+<p>No projeto <strong>Radar de investimento em saúde oncológica nos municípios</strong>, utilizaremos a API pública do <strong>Querido Diário</strong>, que disponibiliza os diários oficiais municipais de forma acessível para consulta e análise.</p>
+<hr>
+<h2 id="api-do-querido-diário">API do Querido Diário</h2>
+<p>A API do <strong>Querido Diário</strong> segue o modelo <strong>REST</strong>, baseada em requisições HTTP, retornando dados no formato <strong>JSON</strong>. Ela permite consultar e filtrar publicações dos diários oficiais de diferentes municípios brasileiros.</p>
+<p>Principais características:</p>
+<ul>
+<li><strong>REST:</strong> arquitetura utilizada, simples e amplamente compatível.</li>
+<li><strong>Formato de Resposta:</strong> JSON.</li>
+<li><strong>Filtros disponíveis:</strong> município (código IBGE), palavras-chave, intervalo de datas.</li>
+</ul>
+<hr>
+<h2 id="como-funciona-a-api">Como funciona a API</h2>
+<ol>
+<li>O <strong>cliente</strong> (nosso sistema) envia uma requisição HTTP para um endpoint (por exemplo: <code>/gazettes</code>).</li>
+<li>O <strong>servidor</strong> da API processa a requisição e busca as publicações correspondentes.</li>
+<li>A <strong>resposta</strong> é enviada em JSON, contendo os resultados encontrados.</li>
+</ol>
+<p>Exemplo de requisição:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /api/gazettes?territory_ids=4314902&amp;published_since=2023-01-01&amp;published_until=2023-12-31&amp;querystring=oncologia
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">Host: queridodiario.ok.org.br
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">Accept: application/json
+</span></span></span></code></pre></div><p>Resposta:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;gazettes&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;territory_id&#34;</span>: <span style="color:#e6db74">&#34;4314902&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;date&#34;</span>: <span style="color:#e6db74">&#34;2023-03-10&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;url&#34;</span>: <span style="color:#e6db74">&#34;https://queridodiario.ok.org.br/gazettes/4314902/2023-03-10.pdf&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;excerpt&#34;</span>: <span style="color:#e6db74">&#34;... contratação de serviços de oncologia clínica ...&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="principais-endpoints">Principais Endpoints</h2>
+<h3 id="gazettes"><code>/gazettes</code></h3>
+<p>Permite consultar os diários oficiais.</p>
+<p><strong>Parâmetros principais:</strong></p>
+<ul>
+<li><code>querystring</code> → termo de busca (ex.: <em>oncologia</em>, <em>câncer</em>, <em>quimioterapia</em>).</li>
+<li><code>territory_ids</code> → código IBGE do município (ex.: Porto Alegre = <code>4314902</code>).</li>
+<li><code>published_since</code> → data inicial (AAAA-MM-DD).</li>
+<li><code>published_until</code> → data final (AAAA-MM-DD).</li>
+</ul>
+<hr>
+<h2 id="tecnologias-de-apoio">Tecnologias de apoio</h2>
+<p>Para testar e documentar a API do Querido Diário, podemos usar ferramentas como:</p>
+<ul>
+<li><strong>Postman</strong> → testar requisições e organizar coleções.</li>
+<li><strong>Swagger (OpenAPI)</strong> → a própria API já oferece documentação interativa.</li>
+</ul>
+<hr>
+<h2 id="passos-de-uso-no-projeto">Passos de Uso no Projeto</h2>
+<ol>
+<li><strong>Definir municípios de interesse</strong> (lista com códigos IBGE).</li>
+<li><strong>Listar palavras-chave</strong> relacionadas à oncologia (ex.: quimioterapia, radioterapia, medicamentos oncológicos).</li>
+<li><strong>Implementar coleta</strong> usando scripts (ex.: Python + <code>requests</code>).</li>
+<li><strong>Armazenar dados</strong> em CSV ou banco de dados.</li>
+<li><strong>Analisar resultados</strong> para identificar padrões de investimento e publicações.</li>
+</ol>
+<hr>
+<h2 id="vantagens-e-limitações">Vantagens e Limitações</h2>
+<h3 id="-vantagens">✅ Vantagens</h3>
+<ul>
+<li>Dados públicos e acessíveis.</li>
+<li>Permite buscas flexíveis por texto.</li>
+<li>Respostas em JSON, fáceis de manipular.</li>
+</ul>
+<h3 id="-limitações">⚠️ Limitações</h3>
+<ul>
+<li>Nem todos os municípios possuem cobertura completa.</li>
+<li>É necessário processar os textos para extrair valores financeiros.</li>
+<li>Termos variam conforme a redação de cada diário.</li>
+</ul>
+<hr>
+<h2 id="possíveis-extensões-futuras">Possíveis Extensões Futuras</h2>
+<ul>
+<li>Integração com bases de dados de licitação (Portal da Transparência, ComprasNet).</li>
+<li>Construção de dashboards interativos para análise por município/estado.</li>
+<li>Uso de NLP (Processamento de Linguagem Natural) para detectar automaticamente investimentos em saúde oncológica.</li>
+</ul>
+<hr>
+<h2 id="-resumo">📌 Resumo</h2>
+<ul>
+<li><strong>API utilizada:</strong> Querido Diário (REST, pública).</li>
+<li><strong>Endpoint principal:</strong> <code>/gazettes</code>.</li>
+<li><strong>Filtros principais:</strong> <code>querystring</code>, <code>territory_ids</code>, <code>published_since</code>, <code>published_until</code>.</li>
+<li><strong>Objetivo:</strong> buscar e analisar menções a investimentos em saúde oncológica nos municípios brasileiros.</li>
+</ul>
+<hr>
+<h2 id="links-úteis">Links Úteis</h2>
+<ul>
+<li><a href="https://queridodiario.ok.org.br/api/docs">Documento Api QueridoDiário</a></li>
+<li><a href="https://github.com/okfn-brasil/querido-diario-api">GitHub QueridoDiário</a></li>
+</ul>
+
+        </div>
+    </div>
+
+
+    </main>
+
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            
+            <div class="footer-column about">
+                <h3>OncoMap</h3>
+                <p>Mapa de investimento em saúde oncológica</p>
+            </div>
+            
+            <div class="footer-column links">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/">Início</a></li>
+                    <li><a href="http://localhost:1313/2025-2-OncoMap/sprints">Sprints</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="http://localhost:1313/2025-2-OncoMap/requisitos/">Requisitos</a></li>
+                    
+                    
+                    
+                    
+                        <li><a href="http://localhost:1313/2025-2-OncoMap/arquitetura/">Arquitetura</a></li>
+                    
+                </ul>
+            </div>
+            
+            <div class="footer-column contact">
+                <h3>Contato</h3>
+                <ul>
+                    <li><a href="https://github.com/unb-mds/2025-2-OncoMap" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="container">
+            <p>&copy; 2025 OncoMap. Todos os direitos reservados.</p>
+            <p>Desenvolvido pela equipe UnB-MDS</p>
+        </div>
+    </div>
+</footer>
+    
+    <script src="http://localhost:1313/2025-2-OncoMap/js/app.js"></script>
+</body>
+</html>

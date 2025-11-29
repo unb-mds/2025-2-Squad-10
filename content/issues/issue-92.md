@@ -1,6 +1,6 @@
 ---
 title: "[Feat] Geração relatórios PDF"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Nenhuma"
 type: "issue"
 draft: false

@@ -1,6 +1,6 @@
 ---
 title: "Prototipo de Baixa Fidelidade"
-date: 2025-11-28
+date: 2025-11-29
 milestone: "Sprint 4"
 type: "issue"
 draft: false
